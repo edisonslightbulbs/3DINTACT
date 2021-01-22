@@ -8,32 +8,39 @@
 
 #include "logger.h"
 #include "point.h"
-#include "point3d.h"
 #include "timer.h"
 
-extern const int SUCCESS;
-extern const int FAILURE;
+extern const int PASS;
+extern const int FAIL;
+extern const int NOISE;
+extern const int UNCLASSIFIED;
 
 const int MINIMUM_POINTS = 4;
 const float EPSILON = 0.75 * 0.75;
 
-class Dbscan {
+class dbscan {
 
 private:
-    int findNeighbors(Point* ptr_point, int t_cluster);
-    std::vector<int> inEpsilonNeighbourhood(Point* ptr_point3d);
-    void clusterPoints();
+    int findNeighbors(Point t_point, int t_cluster);
+    std::vector<int> neighbourhood(Point t_point);
 
 public:
-    std::vector<Point*> m_points3d;
+    std::vector<Point> m_points;
 
-    explicit Dbscan(std::vector<Point*>& t_points3d)
-        : m_points3d(t_points3d)
+    explicit dbscan(std::vector<Point>& t_point)
+        : m_points(t_point)
     {
-        clusterPoints();
+        int cluster = 0;
+        for (auto point : m_points) {
+            if (point.m_cluster == UNCLASSIFIED) {
+                if (findNeighbors(point, cluster) != FAIL) {
+                    cluster += 1;
+                }
+            }
+        }
     }
 
-    ~Dbscan() = default;
+    ~dbscan() = default;
 };
 #endif /* DBSCAN_H */
 
