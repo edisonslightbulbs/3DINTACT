@@ -1,8 +1,8 @@
-#### Dbscan [adapted](https://github.com/james-yoo/Dbscan)
+#### dbscan
 
 Dbscan (Density-Based Spatial Clustering of Applications with Noise) is a data clustering algorithm proposed by [Martin Ester, Hans-Peter Kriegel, Jörg Sander and Xiaowei Xu in 1996](https://en.wikipedia.org/wiki/Dbscan).
 
-![](https://raw.githubusercontent.com/antiqueeverett/dbscan/master/resources/demo.png)
+![](https://raw.githubusercontent.com/antiqueeverett/dbscan-cpp/main/resources/demo.png)
 
 ##### Usage
 
