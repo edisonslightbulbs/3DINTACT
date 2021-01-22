@@ -41,8 +41,10 @@ set(SRC_DIR ${PROJECT_DIR}/src)
 
 # define project target
 add_executable(dbscan
+        ${SRC_DIR}/point.cpp
+        ${SRC_DIR}/io.cpp
+        ${SRC_DIR}/dbscan.cpp
     ${SRC_DIR}/main.cpp
-    ${SRC_DIR}/dbscan.cpp
     )
 
 target_include_directories(dbscan PRIVATE
