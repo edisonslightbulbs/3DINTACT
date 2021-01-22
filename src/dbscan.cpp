@@ -1,23 +1,11 @@
 #include "dbscan.h"
 
-void Dbscan::clusterPoints()
-{
-    int cluster = 0;
-    for (auto* ptr_point3d : m_points3d) {
-        if (ptr_point3d->m_cluster == UNCLASSIFIED) {
-            if (findNeighbors(ptr_point3d, cluster) != FAILURE) {
-                cluster += 1;
-            }
-        }
-    }
-}
-
-std::vector<int> Dbscan::inEpsilonNeighbourhood(Point* ptr_point3d)
+std::vector<int> dbscan::neighbourhood(Point t_point)
 {
     int index = 0;
     std::vector<int> neighbours;
-    for (auto* ptr_other3d : m_points3d) {
-        if (ptr_point3d->distance(ptr_other3d) <= EPSILON) {
+    for (auto points : m_points) {
+        if (t_point.distance(points) <= EPSILON) {
             neighbours.push_back(index);
         }
         index++;
@@ -25,19 +13,19 @@ std::vector<int> Dbscan::inEpsilonNeighbourhood(Point* ptr_point3d)
     return neighbours;
 }
 
-int Dbscan::findNeighbors(Point* ptr_point, int t_cluster)
+int dbscan::findNeighbors(Point t_point, int t_cluster)
 {
-    std::vector<int> neighbours = inEpsilonNeighbourhood(ptr_point);
+    std::vector<int> neighbours = neighbourhood(t_point);
     if (neighbours.size() < MINIMUM_POINTS) {
-        ptr_point->m_cluster = NOISE;
-        return FAILURE;
+        t_point.m_cluster = NOISE;
+        return FAIL;
     }
 
     int index = 0;
     int centroid = 0;
     for (auto neighbour : neighbours) {
-        m_points3d.at(neighbour)->m_cluster = t_cluster;
-        if (m_points3d.at(neighbour) == ptr_point) {
+        m_points.at(neighbour).m_cluster = t_cluster;
+        if (m_points.at(neighbour) == t_point) {
             centroid = index;
         }
         ++index;
@@ -46,19 +34,19 @@ int Dbscan::findNeighbors(Point* ptr_point, int t_cluster)
 
     for (std::vector<int>::size_type i = 0, n = neighbours.size(); i < n; ++i) {
         std::vector<int> nextNeighbours
-            = inEpsilonNeighbourhood(m_points3d.at(neighbours[i]));
+            = neighbourhood(m_points.at(neighbours[i]));
 
         if (nextNeighbours.size() >= MINIMUM_POINTS) {
             for (auto neighbour : nextNeighbours) {
-                if (m_points3d.at(neighbour)->unclassified()) {
+                if (m_points.at(neighbour).unclassified()) {
                     neighbours.push_back(neighbour);
                     n = neighbours.size();
-                    m_points3d.at(neighbour)->m_cluster = t_cluster;
+                    m_points.at(neighbour).m_cluster = t_cluster;
                 }
             }
         }
     }
-    return SUCCESS;
+    return PASS;
 }
 
 /**
