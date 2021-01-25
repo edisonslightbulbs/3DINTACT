@@ -16,7 +16,7 @@ extern const int NOISE;
 extern const int UNCLASSIFIED;
 
 const int MINIMUM_POINTS = 4;
-const float EPSILON = 0.75 * 0.75;
+const float EPSILON = 2.1;
 
 class dbscan {
 
