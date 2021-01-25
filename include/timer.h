@@ -9,7 +9,7 @@
 using namespace std::this_thread;     // sleep_for, sleep_until
 using namespace std::chrono_literals; // ns, us, ms, s, h, etc.
 
-// #define wait sleep_for
+#define wait sleep_for
 constexpr double SECOND = 1000000;
 constexpr double MILLISECOND = 1000;
 constexpr double TO_SECOND = 0.000001;
