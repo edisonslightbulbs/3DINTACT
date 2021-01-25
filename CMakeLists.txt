@@ -13,6 +13,7 @@ set(REMAP_VERSION ${MAJOR}.${MINOR})
 # CXX and C versions
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_C_STANDARD 99)
+set(CMAKE_CXX_FLAGS "-pthread")
 
 # cmake modules path spec
 list(APPEND CMAKE_MODULE_PATH "$ENV{CMAKE_MODULE_PATH}")
@@ -42,6 +43,7 @@ set(SRC_DIR ${PROJECT_DIR}/src)
 # define project target
 add_executable(dbscan
         ${SRC_DIR}/point.cpp
+        ${SRC_DIR}/workers.cpp
         ${SRC_DIR}/io.cpp
         ${SRC_DIR}/dbscan.cpp
     ${SRC_DIR}/main.cpp
