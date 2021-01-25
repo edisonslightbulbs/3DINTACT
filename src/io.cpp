@@ -1,8 +1,7 @@
 #include "io.h"
 #include "logger.h"
 
-void IO::sortNeighbours(
-    const int& ID, std::vector<std::vector<Point>>& t_neighbours)
+void IO::sort(const int& ID, std::vector<std::vector<Point>>& t_neighbours)
 {
     /** sort neighbour lists | metric = euclidean distance */
     std::sort(t_neighbours[ID].begin(), t_neighbours[ID].end(), Point::compare);
@@ -43,7 +42,7 @@ std::vector<Point> IO::read(std::vector<Point> t_points, const char* t_file)
 void IO::write(const int& ID, const int& t_K,
     std::vector<std::vector<Point>>& t_neighbours, const std::string& t_file)
 {
-    sortNeighbours(ID, t_neighbours);
+    sort(ID, t_neighbours);
 
     std::ofstream filestream;
     filestream.open(t_file);
