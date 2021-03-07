@@ -1,10 +1,20 @@
 #include "io.h"
 #include "logger.h"
 
-void IO::sort(const int& ID, std::vector<std::vector<Point>>& t_neighbours)
+#ifdef WINDOWS
+#include <direct.h>
+#define wd _getcwd
+#else
+#include <unistd.h>
+#define wd getcwd
+#endif
+
+std::string IO::pwd()
 {
-    /** sort neighbour lists | metric = euclidean distance */
-    std::sort(t_neighbours[ID].begin(), t_neighbours[ID].end(), Point::compare);
+    char buff[FILENAME_MAX];
+    wd(buff, FILENAME_MAX);
+    std::string workingDir(buff);
+    return workingDir;
 }
 
 std::vector<Point> IO::read(std::vector<Point> t_points, const char* t_file)
@@ -39,19 +49,16 @@ std::vector<Point> IO::read(std::vector<Point> t_points, const char* t_file)
     return t_points;
 }
 
-void IO::write(const int& ID, const int& t_K,
-    std::vector<std::vector<Point>>& t_neighbours, const std::string& t_file)
+void IO::write(const std::vector<float>& distances, const std::string& file)
 {
-    sort(ID, t_neighbours);
-
     std::ofstream filestream;
-    filestream.open(t_file);
+    filestream.open(file);
     filestream << "id,nn1" << std::endl;
 
-    /** graph-able knn of point(ID) */
+    /** graph-able knn */
     int count = 1;
-    for (auto& point : t_neighbours[ID]) {
-        filestream << count << ", " << point.m_distance.second << std::endl;
+    for (const auto& distance : distances) {
+        filestream << count << ", " << distance << std::endl;
         count++;
     }
     filestream.close();

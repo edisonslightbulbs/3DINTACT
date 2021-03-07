@@ -42,10 +42,11 @@ set(SRC_DIR ${PROJECT_DIR}/src)
 
 # define project target
 add_executable(dbscan
-        ${SRC_DIR}/point.cpp
-        ${SRC_DIR}/workers.cpp
-        ${SRC_DIR}/io.cpp
-        ${SRC_DIR}/dbscan.cpp
+    ${SRC_DIR}/point.cpp
+    ${SRC_DIR}/io.cpp
+    ${SRC_DIR}/dbscan.cpp
+    ${SRC_DIR}/knn.cpp
+    ${SRC_DIR}/timer.cpp
     ${SRC_DIR}/main.cpp
     )
 

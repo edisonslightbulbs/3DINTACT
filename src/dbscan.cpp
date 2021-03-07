@@ -1,57 +1,88 @@
 #include "dbscan.h"
+#include "knn.h"
 
-std::vector<int> dbscan::neighbourhood(Point t_point)
+std::vector<Point> query(
+    const std::vector<Point>& points, Point core, const float& EPSILON)
 {
-    int index = 0;
-    std::vector<int> neighbours;
-    for (auto points : m_points) {
-        if (t_point.distance(points) <= EPSILON) {
-            neighbours.push_back(index);
+    /** neighboring points */
+    std::vector<Point> neighbours;
+    for (const auto& point : points) {
+        if (core.distance(point) < EPSILON) {
+            neighbours.push_back(point);
         }
-        index++;
     }
     return neighbours;
 }
 
-int dbscan::findNeighbors(Point t_point, int t_cluster)
+float elbow(std::vector<float> distances)
 {
-    std::vector<int> neighbours = neighbourhood(t_point);
-    if (neighbours.size() < MINIMUM_POINTS) {
-        t_point.m_cluster = NOISE;
-        return FAIL;
-    }
+    float vec1;
+    float vec2;
+    std::vector<float> angles;
 
-    int index = 0;
-    int centroid = 0;
-    for (auto neighbour : neighbours) {
-        m_points.at(neighbour).m_cluster = t_cluster;
-        if (m_points.at(neighbour) == t_point) {
-            centroid = index;
+    for (int i = 1; i < distances.size() - 1; i++) {
+        vec1 = distances[i] - distances[i - 1];
+        vec2 = distances[i + 1] - distances[i];
+        float angle = std::atan2(vec1, vec2);
+        angles.push_back(angle);
+    }
+    float maxDiff = 0;
+    for (int i = 1; i < angles.size() - 1; i++) {
+        float d1 = angles[i - 1] - angles[i];
+        float d2 = angles[i + 1] - angles[i];
+        float diff = (d1 + d2) / 2;
+        if (diff > maxDiff) {
+            maxDiff = std::abs(angles[i]);
         }
-        ++index;
     }
-    neighbours.erase(neighbours.begin() + centroid);
+    return maxDiff;
+}
 
-    for (std::vector<int>::size_type i = 0, n = neighbours.size(); i < n; ++i) {
-        std::vector<int> nextNeighbours
-            = neighbourhood(m_points.at(neighbours[i]));
+std::vector<Point> dbscan::cluster(
+    std::vector<Point> points, const int& neighbourhoodSize)
+{
+    /** compute knn where k = 4 and estimate epsilon */
+    std::vector<float> kdist = knn::compute(points);
+    const float EPSILON = elbow(kdist);
 
-        if (nextNeighbours.size() >= MINIMUM_POINTS) {
-            for (auto neighbour : nextNeighbours) {
-                if (m_points.at(neighbour).unclassified()) {
-                    neighbours.push_back(neighbour);
-                    n = neighbours.size();
-                    m_points.at(neighbour).m_cluster = t_cluster;
-                }
+    /** cluster counter / label */
+    int cluster = -1;
+
+    /**
+     * DBSCAN
+     *   Original query-based algorithm:
+     *   https://en.wikipedia.org/wiki/DBSCAN
+     *   date: 2021-03-06 16:04
+     */
+    for (auto& point : points) {
+        if (point.m_cluster != UNCLASSIFIED) {
+            continue;
+        }
+
+        /** neighboring points */
+        std::vector<Point> neighbours = query(points, point, EPSILON);
+        if (neighbours.size() < neighbourhoodSize) {
+            point.m_cluster = NOISE;
+            continue;
+        }
+        cluster++;
+        point.m_cluster = cluster;
+
+        for (auto& n : neighbours) {
+            if (n.m_cluster == NOISE) {
+                n.m_cluster = cluster;
+            }
+            if (n.m_cluster != UNCLASSIFIED) {
+                continue;
+            }
+            n.m_cluster = cluster;
+
+            /** nearest neighbors */
+            std::vector<Point> nn = query(points, n, EPSILON);
+            if (nn.size() >= neighbourhoodSize) {
+                neighbours.insert(neighbours.end(), nn.begin(), nn.end());
             }
         }
     }
-    return PASS;
+    return points;
 }
-
-/**
- * std::vector<int>::size_type usage
- * see
- * https://stackoverflow.com/questions/4849632/vectorintsize-type-in-c
- * date: 2020-12-30 20:22
- */

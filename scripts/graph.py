@@ -9,14 +9,14 @@ from matplotlib.colors import ListedColormap
 pwd = os.getcwd()
 
 # KNN:
-data_file = pwd + "/build/output_data.txt"
+data_file = pwd + "/build/knn.csv"
 plt.figure()
 df = pd.read_csv(data_file)
-sns.lineplot(x=df.id, y=df.nn1, hue = 100)
+sns.lineplot(x=df.id, y=df.nn1, hue=100)
 plt.xlabel("id")
 plt.ylabel("Euclidean dist")
 plt.title("knn")
-# plt.show()
+plt.show()
 
 # DBSCAN:
 data_3d_output = pwd + "/build/results.csv"

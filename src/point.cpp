@@ -4,10 +4,27 @@ extern const int NOISE = -2;
 extern const int UNASSIGNED = -1;
 extern const int UNCLASSIFIED = -1;
 
+// extern const int X = 0;   //  x_i = {x_1, x_2, ... x_m}
+// extern const int Y = 1;   //  y_i = {y_1, y_2, ... y_m}
+// extern const int Z = 2;   //  z_i = {z_1, z_2, ... z_m}
+// extern const int R = 3;   // dimensional space
+
+bool compare(const Point& t_point, const Point& t_other)
+{
+    return t_point.m_distance.second < t_other.m_distance.second;
+}
+
+void Point::sort(std::vector<Point>& points)
+{
+    /** sort points using m_distance.second (i.e., euclidean distance) */
+    std::sort(points.begin(), points.end(), compare);
+}
+
 Point::Point()
     : m_x(0.0)
     , m_y(0.0)
     , m_z(0.0)
+
     , m_id(UNASSIGNED)
     , m_cluster(UNCLASSIFIED)
     , m_distance(0, __DBL_MAX__)
@@ -18,15 +35,11 @@ Point::Point(float t_x, float t_y, float t_z)
     : m_x(t_x)
     , m_y(t_y)
     , m_z(t_z)
+
     , m_id(UNASSIGNED)
     , m_cluster(UNCLASSIFIED)
     , m_distance(0, __DBL_MAX__)
 {
-}
-
-bool Point::unclassified() const
-{
-    return (m_cluster == UNCLASSIFIED || m_cluster == NOISE);
 }
 
 float Point::distance(Point point) const
@@ -53,11 +66,6 @@ Point Point::centroid(std::vector<Point>& t_points)
 
     return Point { (float)pointsMat.col(0).mean(),
         (float)pointsMat.col(1).mean(), (float)pointsMat.col(2).mean() };
-}
-
-bool Point::compare(const Point& t_point, const Point& t_other)
-{
-    return t_point.m_distance.second < t_other.m_distance.second;
 }
 
 bool Point::operator==(const Point& rhs) const

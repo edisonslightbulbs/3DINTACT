@@ -7,6 +7,21 @@
 #include <utility>
 #include <vector>
 
+/**
+ * A point may not belong to any cluster.
+ * For such cases we deem the point to be
+ * Either noise, or unclassified. */
+extern const int NOISE;
+extern const int UNCLASSIFIED;
+
+// extern const int X; // vector column with x values
+// extern const int Y; // vector column with y values
+// extern const int Z; // vector column with Z values
+// extern const int R; // dimensions
+
+/** todo: optimize data structure for color manipulation
+ * Bit values for colors*/
+
 class Point {
 
 public:
@@ -26,11 +41,11 @@ public:
 
     std::pair<int, float> m_distance;
 
-    bool unclassified() const;
     float distance(Point point) const;
 
     static Point centroid(std::vector<Point>& t_points);
-    static bool compare(const Point& t_point, const Point& t_other);
+
+    static void sort(std::vector<Point>& points);
 };
 
 #endif /* POINT_H */
