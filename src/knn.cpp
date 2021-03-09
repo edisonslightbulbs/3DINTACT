@@ -1,38 +1,101 @@
+#include <algorithm>
+#include <cmath>
+
 #include "knn.h"
 #include "io.h"
+#include "naiveknn.h"
+#include "kdtreeknn.h"
 
-std::vector<float> knn::compute(std::vector<Point>& points)
+
+void csv(std::vector<float>& knn)
 {
-    /** list of neighbourhoods for each point */
-    std::vector<std::vector<Point>> neighbourhoods;
-    std::vector<Point> neighbours;
-
-    for (auto& point : points) {
-        for (auto& n : points) {
-            if (point == n) {
-                continue;
-            }
-            float distance = n.distance(point);
-            n.m_distance.first = point.m_id;
-            n.m_distance.second = distance;
-            neighbours.push_back(n);
-        }
-        neighbourhoods.push_back(neighbours);
-        neighbours.clear();
-    }
-
-    for (auto& neighbourhood : neighbourhoods) {
-        Point::sort(neighbourhood); // please verify the output from here
-    }
-
-    std::vector<float> knn;
-    for (auto& neighbourhood : neighbourhoods) {
-        knn.push_back(neighbourhood[3].m_distance.second);
-    }
-    std::sort(knn.begin(), knn.end(), std::greater<>());
-
+    /** output path */
     const std::string OUTPUT = IO::pwd() + "/build/knn.csv";
-    IO::write(knn, OUTPUT);
 
-    return knn;
+    /** first: sort in descending order */
+    std::sort(knn.begin(), knn.end(), std::greater<>());
+    IO::write(knn, OUTPUT);
+}
+
+std::vector<Point> seed(std::vector<Point> points)
+{
+    const int SAMPLE_SIZE = 5;
+
+    /** find centroid */
+    Point center = Point::centroid(points);
+
+    /** compute distances from centroid for each point */
+    for (auto& point : points) {
+        float distance = point.distance(center);
+        point.m_distance.second = distance;
+    }
+
+    /** sort points using computed distance */
+    Point::sort(points);
+
+    /** sample edge of cluster points */
+    std::vector<Point> sample = std::vector<Point>(
+        points.begin() + points.size() - SAMPLE_SIZE, points.end());
+
+    /** visual check of sample size */
+    std::cout << "sampled " << sample.size() << " points" << std::endl;
+
+    return sample;
+}
+
+std::vector<float> compute(std::vector<Point>& points, const int& K)
+{
+    /** sample points (todo: revise sampling strategy)  */
+    std::vector<Point> sample(seed(points));
+
+    /** list of Kth nearest neighbours for all points */
+    std::vector<float> knearest;
+
+    /***************************** performance testing ************************/
+    /** 1. naive: */
+    knearest = naiveknn::run(sample, K);
+
+    /** 2. kdtree: */
+    kdtreeknn::run(sample, K);
+
+    /***************************** performance testing ************************/
+
+    csv(knearest); // graphable Kth nearest neighbours
+
+    return knearest;
+}
+
+float knn::elbow(std::vector<Point>& points)
+{
+    const int K = 5; // <---- 4 excluding core point
+
+    /** Kth nearest distance for every point */
+    std::vector<float> knearest = compute(points, K);
+
+    /** use Snell's Law to evaluate relative angular distances */
+    std::vector<std::pair<float, float>> angles;
+
+    float vec2;
+    for (int i = 1; i < knearest.size() - 1; i++) {
+        vec2 = knearest[i + 1] - knearest[i];
+        float angle = std::asin(vec2);
+        angles.emplace_back(knearest[i], angle);
+    }
+
+    /** find the maximum absolute second derivative (masd) */
+    float masd = 0;
+    for (int i = 1; i < angles.size() - 1; i++) {
+        float d1 = angles[i - 1].second - angles[i].second;
+        float d2 = angles[i + 1].second - angles[i].second;
+        float cd = 2 * angles[i].second;
+
+        /** evaluate the second derivative (sd) - central difference (cd) */
+        float sd = d1 + d2 - cd;
+
+        /** determine elbow as it corresponds to the distance with the masd */
+        if (sd > masd) {
+            masd = angles[i].first;
+        }
+    }
+    return masd;
 }

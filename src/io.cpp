@@ -35,7 +35,7 @@ std::vector<Point> IO::read(std::vector<Point> t_points, const char* t_file)
         std::vector<std::string> row;
 
         /** ... parse each line based on delimiter */
-        while (std::getline(ss, cell, ',')) {
+        while (std::getline(ss, cell, ' ')) {
             row.push_back(cell);
         }
 

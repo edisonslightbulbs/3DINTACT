@@ -42,10 +42,10 @@ set(SRC_DIR ${PROJECT_DIR}/src)
 
 # define project target
 add_executable(dbscan
-    ${SRC_DIR}/point.cpp
-    ${SRC_DIR}/io.cpp
     ${SRC_DIR}/dbscan.cpp
     ${SRC_DIR}/knn.cpp
+    ${SRC_DIR}/point.cpp
+    ${SRC_DIR}/io.cpp
     ${SRC_DIR}/timer.cpp
     ${SRC_DIR}/main.cpp
     )
@@ -67,6 +67,6 @@ if(GRAPH)
     add_custom_command(TARGET dbscan
         POST_BUILD
         COMMAND ./build/bin/dbscan --logtostderr=1
-        COMMAND /bin/python3 ./scripts/graph.py
+        #COMMAND /bin/python3 ./scripts/graph.py
         WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
 endif()
