@@ -35,10 +35,12 @@ find_package(gflags REQUIRED)
 find_package(glog REQUIRED)
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 
-# project paths spec
+# project paths
 set(PROJECT_DIR ${CMAKE_CURRENT_LIST_DIR})
 set(INCLUDE_DIR ${PROJECT_DIR}/include)
 set(SRC_DIR ${PROJECT_DIR}/src)
+set(EXT_DIR ${PROJECT_DIR}/external)
+set(LIBS_DIR ${PROJECT_DIR}/libs)
 
 # define project target
 add_executable(dbscan

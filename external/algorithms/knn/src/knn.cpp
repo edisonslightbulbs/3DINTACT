@@ -1,11 +1,10 @@
 #include <algorithm>
 #include <cmath>
 
-#include "knn.h"
 #include "io.h"
-#include "naiveknn.h"
 #include "kdtreeknn.h"
-
+#include "knn.h"
+#include "naiveknn.h"
 
 void csv(std::vector<float>& knn)
 {
@@ -19,7 +18,7 @@ void csv(std::vector<float>& knn)
 
 std::vector<Point> seed(std::vector<Point> points)
 {
-    const int SAMPLE_SIZE = 5;
+    const int SAMPLE_SIZE = 10;
 
     /** find centroid */
     Point center = Point::centroid(points);
