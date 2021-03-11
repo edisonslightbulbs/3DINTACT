@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
         Timer timer;
         float epsilon = knn::elbow(points); // <-- best time 292 ms O(N^2)
         std::cout << epsilon << std::endl;
-        LOG(INFO) << timer.getDuration() << "ms : knn analysis";
+        //LOG(INFO) << timer.getDuration() << "ms : knn analysis";
     }
 
     /** cluster using dbscan */
