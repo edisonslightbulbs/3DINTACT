@@ -24,9 +24,9 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 
 # clang-tidy rules (good dev practice)
-# set(CMAKE_CXX_CLANG_TIDY
-#     clang-tidy -p pwd
-#     --checks=-*,readability-*,clang-analyzer-*,performance-*)
+set(CMAKE_CXX_CLANG_TIDY
+    clang-tidy -p pwd
+    --checks=-*,readability-*,clang-analyzer-*,performance-*)
 
 # build shared library (on)
 option(BUILD_SHARED_LIBS "Build Shared Library" ON)
@@ -67,11 +67,11 @@ add_executable(dbscan
     ${SRC_DIR}/main.cpp
     )
 
-target_include_directories(dbscan SYSTEM PRIVATE
+target_include_directories(dbscan PRIVATE
     ${INCLUDE_DIRS}
     )
 
-target_link_libraries(dbscan SYSTEM
+target_link_libraries(dbscan
     glog
     gflags
     Eigen3::Eigen
@@ -84,6 +84,7 @@ if(GRAPH)
     add_custom_command(TARGET dbscan
         POST_BUILD
         COMMAND ./build/bin/dbscan --logtostderr=1
+        COMMAND cloudcompare.CloudCompare ./build/bin/context.ply >/dev/null 2>&1 &
         #COMMAND /bin/python3 ./scripts/graph.py
         WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
 endif()

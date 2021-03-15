@@ -8,11 +8,11 @@
 	path = external/algorithms/svd
 	url = git@github.com:edisonslightbulbs/svd.git
 [submodule "libs/utility"]
-	path = libs/utility
+	path = external/utility
 	url = git@github.com:edisonslightbulbs/utility.git
 [submodule "libs/preprocessing"]
 	path = libs/preprocessing
 	url = git@github.com:edisonslightbulbs/preprocessing.git
 [submodule "libs/geometry"]
-	path = libs/geometry
+	path = external/geometry
 	url = git@github.com:edisonslightbulbs/geometry.git
