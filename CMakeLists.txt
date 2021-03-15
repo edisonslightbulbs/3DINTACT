@@ -23,10 +23,12 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 
-# clang-tidy rules (good dev practice)
-set(CMAKE_CXX_CLANG_TIDY
-    clang-tidy -p pwd
-    --checks=-*,readability-*,clang-analyzer-*,performance-*)
+# clang-tidy rules
+if(UNIX AND NOT APPLE)
+    set(CMAKE_CXX_CLANG_TIDY
+        clang-tidy -p pwd
+        --checks=-*,readability-*,clang-analyzer-*,performance-*)
+endif()
 
 # build shared library (on)
 option(BUILD_SHARED_LIBS "Build Shared Library" ON)
