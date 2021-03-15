@@ -24,9 +24,9 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 
 # clang-tidy rules (good dev practice)
-set(CMAKE_CXX_CLANG_TIDY
-    clang-tidy -p pwd
-    --checks=-*,readability-*,clang-analyzer-*,performance-*)
+# set(CMAKE_CXX_CLANG_TIDY
+#     clang-tidy -p pwd
+#     --checks=-*,readability-*,clang-analyzer-*,performance-*)
 
 # build shared library (on)
 option(BUILD_SHARED_LIBS "Build Shared Library" ON)
@@ -67,11 +67,11 @@ add_executable(dbscan
     ${SRC_DIR}/main.cpp
     )
 
-target_include_directories(dbscan PRIVATE
+target_include_directories(dbscan SYSTEM PRIVATE
     ${INCLUDE_DIRS}
     )
 
-target_link_libraries(dbscan
+target_link_libraries(dbscan SYSTEM
     glog
     gflags
     Eigen3::Eigen
