@@ -13,6 +13,7 @@
 
 extern const int FAIL = -3;
 extern const int PASS = 0;
+const int tweak = 60;
 
 static std::vector<Point> segment(std::vector<Point> points){
     Timer timer;
@@ -31,13 +32,13 @@ static std::vector<Point> segment(std::vector<Point> points){
     /** accumulate distances to 4th nearest neighbours */
     std::vector<float> knn4 = knn::compute(sample);
 
-    /** find epsilon query size */
+    /** find epsilon queryRange size */
     float epsilon = elbow::find(knn4);
     LOG(INFO) << epsilon << ": ≈ epsilon";
 
     /** run: return clustered points and number of clusters */
-    const int MIN_POINTS = 4;
-    std::pair<std::vector<Point>, int> clusters = dbscan::run(roi, MIN_POINTS, epsilon);
+    const int MIN_POINTS = 4; // <-- https://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.121.9220
+    std::pair<std::vector<Point>, int> clusters = dbscan::cluster(roi, MIN_POINTS, epsilon + tweak);
 
     /** segment tabletop interaction context */
     std::vector<Point> context = segmenter::segment(clusters);
