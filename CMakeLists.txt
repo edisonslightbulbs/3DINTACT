@@ -86,7 +86,8 @@ if(GRAPH)
     add_custom_command(TARGET dbscan
         POST_BUILD
         COMMAND ./build/bin/dbscan --logtostderr=1
-        COMMAND cloudcompare.CloudCompare ./build/bin/context.ply >/dev/null 2>&1 &
+        #COMMAND cloudcompare.CloudCompare ./build/bin/context.ply >/dev/null 2>&1 &
+        COMMAND cloudcompare.CloudCompare ./build/bin/context2d.ply >/dev/null 2>&1 &
         #COMMAND /bin/python3 ./scripts/graph.py
         WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
 endif()
