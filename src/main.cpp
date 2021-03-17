@@ -17,41 +17,18 @@ const int tweak = 60;
 
 static std::vector<Point> segment(std::vector<Point> points){
     Timer timer;
-    /** reduce dimensions  */
-    std::vector<Point> reducedPoints = lda::reduce(points);
+    /** do linear analysis */
+    std::vector<Point> refined = lda::analyze(points);
 
-    /** grow region of interest */
-    std::vector<Point> roi = svd::compute(reducedPoints);
+    /** grow course segment  */
+    std::vector<Point> roi = svd::segment(refined);
 
-    /** define tabletop area */
-    std::vector<Point> area = area::estimate(roi);
-
-    /** sample grown region */
-    std::vector<Point> sample = sampler::sample(roi);
-
-    // /** accumulate distances to 4th nearest neighbours */
-    // std::vector<float> knn4 = knn::compute(sample);
-
-    // /** find epsilon queryRange size */
-    // float epsilon = elbow::find(knn4);
-    // LOG(INFO) << epsilon << ": ≈ epsilon";
-
-    // /** run: return clustered points and number of clusters */
-    // const int MIN_POINTS = 4; // <-- https://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.121.9220
-    // std::pair<std::vector<Point>, int> clusters = dbscan::cluster(roi, MIN_POINTS, epsilon + tweak);
-
-    // /** segment tabletop interaction context */
-    // std::vector<Point> context = segmenter::segment(clusters);
-
+    /** segment tabletop interaction context */
+    std::vector<Point> context = roi::segment(roi);
     LOG(INFO) << "..........................................................";
     LOG(INFO) << timer.getDuration() << " ms: total segmentation runtime (!unoptimized!)";
 
-    // /** external resources for downstream analysis */
-    // io::log_performance(points.size(), denoisedPoints.size(), roi.size(), context.size(), timer.getDuration());
-    // io::write_ply(context);
-
-    //return context;
-    return roi;
+    return context;
 }
 
 int main(int argc, char* argv[])
@@ -59,7 +36,7 @@ int main(int argc, char* argv[])
     /** initialize logger */
     logger(argc, argv);
 
-    /** point cloud */
+    /** developer testing point cloud */
     std::vector<Point> points;
     const std::string DATA = io::pwd() + "/resources/inputdata.ply";
     points = io::read(points, DATA.c_str());
