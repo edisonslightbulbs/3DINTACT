@@ -4,7 +4,7 @@
 #include "point.h"
 #include "lda.h"
 #include "svd.h"
-#include "area.h"
+#include "edge.h"
 
 extern const int FAIL = -3;
 extern const int PASS = 0;
@@ -19,7 +19,7 @@ static std::vector<Point> segment(std::vector<Point> points){
     std::vector<Point> roi = svd::compute(refined);
 
     /** segment tabletop interaction context */
-    std::vector<Point> context = roi::segment(roi);
+    std::vector<Point> context = edge::segment(roi);
     LOG(INFO) << "..........................................................";
     LOG(INFO) << timer.getDuration() << " ms: total segmentation runtime (!unoptimized!)";
 
