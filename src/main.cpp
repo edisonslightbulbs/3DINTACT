@@ -1,15 +1,10 @@
 #include <vector>
 
-#include "dbscan.h"
 #include "io.h"
-#include "knn.h"
 #include "point.h"
 #include "lda.h"
-#include "sampler.h"
-#include "elbow.h"
 #include "svd.h"
 #include "area.h"
-#include "segmenter.h"
 
 extern const int FAIL = -3;
 extern const int PASS = 0;
@@ -21,7 +16,7 @@ static std::vector<Point> segment(std::vector<Point> points){
     std::vector<Point> refined = lda::analyze(points);
 
     /** grow course segment  */
-    std::vector<Point> roi = svd::segment(refined);
+    std::vector<Point> roi = svd::compute(refined);
 
     /** segment tabletop interaction context */
     std::vector<Point> context = roi::segment(roi);
