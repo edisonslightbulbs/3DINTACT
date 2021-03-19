@@ -1,18 +1,24 @@
 [submodule "external/algorithms/dbscan"]
 	path = external/algorithms/dbscan
 	url = git@github.com:edisonslightbulbs/dbscan.git
+	branch = main
 [submodule "external/algorithms/knn"]
 	path = external/algorithms/knn
 	url = git@github.com:edisonslightbulbs/knn.git
+	branch = main
 [submodule "external/algorithms/svd"]
 	path = external/algorithms/svd
 	url = git@github.com:edisonslightbulbs/svd.git
+	branch = main
 [submodule "libs/utility"]
 	path = external/utility
 	url = git@github.com:edisonslightbulbs/utility.git
+	branch = main
 [submodule "libs/preprocessing"]
 	path = libs/preprocessing
 	url = git@github.com:edisonslightbulbs/preprocessing.git
+	branch = main
 [submodule "libs/geometry"]
 	path = external/geometry
 	url = git@github.com:edisonslightbulbs/geometry.git
+	branch = main
