@@ -171,9 +171,7 @@ if(RUN)
         POST_BUILD
         COMMAND rm -rf ./output/context.ply >/dev/null 2>&1
         COMMAND ./build/bin/INTACToolkit --logtostderr=1
-        if(UNIX AND NOT APPLE)
             COMMAND cloudcompare.CloudCompare ./output/context.ply >/dev/null 2>&1 &
-        endif()
         WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
 endif()
 
