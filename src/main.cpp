@@ -3,9 +3,9 @@
 #include "frame.h"
 #include "io.h"
 #include "kinect.h"
-#include "lda.h"
+#include "outliers.h"
 #include "point.h"
-#include "scalpel.h"
+#include "segment.h"
 #include "svd.h"
 
 extern const int FAIL = -3;
@@ -13,11 +13,11 @@ extern const int PASS = 0;
 
 const float TO_PERCENTAGE = 100;
 
-static std::vector<Point> segment(std::vector<Point> points)
+static std::vector<Point> define(std::vector<Point> points)
 {
     Timer timer;
     /** do linear analysis */
-    std::vector<Point> refined = lda::analyze(points);
+    std::vector<Point> refined = outliers::remove(points);
     std::string refineTime = timer.getDuration();
 
     /** grow course segment  */
@@ -25,7 +25,7 @@ static std::vector<Point> segment(std::vector<Point> points)
     std::string roiTime = timer.getDuration();
 
     /** segment tabletop interaction context */
-    std::vector<Point> context = scalpel::segment(roi);
+    std::vector<Point> context = segment::partition(roi);
     std::string segmentTime = timer.getDuration();
 
     /** readable queries */
@@ -35,7 +35,7 @@ static std::vector<Point> segment(std::vector<Point> points)
 
     /** output resources for downstream analysis */
     io::performance(points.size(), refined.size(), refineTime, roi.size(),
-        roiTime, context.size(), segmentTime, timer.getDuration());
+                    roiTime, context.size(), segmentTime, timer.getDuration());
     io::reduction(refineDataReduction, roiDataReduction, segmentDataReduction);
 
     return context;
@@ -48,8 +48,8 @@ static std::vector<Point> plyFile()
     points = io::read(points, DATA.c_str());
     return points;
 }
-
-static std::vector<Point> image()
+#if __linux__
+static std::vector<Point> getKinectImage()
 {
     Kinect kinect;                   // <- set up kinect
     Frame frame = kinect.getImage(); // <- get surface view
@@ -61,6 +61,7 @@ static std::vector<Point> image()
 
     return frame.m_points;
 }
+#endif
 
 int main(int argc, char* argv[])
 {
@@ -68,15 +69,19 @@ int main(int argc, char* argv[])
     logger(argc, argv);
 
     /** get point cloud */
-    //std::vector<Point> points = plyFile();
-    std::vector<Point> points = image();
+#if __linux__
+    std::vector<Point> points = getKinectImage();
+#elif __APPLE__
+    std::vector<Point> points = plyFile();
+#endif
 
     Timer timer;
     /** segment tabletop interaction context */
-    std::vector<Point> context = segment(points);
+    std::vector<Point> context = define(points);
     LOG(INFO) << timer.getDuration() << " ms: segmentation runtime";
 
     /** output point cloud as a *.ply file */
+    //io::write_ply(points);
     io::write_ply(context);
 
     return PASS;

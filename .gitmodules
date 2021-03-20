@@ -1,15 +1,3 @@
-[submodule "external/algorithms/dbscan"]
-    path = libs/algorithms/dbscan
-    url = git@github.com:edisonslightbulbs/dbscan.git
-    branch = main
-[submodule "external/algorithms/knn"]
-    path = libs/algorithms/knn
-    url = git@github.com:edisonslightbulbs/knn.git
-    branch = main
-[submodule "external/algorithms/svd"]
-    path = libs/algorithms/svd
-    url = git@github.com:edisonslightbulbs/svd.git
-    branch = main
 [submodule "libs/utility"]
     path = libs/utility
     url = git@github.com:edisonslightbulbs/utility.git
@@ -22,19 +10,18 @@
     path = libs/geometry
     url = git@github.com:edisonslightbulbs/geometry.git
     branch = main
-[submodule "external/kinectConf"]
-    path = external/kinectConf
-    url = git@github.com:edisonslightbulbs/kinectConf.git
-    branch = main
-[submodule "external/kinectSDK"]
-    path = external/kinectSDK
-    url = git@github.com:antiqueeverett/kinectSDK.git
-    branch = develop
 [submodule "libs/glad"]
     path = libs/glad
     url = git@github.com:edisonslightbulbs/glad.git
     branch = main
-[submodule "libs/kinectConf"]
-    path = libs/kinectConf
-    url = git@github.com:edisonslightbulbs/kinectConf.git
-    branch = main
+[submodule "libs/kinect"]
+    path = libs/kinect
+    url = git@github.com:edisonslightbulbs/kinect.git
+[submodule "libs/outliers"]
+    path = libs/outliers
+    url = git@github.com:edisonslightbulbs/outliers.git
+[submodule "external/kinectSDK"]
+    path = external/kinectSDK
+    url = git@github.com:antiqueeverett/kinectSDK.git
+    branch = develop
+    ignore = dirty

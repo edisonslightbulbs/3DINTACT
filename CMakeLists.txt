@@ -154,16 +154,26 @@ target_link_libraries(INTACToolkit
     gflags
     OpenGL::GL
     Eigen3::Eigen
-    ${OpenCV_LIBS}
     ${GLEW_LIBRARY}
     ${GLUT_LIBRARY}
-    ${K4A_LIBRARY}/libk4a.so
     )
+
+if(UNIX AND NOT APPLE)
+    target_link_libraries(INTACToolkit
+        ${OpenCV_LIBS}
+        ${K4A_LIBRARY}/libk4a.so
+        )
+endif()
+
 option(RUN "execute target" ON) # (default ON)
 if(RUN)
     add_custom_command(TARGET INTACToolkit
         POST_BUILD
+        COMMAND rm -rf ./output/context.ply >/dev/null 2>&1
         COMMAND ./build/bin/INTACToolkit --logtostderr=1
-        COMMAND cloudcompare.CloudCompare ./output/context.ply >/dev/null 2>&1 &
+        if(UNIX AND NOT APPLE)
+            COMMAND cloudcompare.CloudCompare ./output/context.ply >/dev/null 2>&1 &
+        endif()
         WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
 endif()
+
