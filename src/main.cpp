@@ -11,33 +11,26 @@
 extern const int FAIL = -3;
 extern const int PASS = 0;
 
-const float TO_PERCENTAGE = 100;
 
-static std::vector<Point> define(std::vector<Point> points)
+static std::vector<Point> define(std::vector<Point>& points)
 {
     Timer timer;
-    /** do linear analysis */
-    std::vector<Point> refined = outliers::remove(points);
-    std::string refineTime = timer.getDuration();
+    float rawSize = points.size();
+
+    /** remove outliers*/
+    std::vector<Point> denoised = outliers::remove(points);
+    std::string removeTime = timer.getDuration();
 
     /** grow course segment  */
-    std::vector<Point> roi = svd::compute(refined);
-    std::string roiTime = timer.getDuration();
+    std::vector<Point> proposal = svd::compute(denoised);
+    std::string computeTime = timer.getDuration();
 
-    /** segment tabletop interaction context */
-    std::vector<Point> context = segment::partition(roi);
-    std::string segmentTime = timer.getDuration();
+    /** segment interaction context */
+    std::vector<Point> context = segment::cut(proposal);
+    std::string cutTime = timer.getDuration();
 
-    /** readable queries */
-    float refineDataReduction = (float)refined.size() / points.size() * TO_PERCENTAGE;
-    float roiDataReduction = (float)roi.size() / points.size() * TO_PERCENTAGE;
-    float segmentDataReduction = (float)context.size() / points.size() *TO_PERCENTAGE;
-
-    /** output resources for downstream analysis */
-    io::performance(points.size(), refined.size(), refineTime, roi.size(),
-                    roiTime, context.size(), segmentTime, timer.getDuration());
-    io::reduction(refineDataReduction, roiDataReduction, segmentDataReduction);
-
+    // /** log performance */
+    // io::performance(rawSize, denoised.size(), removeTime, proposal.size(), computeTime, context.size(), cutTime, timer.getDuration());
     return context;
 }
 
@@ -53,12 +46,10 @@ static std::vector<Point> getKinectImage()
 {
     Kinect kinect;                   // <- set up kinect
     Frame frame = kinect.getImage(); // <- get surface view
-    frame.release();                 // <- release resources
-    kinect.close();
-
     // frame.m_rgb;                  // <- synchronized rgb image
     // frame.m_points;               // <- point cloud
-
+    frame.release();                 // <- release resources
+    kinect.close();
     return frame.m_points;
 }
 #endif
@@ -69,10 +60,11 @@ int main(int argc, char* argv[])
     logger(argc, argv);
 
     /** get point cloud */
+    std::vector<Point> points;
 #if __linux__
-    std::vector<Point> points = getKinectImage();
+     points = getKinectImage();
 #elif __APPLE__
-    std::vector<Point> points = plyFile();
+     points = plyFile();
 #endif
 
     Timer timer;
@@ -80,9 +72,6 @@ int main(int argc, char* argv[])
     std::vector<Point> context = define(points);
     LOG(INFO) << timer.getDuration() << " ms: segmentation runtime";
 
-    /** output point cloud as a *.ply file */
-    //io::write_ply(points);
     io::write_ply(context);
-
     return PASS;
 }

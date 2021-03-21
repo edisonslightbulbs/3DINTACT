@@ -1,9 +1,1 @@
-refineReduction, roiReduction, segmentReduction
-100, 40.7247, 33.9759
-100, 37.9734, 22.9707
-100, 40.8646, 34.414
-100, 25.4357, 22.0174
-100, 38.3043, 32.7821
-100, 35.7074, 30.3965
-100, 36.8017, 31.139
-100, 35.476, 30.3819
+duringOutlierRemoval, duringCoarseSegmentation, duringFinalSegmentation, totalReduction
