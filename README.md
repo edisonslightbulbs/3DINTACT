@@ -2,8 +2,7 @@
 
 Fast segmentation for tabletop interaction context.
 
-![](https://github.com/edisonslightbulbs/INTACToolkit/blob/main/doc/figures/concept.png?raw=true)  | ![](https://github.com/edisonslightbulbs/INTACToolkit/blob/main/doc/figures/pipeline.png?raw=true)
-:-------------------------:|:-------------------------:
+![](https://github.com/edisonslightbulbs/INTACToolkit/blob/main/doc/figures/pipeline.png?raw=true)
 
 ### Overview:
 
@@ -15,40 +14,53 @@ Fast segmentation for tabletop interaction context.
 ||| :white_square_button:  [ Azure Kinect SDK](https://github.com/microsoft/Azure-Kinect-Sensor-SDK) |
 
 ### Project structure
+```
+.
+├── cmake
+├── doc
+│   └── figures
+├── external
+│   └── kinectSDK
+│       ├── cmake
+│       ├── docs
+│       ├── doxygen
+│       ├── examples
+│       ├── extern
+│       ├── include
+│       ├── proposals
+│       ├── scripts
+│       ├── src
+│       ├── tests
+│       └── tools
+├── libs
+│   ├── algorithms
+│   │   ├── dbscan
+│   │   ├── elbow
+│   │   ├── knn
+│   │   └── svd
+│   ├── geometry
+│   │   ├── include
+│   │   └── src
+│   ├── kinect
+│   │   ├── include
+│   │   └── src
+│   ├── outliers
+│   │   ├── include
+│   │   └── src
+│   ├── segment
+│   │   ├── include
+│   │   └── src
+│   └── utility
+│       ├── include
+│       └── src
+├── output
+├── scripts
+│   └── setup-azure-kinect
+│       └── resources
+└── src
+```
 
-    .
-    ├── cmake
-    ├── docs
-    │   └── figures
-    ├── external
-    │   ├── glad
-    │   │   ├── include
-    │   │   └── src
-    │   └── submodules
-    │       └── Azure-Kinect-Sensor-SDK
-    ├── include
-    │   ├── hardware
-    │   ├── middleware
-    │   ├── software
-    │   │   ├── activity
-    │   │   ├── context
-    │   │   └── surface
-    │   └── utility
-    ├── scripts
-    │   └── setup-azure-kinect
-    │       └── resources
-    ├── src
-    │   ├── hardware
-    │   ├── middleware
-    │   ├── software
-    │   │   ├── activity
-    │   │   ├── context
-    │   │   ├── routine
-    │   │   └── surface
-    │   └── utility
-    └── tests
-
-### \[1/4] Getting started
+### [1/4] Getting started
 
 ***
 
@@ -61,7 +73,7 @@ cd INTACToolkit
 git submodule update --init --recursive
 ```
 
-### \[2/4] Installing the dependencies
+### [2/4] Installing the dependencies
 
 ***
 
@@ -77,7 +89,7 @@ For convenience, the USB rules can be installed by running this [`install-usb-ru
 
 To install the shared system dependencies, run this [`install-project-dependencies.sh`](./scripts/setup-azure-kinect/) helper script.
 
-### \[3/4] Developer options in project [`CMakeLists.txt`](https://github.com/edisonslightbulbs/kinect-SAR/blob/master/CMakeLists.txt) file
+### [3/4] Developer options in project [`CMakeLists.txt`](https://github.com/edisonslightbulbs/INTACToolkit/blob/main/CMakeLists.txt) file
 
 ***
 
@@ -102,11 +114,11 @@ option(K4A_SDK_BUILD "Check submodules during build" OFF)
 option(RUN "execute target" ON)
 ```
 
-#### \[4/4] Building project and executing target
+#### [4/4] Building project and executing target
 
 ***
 
-1.  from the project/root directory
+1) from the project/root directory
 
 ```bash
 mkdir build && cd build || return
@@ -114,7 +126,7 @@ cmake ..
 make
 ```
 
-2.  from the project root directory
+2) from the project root directory
 
 ```bash
 # change to project binary directory
@@ -124,5 +136,5 @@ cd build/bin
 ./main
 
 # to stdout logs [ optional ]
-./main --logtostderr=1
+# ./main --logtostderr=1
 ```
