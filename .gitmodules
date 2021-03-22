@@ -26,3 +26,7 @@
     path = external/Azure-Kinect-Sensor-SDK
     url = https://github.com/microsoft/Azure-Kinect-Sensor-SDK.git
     branch = develop
+[submodule "libs/algorithms/dbscan"]
+	path = libs/algorithms/dbscan
+    url = https://github.com/edisonslightbulbs/dbscan.git
+    branch = main
