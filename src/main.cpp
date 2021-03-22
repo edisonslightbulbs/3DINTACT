@@ -29,8 +29,8 @@ static std::vector<Point> define(std::vector<Point>& points)
     std::vector<Point> context = segment::cut(proposal);
     std::string cutTime = timer.getDuration();
 
-    // /** log performance */
-    // io::performance(rawSize, denoised.size(), removeTime, proposal.size(), computeTime, context.size(), cutTime, timer.getDuration());
+    /** log performance */
+    io::performance(rawSize, denoised.size(), removeTime, proposal.size(), computeTime, context.size(), cutTime, timer.getDuration());
     return context;
 }
 
