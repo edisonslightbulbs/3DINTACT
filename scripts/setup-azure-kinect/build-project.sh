@@ -11,7 +11,7 @@
 PROJECT_DIR=$(dirname $(dirname $(dirname $(readlink -f "$0"))))
 
 # -- build directory
-build="$PROJECT_DIR/external/kinectSDK/build"
+build="$PROJECT_DIR/external/Azure-Kinect-Sensor-SDK/build"
 
 # -- clean old build files
 if [ -d "$build" ]; then rm -Rf "$build"; fi

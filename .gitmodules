@@ -1,25 +1,28 @@
 [submodule "libs/utility"]
     path = libs/utility
-    url = git@github.com:edisonslightbulbs/utility.git
+    url = https://github.com/edisonslightbulbs/utility.git
     branch = main
 [submodule "libs/geometry"]
     path = libs/geometry
-    url = git@github.com:edisonslightbulbs/geometry.git
+    url = https://github.com/edisonslightbulbs/geometry.git
     branch = main
 [submodule "libs/kinect"]
     path = libs/kinect
-    url = git@github.com:edisonslightbulbs/kinect.git
+    url = https://github.com/edisonslightbulbs/kinect.git
+    branch = main
 [submodule "libs/outliers"]
     path = libs/outliers
-    url = git@github.com:edisonslightbulbs/outliers.git
-[submodule "external/kinectSDK"]
-    path = external/kinectSDK
-    url = git@github.com:antiqueeverett/kinectSDK.git
-    branch = develop
-    ignore = dirty
+    url = https://github.com/edisonslightbulbs/outliers.git
+    branch = main
 [submodule "libs/algorithms/elbow"]
-	path = libs/algorithms/elbow
-	url = git@github.com:edisonslightbulbs/elbow.git
+    path = libs/algorithms/elbow
+    url = https://github.com/edisonslightbulbs/elbow.git
+    branch = main
 [submodule "libs/segment"]
-	path = libs/segment
-	url = git@github.com:edisonslightbulbs/segment.git
+    path = libs/segment
+    url = https://github.com/edisonslightbulbs/segment.git
+    branch = main
+[submodule "external/Azure-Kinect-Sensor-SDK"]
+    path = external/Azure-Kinect-Sensor-SDK
+    url = https://github.com/microsoft/Azure-Kinect-Sensor-SDK.git
+    branch = develop
