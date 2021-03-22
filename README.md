@@ -70,8 +70,8 @@ mounted overhead as illustrated.
 ***
 
 ```bash
-# clone repository with submodules using the --recursive parameter
-git clone --recurse-submodules https://github.com/edisonslightbulbs/INTACToolkit.git -j8
+# fork and clone repo  using the --recursive parameter
+git clone --recurse-submodules <link to github fork>
 
 # if already cloned without the --recurse-submodules parameter
 cd INTACToolkit
