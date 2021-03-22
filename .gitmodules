@@ -6,10 +6,6 @@
     path = libs/geometry
     url = git@github.com:edisonslightbulbs/geometry.git
     branch = main
-[submodule "libs/glad"]
-    path = libs/glad
-    url = git@github.com:edisonslightbulbs/glad.git
-    branch = main
 [submodule "libs/kinect"]
     path = libs/kinect
     url = git@github.com:edisonslightbulbs/kinect.git

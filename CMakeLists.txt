@@ -42,21 +42,13 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 
-# dependency policies
-cmake_policy(SET CMP0072 NEW)
-
 # build shared library (on)
 option(BUILD_SHARED_LIBS "Build Shared Library" ON)
 
 # dependencies
-find_package(OpenCV REQUIRED)
 find_package(Git REQUIRED)
-find_package(GLUT REQUIRED)
-find_package(glfw3 3.3 REQUIRED)
-find_package(GLEW REQUIRED)
 find_package(gflags REQUIRED)
 find_package(glog REQUIRED)
-find_package(OpenGL REQUIRED)
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 
 # main project include paths
@@ -101,7 +93,6 @@ if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
     endif()
 endif()
 
-
 set(K4A_LIBRARY ${KINECT_SDK}/build/bin)
 set(K4A_SRC_INCLUDE ${KINECT_SDK}/build/src/sdk/include)
 set(K4A_INCLUDE ${KINECT_SDK}/include)
@@ -121,9 +112,6 @@ list(REMOVE_DUPLICATES INCLUDE_DIRS)
 # src paths
 file(GLOB_RECURSE LIBS_SRC ${LIBS_DIR}/*.cpp)
 
-# glad target library and include
-add_library(glad ${LIBS_DIR}/glad/src/glad.c)
-target_include_directories(glad PRIVATE ${LIBS_DIR}/glad/include)
 
 # INTACT project target, includes, and linkages
 add_executable(INTACToolkit
@@ -132,35 +120,20 @@ add_executable(INTACToolkit
     ${SRC_DIR}/main.cpp
     )
 target_include_directories(INTACToolkit PRIVATE
-    ${OpenCV_INCLUDE_DIRS}
-    ${OPENGL_INCLUDE}
-    ${GLFW3_INCLUDE}
-    ${GLEW_INCLUDE}
-    ${GLUT_INCLUDE}
-
     ${K4A_INCLUDE}
     ${K4A_SRC_INCLUDE}
     ${LIBS_DIR}/glad/include
     ${INCLUDE_DIRS}
     )
 
-# glad linkage
-target_link_libraries(glad ${CMAKE_DL_LIBS})
-
 target_link_libraries(INTACToolkit
-    glad
-    glfw
     glog
     gflags
-    OpenGL::GL
     Eigen3::Eigen
-    ${GLEW_LIBRARY}
-    ${GLUT_LIBRARY}
     )
 
 if(UNIX AND NOT APPLE)
     target_link_libraries(INTACToolkit
-        ${OpenCV_LIBS}
         ${K4A_LIBRARY}/libk4a.so
         )
 endif()
