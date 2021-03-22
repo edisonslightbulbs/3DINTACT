@@ -10,4 +10,9 @@ For convenience, the USB rules can be installed by running the `install-usb-rule
 
 ##### 3. Building the submodule project
 
-__Iff__  all dependencies have been installed, build the [Azure-Kinect-Sensor-SDK project](../../external/submodules/Azure-Kinect-Sensor-SDK) project by running the `build-project.sh` script in this directory.
+__Iff__  all dependencies have been installed, build the [Azure-Kinect-Sensor-SDK project](../../external/submodules/Azure-Kinect-Sensor-SDK) project by running the `build-project.sh` script in this directory, viz,
+
+```bash
+# from inside this directory
+./build-project.sh
+```
