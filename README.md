@@ -102,21 +102,21 @@ To install the shared system dependencies, run this [`install-project-dependenci
 
 ```cpp
 # recursively pull-update all project submodules (default behaviour is ON)
-option(GIT_SUBMODULE "Check submodules during build" OFF)
+option(GIT_SUBMODULE "Check submodules during build" ON)
 ```
 
 ###### option 2
 
 ```cpp
 # build the Azure-Kinect-Sensor-SDK submodule (default behaviour is ON)
-option(K4A_SDK_BUILD "Check submodules during build" OFF)
+option(K4A_SDK_BUILD "Check submodules during build" ON)
 ```
 
 ###### option 3
 
 ```cpp
 # run target (default behaviour is OFF)
-option(RUN "execute target" ON)
+option(RUN "execute target" OFF)
 ```
 
 #### [4/4] Building project and executing target
