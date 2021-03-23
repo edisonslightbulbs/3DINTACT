@@ -47,8 +47,9 @@ option(BUILD_SHARED_LIBS "Build Shared Library" ON)
 
 # dependencies
 find_package(Git REQUIRED)
-find_package(gflags REQUIRED)
 find_package(glog REQUIRED)
+find_package(OpenCV REQUIRED)
+find_package(gflags REQUIRED)
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 
 # main project include paths
@@ -62,7 +63,7 @@ set(KINECT_SDK ${EXT_DIR}/Azure-Kinect-Sensor-SDK)
 # submodule management
 if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
 
-    option(GIT_SUBMODULE "Check submodules during build" ON) # (default ON)
+    option(GIT_SUBMODULE "Check submodules during build" OFF) # (default ON)
     if(GIT_SUBMODULE)
         message(STATUS "Updating submodule dependencies")
         execute_process(
@@ -77,7 +78,7 @@ if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
         endif()
     endif()
 
-    option(K4A_SDK_BUILD "Build the kinectSDK submodule" ON) # (default ON)
+    option(K4A_SDK_BUILD "Build the kinectSDK submodule" OFF) # (default ON)
     if(K4A_SDK_BUILD)
         if(NOT EXISTS "${KINECT_SDK}/CMakeLists.txt")
             message(FATAL_ERROR "The submodules were not downloaded!  GIT_SUBMODULE was turned off or failed. Please clone kinect SDK submodule and try again.")
@@ -121,14 +122,16 @@ add_executable(INTACToolkit
     )
 target_include_directories(INTACToolkit PRIVATE
     ${K4A_INCLUDE}
-    ${K4A_SRC_INCLUDE}
     ${INCLUDE_DIRS}
+    ${K4A_SRC_INCLUDE}
+    ${OpenCV_INCLUDE_DIRS}
     )
 
 target_link_libraries(INTACToolkit
     glog
     gflags
     Eigen3::Eigen
+    ${OpenCV_LIBS}
     )
 
 if(UNIX AND NOT APPLE)
