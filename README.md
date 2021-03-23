@@ -1,3 +1,5 @@
+![](https://github.com/edisonslightbulbs/INTACToolkit/blob/main/doc/figures/concept.png)
+
 ## INTACT: Toolkit for fast segmentation of tabletop interaction context
 
 Fast segmentation for tabletop interaction context. This project uses
@@ -5,7 +7,6 @@ Microsoft's Azure kinect but should be adaptable for any other development kit
 which facilitates point clouds. One critical assumption is that sensor is
 mounted overhead as illustrated.
 
-![](https://github.com/edisonslightbulbs/INTACToolkit/blob/main/doc/figures/concept.png)
 
 ### Overview:
 
