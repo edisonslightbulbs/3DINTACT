@@ -46,11 +46,10 @@ static std::vector<Point> getKinectImage()
 {
     Kinect kinect;                   // <- set up kinect
     Frame frame = kinect.getImage(); // <- get surface view
-    // frame.m_rgb;                  // <- synchronized rgb image
-    // frame.m_points;               // <- point cloud
+    io::write(frame.m_rgb);          // <- synchronized rgb image
     frame.release();                 // <- release resources
-    kinect.close();
-    return frame.m_points;
+    kinect.close();                  // <- close kinect
+    return frame.m_points;           // <- point cloud
 }
 #endif
 
