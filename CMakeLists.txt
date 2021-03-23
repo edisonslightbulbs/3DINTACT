@@ -63,7 +63,7 @@ set(KINECT_SDK ${EXT_DIR}/Azure-Kinect-Sensor-SDK)
 # submodule management
 if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
 
-    option(GIT_SUBMODULE "Check submodules during build" OFF) # (default ON)
+    option(GIT_SUBMODULE "Check submodules during build" ON) # (default ON)
     if(GIT_SUBMODULE)
         message(STATUS "Updating submodule dependencies")
         execute_process(
@@ -78,7 +78,7 @@ if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
         endif()
     endif()
 
-    option(K4A_SDK_BUILD "Build the kinectSDK submodule" OFF) # (default ON)
+    option(K4A_SDK_BUILD "Build the kinectSDK submodule" ON) # (default ON)
     if(K4A_SDK_BUILD)
         if(NOT EXISTS "${KINECT_SDK}/CMakeLists.txt")
             message(FATAL_ERROR "The submodules were not downloaded!  GIT_SUBMODULE was turned off or failed. Please clone kinect SDK submodule and try again.")
