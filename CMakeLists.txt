@@ -62,7 +62,7 @@ set(KINECT_SDK ${EXT_DIR}/Azure-Kinect-Sensor-SDK)
 # submodule management
 if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
 
-    option(GIT_SUBMODULE "Check submodules during build" OFF) # (default ON)
+    option(GIT_SUBMODULE "Check submodules during build" ON) # (default ON)
     if(GIT_SUBMODULE)
         message(STATUS "Updating submodule dependencies")
         execute_process(
@@ -77,7 +77,7 @@ if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
         endif()
     endif()
 
-    option(K4A_SDK_BUILD "Build the kinectSDK submodule" OFF) # (default ON)
+    option(K4A_SDK_BUILD "Build the kinectSDK submodule" ON) # (default ON)
     if(K4A_SDK_BUILD)
         if(NOT EXISTS "${KINECT_SDK}/CMakeLists.txt")
             message(FATAL_ERROR "The submodules were not downloaded!  GIT_SUBMODULE was turned off or failed. Please clone kinect SDK submodule and try again.")
@@ -122,7 +122,6 @@ add_executable(INTACToolkit
 target_include_directories(INTACToolkit PRIVATE
     ${K4A_INCLUDE}
     ${K4A_SRC_INCLUDE}
-    ${LIBS_DIR}/glad/include
     ${INCLUDE_DIRS}
     )
 
@@ -144,7 +143,7 @@ if(RUN)
         POST_BUILD
         COMMAND rm -rf ./output/context.ply >/dev/null 2>&1
         COMMAND ./build/bin/INTACToolkit --logtostderr=1
-        #COMMAND cloudcompare.CloudCompare ./output/context.ply >/dev/null 2>&1 &
+        COMMAND cloudcompare.CloudCompare ./output/context.ply >/dev/null 2>&1 &
         WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
 endif()
 
