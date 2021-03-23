@@ -7,8 +7,6 @@ mounted overhead as illustrated.
 
 ![](https://github.com/edisonslightbulbs/INTACToolkit/blob/main/doc/figures/concept.png)
 
-![](https://github.com/edisonslightbulbs/INTACToolkit/blob/main/doc/figures/pipeline.png?raw=true)
-
 ### Overview:
 
 |   Platform |   Hardware	|  Dependencies 	|
