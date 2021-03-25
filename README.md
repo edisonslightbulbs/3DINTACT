@@ -15,7 +15,8 @@ mounted overhead as illustrated.
 |   :white_square_button: Linux	|   :white_square_button: Azure Kinect 	| :white_square_button: [ gflags](https://github.com/gflags/gflags)	|
 || |  :white_square_button: [ glog ](https://github.com/google/glog)  	|
 || |  :white_square_button: [ Eigen ](https://gitlab.com/libeigen/eigen.git) |
-||| :white_square_button:  [ Azure Kinect SDK](https://github.com/microsoft/Azure-Kinect-Sensor-SDK) |
+||| :white_square_button:  [ Azure Kinect SDK ](https://github.com/microsoft/Azure-Kinect-Sensor-SDK) |
+||| :white_square_button:  [ opencv ](https://github.com/opencv/opencv) |
 
 ### Project structure
 ```
@@ -24,7 +25,7 @@ mounted overhead as illustrated.
 ├── doc
 │   └── figures
 ├── external
-│   └── kinectSDK
+│   └── Azure-Kinect-Sensor-SDK
 │       ├── cmake
 │       ├── docs
 │       ├── doxygen
@@ -37,11 +38,9 @@ mounted overhead as illustrated.
 │       ├── tests
 │       └── tools
 ├── libs
-│   ├── algorithms
-│   │   ├── dbscan
-│   │   ├── elbow
-│   │   ├── knn
-│   │   └── svd
+│   ├── svd
+│   │   ├── include
+│   │   └── src
 │   ├── geometry
 │   │   ├── include
 │   │   └── src
