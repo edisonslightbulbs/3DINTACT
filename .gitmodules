@@ -14,26 +14,13 @@
     path = libs/outliers
     url = https://github.com/edisonslightbulbs/outliers.git
     branch = main
-[submodule "libs/algorithms/elbow"]
-    path = libs/algorithms/elbow
-    url = https://github.com/edisonslightbulbs/elbow.git
-    branch = main
 [submodule "libs/segment"]
     path = libs/segment
     url = https://github.com/edisonslightbulbs/segment.git
     branch = main
-[submodule "libs/algorithms/dbscan"]
-	path = libs/algorithms/dbscan
-    url = https://github.com/edisonslightbulbs/dbscan.git
-    branch = main
-[submodule "libs/algorithms/svd"]
-	path = libs/algorithms/svd
-    url = https://github.com/edisonslightbulbs/svd.git
-    branch = main
-[submodule "libs/algorithms/knn"]
-	path = libs/algorithms/knn
-    url = https://github.com/edisonslightbulbs/knn.git
-    branch = main
 [submodule "external/Azure-Kinect-Sensor-SDK"]
 	path = external/Azure-Kinect-Sensor-SDK
 	url = https://github.com/microsoft/Azure-Kinect-Sensor-SDK.git
+[submodule "libs/svd"]
+	path = libs/svd
+	url = git@github.com:edisonslightbulbs/svd.git

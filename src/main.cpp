@@ -3,36 +3,12 @@
 #include "frame.h"
 #include "io.h"
 #include "kinect.h"
-#include "outliers.h"
+#include "logger.h"
 #include "point.h"
 #include "segment.h"
-#include "svd.h"
 
 extern const int FAIL = -3;
 extern const int PASS = 0;
-
-
-static std::vector<Point> define(std::vector<Point>& points)
-{
-    Timer timer;
-    float rawSize = points.size();
-
-    /** remove outliers*/
-    std::vector<Point> denoised = outliers::remove(points);
-    std::string removeTime = timer.getDuration();
-
-    /** grow course segment  */
-    std::vector<Point> proposal = svd::compute(denoised);
-    std::string computeTime = timer.getDuration();
-
-    /** segment interaction context */
-    std::vector<Point> context = segment::cut(proposal);
-    std::string cutTime = timer.getDuration();
-
-    /** log performance */
-    io::performance(rawSize, denoised.size(), removeTime, proposal.size(), computeTime, context.size(), cutTime, timer.getDuration());
-    return context;
-}
 
 static std::vector<Point> plyFile()
 {
@@ -41,6 +17,7 @@ static std::vector<Point> plyFile()
     points = io::read(points, DATA.c_str());
     return points;
 }
+
 #if __linux__
 static std::vector<Point> getKinectImage()
 {
@@ -61,16 +38,16 @@ int main(int argc, char* argv[])
     /** get point cloud */
     std::vector<Point> points;
 #if __linux__
-     points = getKinectImage();
+    points = getKinectImage();
 #elif __APPLE__
-     points = plyFile();
+    points = plyFile();
 #endif
 
-    Timer timer;
     /** segment tabletop interaction context */
-    std::vector<Point> context = define(points);
-    LOG(INFO) << timer.getDuration() << " ms: segmentation runtime";
-
-    io::write_ply(context);
+    Timer timer;
+    std::vector<Point> context = segment::cut(points);
+    LOG(INFO) << "tabletop interaction context segmented in: "
+              << timer.getDuration() << " ms";
+    io::ply(context);
     return PASS;
 }
