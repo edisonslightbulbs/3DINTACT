@@ -144,7 +144,7 @@ option(RUN "execute target" ON) # (default ON)
 if(RUN)
     add_custom_command(TARGET INTACToolkit
         POST_BUILD
-        COMMAND rm -rf ./output/context.ply >/dev/null 2>&1
+        COMMAND mkdir -p ./output
         COMMAND ./build/bin/INTACToolkit --logtostderr=1
         COMMAND cloudcompare.CloudCompare ./output/context.ply >/dev/null 2>&1 &
         WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})

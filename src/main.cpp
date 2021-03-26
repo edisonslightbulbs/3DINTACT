@@ -37,17 +37,20 @@ int main(int argc, char* argv[])
 
     /** get point cloud */
     std::vector<Point> points;
-#if __linux__
-    points = getKinectImage();
-#elif __APPLE__
-    points = plyFile();
-#endif
+
+    /** Iff on mac, emulate kinect using file resource */
+    #if __linux__
+        points = getKinectImage();
+    #elif __APPLE__
+        points = plyFile();
+    #endif
 
     /** segment tabletop interaction context */
     Timer timer;
     std::vector<Point> context = segment::cut(points);
-    LOG(INFO) << "tabletop interaction context segmented in: "
-              << timer.getDuration() << " ms";
+    LOG(INFO) << "Interaction context segmented in: " << timer.getDuration() << " ms";
+
+    /** write point cloud to ./output/context.ply file */
     io::ply(context);
     return PASS;
 }
