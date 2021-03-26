@@ -53,6 +53,7 @@ int main(int argc, char* argv[])
               << " ms";
 
     /** write point cloud to ./output/context.ply file */
-    io::ply(points, context);
+    io::ply(points, context); // <- superimpose colorized context of original raw point cloud
+    //io::ply( context); // <- isolated segment
     return PASS;
 }
