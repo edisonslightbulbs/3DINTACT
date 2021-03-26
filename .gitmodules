@@ -1,3 +1,6 @@
+[submodule "external/Azure-Kinect-Sensor-SDK"]
+	path = external/Azure-Kinect-Sensor-SDK
+	url = https://github.com/microsoft/Azure-Kinect-Sensor-SDK.git
 [submodule "libs/utility"]
     path = libs/utility
     url = https://github.com/edisonslightbulbs/utility.git
@@ -18,9 +21,18 @@
     path = libs/segment
     url = https://github.com/edisonslightbulbs/segment.git
     branch = main
-[submodule "external/Azure-Kinect-Sensor-SDK"]
-	path = external/Azure-Kinect-Sensor-SDK
-	url = https://github.com/microsoft/Azure-Kinect-Sensor-SDK.git
 [submodule "libs/svd"]
 	path = libs/svd
-	url = git@github.com:edisonslightbulbs/svd.git
+    url = https://github.com/edisonslightbulbs/svd.git
+[submodule "libs/elbow"]
+	path = libs/elbow
+    url = https://github.com/edisonslightbulbs/elbow.git
+[submodule "libs/dbscan"]
+	path = libs/dbscan
+    url = https://github.com/edisonslightbulbs/dbscan.git
+[submodule "libs/knn"]
+	path = libs/knn
+    url = https://github.com/edisonslightbulbs/knn.git
+[submodule "libs/jct"]
+	path = libs/jct
+    url = https://github.com/edisonslightbulbs/jct.git
