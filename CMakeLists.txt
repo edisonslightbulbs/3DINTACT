@@ -50,6 +50,7 @@ find_package(Git REQUIRED)
 find_package(glog REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(gflags REQUIRED)
+find_package(Pangolin REQUIRED)
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 
 # main project include paths
@@ -132,6 +133,7 @@ target_link_libraries(INTACToolkit
     gflags
     Eigen3::Eigen
     ${OpenCV_LIBS}
+    ${Pangolin_LIBRARIES}
     )
 
 if(UNIX AND NOT APPLE)
