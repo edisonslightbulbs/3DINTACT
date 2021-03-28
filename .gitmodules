@@ -37,3 +37,6 @@
 [submodule "libs/jct"]
     path = libs/jct
     url = https://github.com/edisonslightbulbs/jct.git
+[submodule "libs/viewer"]
+	path = libs/viewer
+    url = https://github.com/edisonslightbulbs/viewer.git

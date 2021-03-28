@@ -1,4 +1,3 @@
-
 #include "kinect.h"
 #include "workers.h"
 

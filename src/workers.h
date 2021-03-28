@@ -1,7 +1,7 @@
 #ifndef WORKERS_H
 #define WORKERS_H
 
-#include <atomic>
+#include <exception>
 #include <iostream>
 #include <k4a/k4a.h>
 #include <mutex>
@@ -10,82 +10,65 @@
 
 #include "io.h"
 #include "kinect.h"
+#include "logger.h"
 #include "point.h"
 #include "renderer.h"
 #include "segment.h"
-
-std::atomic<bool> stop(false);
+#include "timer.h"
 
 namespace workers {
 
-/** thread 3: render points cloud in real-time */
+/** In theory this thread will execute every 30 ms to assess the tabletop
+ *  context for down stream processing.
+ */
+void context(Kinect kinect)
+{
+    std::vector<Point> context = segment::cut(kinect.m_points);
 
-/** thread 2: process point cloud segment */
-    void process(std::mutex& m, Kinect kinect,
-                 std::shared_ptr<std::vector<float>>& sptr_points)
-    {
-        while(!stop)
-            {
-                if (m.try_lock()) {
-                    kinect.getPointCloud(sptr_points);
-                    m.unlock();
-                }
-                usleep(10000);
-            }
+    std::vector<float> x;
+    std::vector<float> y;
+    std::vector<float> z;
+
+    for (const auto& point : kinect.m_points) {
+        x.push_back(point.m_x);
+        y.push_back(point.m_y);
+        z.push_back(point.m_z);
     }
+    float xMax = *std::max_element(x.begin(), x.end());
+    float xMin = *std::min_element(x.begin(), x.end());
+    float yMax = *std::max_element(y.begin(), y.end());
+    float yMin = *std::min_element(y.begin(), y.end());
+    float zMax = *std::max_element(z.begin(), z.end());
+    float zMin = *std::min_element(z.begin(), z.end());
 
-/** thread 1: segment interaction context */
-    void context(Kinect kinect)
-    {
-        std::vector<Point> context = segment::cut(kinect.m_points);
+    Point maxPoint(xMax, yMax, zMax);
+    Point minPoint(xMin, yMin, zMin);
 
-        std::vector<float> x;
-        std::vector<float> y;
-        std::vector<float> z;
+    io::ply(kinect.m_points, context);
+}
 
-        for (const auto& point : kinect.m_points) {
-            x.push_back(point.m_x);
-            y.push_back(point.m_y);
-            z.push_back(point.m_z);
-        }
-        float xMax = *std::max_element(x.begin(), x.end());
-        float xMin = *std::min_element(x.begin(), x.end());
-        float yMax = *std::max_element(y.begin(), y.end());
-        float yMin = *std::min_element(y.begin(), y.end());
-        float zMax = *std::max_element(z.begin(), z.end());
-        float zMin = *std::min_element(z.begin(), z.end());
+void manage(const Kinect& kinect)
+{
+    /** MUTEX NOT IN USE ... YET */
+    std::mutex m;
 
-        Point maxPoint(xMax, yMax, zMax);
-        Point minPoint(xMin, yMin, zMin);
+    int pointNum = 640 * 576;
+    auto sptr_points = std::make_shared<std::vector<float>>(pointNum * 3);
 
-        io::ply(kinect.m_points, context);
-    }
+    /** preprocess in separate thread */
+    std::thread preprocessing(context, std::ref(kinect));
 
-/** thread 0:  manage thread work */
-    void manage(const Kinect& kinect)
-    {
-        std::mutex m;
+    /** render in separate thread */
+    std::thread rendering(renderer::render, std::ref(m), std::ref(kinect),
+        std::ref(pointNum), std::ref(sptr_points));
 
-        int pointNum = 640 * 576;
-        auto sptr_points = std::make_shared<std::vector<float>>(pointNum * 3);
+    /** manage thread handles */
+    preprocessing.join();
+    rendering.join();
 
-        std::thread preprocessing(context, std::ref(kinect));
-        std::thread processing(
-                process, std::ref(m), std::ref(kinect), std::ref(sptr_points));
-             std::thread rendering(renderer::render, std::ref(m),
-             std::ref(pointNum),
-                 std::ref(sptr_points));
-
-
-        preprocessing.join();
-        processing.join();
-        rendering.join();
-
-        std::cin.get();
-        stop = true;
-
-        kinect.release();
-        kinect.close();
-    }
+    /** release and close kinect */
+    kinect.release();
+    kinect.close();
+}
 }
 #endif /* WORKERS_H */
