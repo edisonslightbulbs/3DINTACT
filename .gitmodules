@@ -6,10 +6,6 @@
     path = libs/utility
     url = https://github.com/edisonslightbulbs/utility.git
     branch = main
-[submodule "libs/geometry"]
-    path = libs/geometry
-    url = https://github.com/edisonslightbulbs/geometry.git
-    branch = main
 [submodule "libs/kinect"]
     path = libs/kinect
     url = https://github.com/edisonslightbulbs/kinect.git
@@ -17,10 +13,6 @@
 [submodule "libs/outliers"]
     path = libs/outliers
     url = https://github.com/edisonslightbulbs/outliers.git
-    branch = main
-[submodule "libs/segment"]
-    path = libs/segment
-    url = https://github.com/edisonslightbulbs/segment.git
     branch = main
 [submodule "libs/svd"]
     path = libs/svd
@@ -40,3 +32,9 @@
 [submodule "libs/viewer"]
 	path = libs/viewer
     url = https://github.com/edisonslightbulbs/viewer.git
+[submodule "libs/intact"]
+	path = libs/intact
+	url = git@github.com:edisonslightbulbs/intact.git
+[submodule "libs/point"]
+	path = libs/point
+	url = git@github.com:edisonslightbulbs/point.git

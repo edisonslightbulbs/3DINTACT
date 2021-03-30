@@ -151,4 +151,3 @@ if(RUN)
         #COMMAND cloudcompare.CloudCompare ./output/context.ply >/dev/null 2>&1 &
         WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
 endif()
-
