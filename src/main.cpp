@@ -2,6 +2,7 @@
 
 #include "intact.h"
 #include "kinect.h"
+#include "logger.h"
 
 extern const int FAIL = -3;
 extern const int PASS = 0;
@@ -21,6 +22,7 @@ void work(std::shared_ptr<Kinect> sptr_kinect)
 
 int main(int argc, char* argv[])
 {
+    std::cout << "Press ESC to exit." << std::endl;
     logger(argc, argv);
     std::shared_ptr<Kinect> sptr_kinect(new Kinect);
     work(sptr_kinect);
