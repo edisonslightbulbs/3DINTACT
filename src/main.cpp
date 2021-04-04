@@ -7,6 +7,8 @@
 extern const int FAIL = -3;
 extern const int PASS = 0;
 
+std::shared_ptr<bool> RUN_SYSTEM;
+
 void work(std::shared_ptr<Kinect> sptr_kinect)
 {
     /** segment in separate worker thread */
@@ -22,6 +24,7 @@ void work(std::shared_ptr<Kinect> sptr_kinect)
 
 int main(int argc, char* argv[])
 {
+    RUN_SYSTEM = std::make_shared<bool>(true);
     std::cout << "Press ESC to exit." << std::endl;
     logger(argc, argv);
     std::shared_ptr<Kinect> sptr_kinect(new Kinect);
