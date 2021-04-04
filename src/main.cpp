@@ -24,10 +24,16 @@ void work(std::shared_ptr<Kinect> sptr_kinect)
 
 int main(int argc, char* argv[])
 {
+    /** start system */
     RUN_SYSTEM = std::make_shared<bool>(true);
     std::cout << "Press ESC to exit." << std::endl;
     logger(argc, argv);
+
+    /** start kinect */
     std::shared_ptr<Kinect> sptr_kinect(new Kinect);
+
+    /** do multi-threaded work*/
     work(sptr_kinect);
+
     return PASS;
 }
