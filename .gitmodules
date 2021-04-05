@@ -23,3 +23,6 @@
 [submodule "libs/point"]
 	path = libs/point
 	url = git@github.com:edisonslightbulbs/point.git
+[submodule "libs/intact"]
+	path = libs/intact
+	url = git@github.com:edisonslightbulbs/intact.git
