@@ -17,24 +17,9 @@
 [submodule "libs/svd"]
     path = libs/svd
     url = https://github.com/edisonslightbulbs/svd.git
-[submodule "libs/elbow"]
-    path = libs/elbow
-    url = https://github.com/edisonslightbulbs/elbow.git
-[submodule "libs/dbscan"]
-    path = libs/dbscan
-    url = https://github.com/edisonslightbulbs/dbscan.git
-[submodule "libs/knn"]
-    path = libs/knn
-    url = https://github.com/edisonslightbulbs/knn.git
-[submodule "libs/jct"]
-    path = libs/jct
-    url = https://github.com/edisonslightbulbs/jct.git
 [submodule "libs/viewer"]
 	path = libs/viewer
     url = https://github.com/edisonslightbulbs/viewer.git
-[submodule "libs/intact"]
-	path = libs/intact
-	url = git@github.com:edisonslightbulbs/intact.git
 [submodule "libs/point"]
 	path = libs/point
 	url = git@github.com:edisonslightbulbs/point.git
