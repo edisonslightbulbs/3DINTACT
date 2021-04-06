@@ -26,3 +26,6 @@
 [submodule "libs/viewer"]
 	path = libs/viewer
 	url = git@github.com:edisonslightbulbs/viewer.git
+[submodule "external/libjpeg-turbo"]
+	path = external/libjpeg-turbo
+	url = https://github.com/libjpeg-turbo/libjpeg-turbo.git

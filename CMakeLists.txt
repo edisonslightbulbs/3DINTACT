@@ -51,6 +51,7 @@ find_package(glog REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(gflags REQUIRED)
 find_package(Pangolin REQUIRED)
+find_package(LIBJPEGTURBO REQUIRED)
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 
 # main project include paths
@@ -58,7 +59,6 @@ set(PROJECT_DIR ${CMAKE_CURRENT_LIST_DIR})
 set(SRC_DIR ${PROJECT_DIR}/src)
 set(EXT_DIR ${PROJECT_DIR}/external)
 set(LIBS_DIR ${PROJECT_DIR}/libs)
-set(KINECT_SDK ${EXT_DIR}/Azure-Kinect-Sensor-SDK)
 
 
 # submodule management
@@ -95,9 +95,12 @@ if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
     endif()
 endif()
 
-set(K4A_LIBRARY ${KINECT_SDK}/build/bin)
+set(KINECT_SDK ${EXT_DIR}/Azure-Kinect-Sensor-SDK)
+set(K4A_LIBRARY ${KINECT_SDK}/build)
 set(K4A_SRC_INCLUDE ${KINECT_SDK}/build/src/sdk/include)
+set(K4A_RECORD_INCLUDE ${KINECT_SDK}/build/src/record/sdk/include)
 set(K4A_INCLUDE ${KINECT_SDK}/include)
+
 
 # find header directories
 file(GLOB_RECURSE HEADERS
@@ -114,17 +117,19 @@ list(REMOVE_DUPLICATES INCLUDE_DIRS)
 # src paths
 file(GLOB_RECURSE LIBS_SRC ${LIBS_DIR}/*.cpp)
 
-
 # INTACT project target, includes, and linkages
 add_executable(INTACToolkit
     ${EXT_SRC}
     ${LIBS_SRC}
     ${SRC_DIR}/main.cpp
     )
+
 target_include_directories(INTACToolkit PRIVATE
     ${K4A_INCLUDE}
     ${INCLUDE_DIRS}
     ${K4A_SRC_INCLUDE}
+    ${LibJpegTurbo_INCLUDE_DIRS}
+    ${K4A_RECORD_INCLUDE}
     ${OpenCV_INCLUDE_DIRS}
     )
 
@@ -132,21 +137,20 @@ target_link_libraries(INTACToolkit
     glog
     gflags
     Eigen3::Eigen
-    ${OpenCV_LIBS}
-    ${Pangolin_LIBRARIES}
-    )
+        ${OpenCV_LIBS}
+        ${Pangolin_LIBRARIES}
+        ${K4A_LIBRARY}/bin/libk4a.so
+        ${K4A_LIBRARY}/bin/libk4arecord.so
+        ${LibJpegTurbo_LIBRARIES}
 
-if(UNIX AND NOT APPLE)
-    target_link_libraries(INTACToolkit
-        ${K4A_LIBRARY}/libk4a.so
         )
-endif()
 
 option(RUN "execute target" ON) # (default ON)
 if(RUN)
     add_custom_command(TARGET INTACToolkit
         POST_BUILD
         COMMAND mkdir -p ./output
+        COMMAND rm -rf ./output/*.ply
         COMMAND ./build/bin/INTACToolkit --logtostderr=1
         #COMMAND cloudcompare.CloudCompare ./output/context.ply >/dev/null 2>&1 &
         WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
