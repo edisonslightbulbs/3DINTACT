@@ -19,13 +19,14 @@
     url = https://github.com/edisonslightbulbs/svd.git
 [submodule "libs/point"]
 	path = libs/point
-	url = git@github.com:edisonslightbulbs/point.git
+    url = https://github.com/edisonslightbulbs/point.git
 [submodule "libs/intact"]
 	path = libs/intact
-	url = git@github.com:edisonslightbulbs/intact.git
+    url = https://github.com/edisonslightbulbs/intact.git
 [submodule "libs/viewer"]
 	path = libs/viewer
-	url = git@github.com:edisonslightbulbs/viewer.git
+    url = https://github.com/edisonslightbulbs/viewer.git
 [submodule "external/libjpeg-turbo"]
 	path = external/libjpeg-turbo
 	url = https://github.com/libjpeg-turbo/libjpeg-turbo.git
+    ignore = dirty
