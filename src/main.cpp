@@ -1,11 +1,11 @@
-#include <thread>
 #include <string>
+#include <thread>
 
 #include "intact.h"
-#include "kinect.h"
 #include "io.h"
+#include "kinect.h"
 #include "logger.h"
-#include "transformer.h"
+#include "ply.h"
 
 extern const int FAIL = -3;
 extern const int PASS = 0;
@@ -34,13 +34,11 @@ int main(int argc, char* argv[])
     /** start kinect */
     std::shared_ptr<Kinect> sptr_kinect(new Kinect);
 
-
     /** do multi-threaded work*/
-    //work(sptr_kinect);
+    // work(sptr_kinect);
 
-    /** beta testing color point cloud acquisition*/
-    transformer::transform(sptr_kinect);
+    /** beta testing rgb pcl acquisition*/
+    sptr_kinect->capturePcl();
 
     return PASS;
 }
-
