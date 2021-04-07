@@ -51,7 +51,6 @@ find_package(glog REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(gflags REQUIRED)
 find_package(Pangolin REQUIRED)
-find_package(LIBJPEGTURBO REQUIRED)
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 
 # main project include paths
@@ -128,7 +127,6 @@ target_include_directories(INTACToolkit PRIVATE
     ${K4A_INCLUDE}
     ${INCLUDE_DIRS}
     ${K4A_SRC_INCLUDE}
-    ${LibJpegTurbo_INCLUDE_DIRS}
     ${K4A_RECORD_INCLUDE}
     ${OpenCV_INCLUDE_DIRS}
     )
@@ -137,13 +135,11 @@ target_link_libraries(INTACToolkit
     glog
     gflags
     Eigen3::Eigen
-        ${OpenCV_LIBS}
-        ${Pangolin_LIBRARIES}
-        ${K4A_LIBRARY}/bin/libk4a.so
-        ${K4A_LIBRARY}/bin/libk4arecord.so
-        ${LibJpegTurbo_LIBRARIES}
-
-        )
+    ${OpenCV_LIBS}
+    ${Pangolin_LIBRARIES}
+    ${K4A_LIBRARY}/bin/libk4a.so
+    ${K4A_LIBRARY}/bin/libk4arecord.so
+    )
 
 option(RUN "execute target" ON) # (default ON)
 if(RUN)
@@ -152,6 +148,8 @@ if(RUN)
         COMMAND mkdir -p ./output
         COMMAND rm -rf ./output/*.ply
         COMMAND ./build/bin/INTACToolkit --logtostderr=1
+        #COMMAND cloudcompare.CloudCompare ./output/depth2color.ply >/dev/null 2>&1 &
+        #COMMAND cloudcompare.CloudCompare ./output/color2depth.ply >/dev/null 2>&1 &
         #COMMAND cloudcompare.CloudCompare ./output/context.ply >/dev/null 2>&1 &
         WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
 endif()
