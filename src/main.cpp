@@ -2,13 +2,12 @@
 #include <thread>
 
 #include "intact.h"
-#include "io.h"
 #include "kinect.h"
 #include "logger.h"
-#include "ply.h"
 
 extern const int FAIL = -3;
 extern const int PASS = 0;
+
 std::shared_ptr<bool> RUN_SYSTEM;
 
 void work(std::shared_ptr<Kinect> sptr_kinect)
@@ -17,11 +16,11 @@ void work(std::shared_ptr<Kinect> sptr_kinect)
     std::thread segmenting(intact::segment, std::ref(sptr_kinect));
 
     /** render in separate worker thread */
-    //std::thread rendering(intact::render, std::ref(sptr_kinect));
+    // std::thread rendering(intact::render, std::ref(sptr_kinect));
 
     /** manage worker threads */
     segmenting.join();
-    //rendering.join();
+    // rendering.join();
 }
 
 int main(int argc, char* argv[])
@@ -36,9 +35,6 @@ int main(int argc, char* argv[])
 
     /** do multi-threaded work*/
     work(sptr_kinect);
-
-    /** beta testing rgb pcl acquisition*/
-    //sptr_kinect->capturePcl();
 
     return PASS;
 }
