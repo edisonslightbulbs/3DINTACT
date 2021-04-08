@@ -2,6 +2,10 @@
     path = external/Azure-Kinect-Sensor-SDK
     url = https://github.com/microsoft/Azure-Kinect-Sensor-SDK.git
     ignore = dirty
+[submodule "external/libjpeg-turbo"]
+    path = external/libjpeg-turbo
+    url = https://github.com/libjpeg-turbo/libjpeg-turbo.git
+    ignore = dirty
 [submodule "libs/utility"]
     path = libs/utility
     url = https://github.com/edisonslightbulbs/utility.git
@@ -18,15 +22,14 @@
     path = libs/svd
     url = https://github.com/edisonslightbulbs/svd.git
 [submodule "libs/point"]
-	path = libs/point
+    path = libs/point
     url = https://github.com/edisonslightbulbs/point.git
 [submodule "libs/intact"]
-	path = libs/intact
+    path = libs/intact
     url = https://github.com/edisonslightbulbs/intact.git
 [submodule "libs/viewer"]
-	path = libs/viewer
+    path = libs/viewer
     url = https://github.com/edisonslightbulbs/viewer.git
-[submodule "external/libjpeg-turbo"]
-	path = external/libjpeg-turbo
-	url = https://github.com/libjpeg-turbo/libjpeg-turbo.git
-    ignore = dirty
+[submodule "libs/proposal"]
+    path = libs/proposal
+    url = https://github.com/edisonslightbulbs/proposal.git
