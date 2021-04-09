@@ -2,6 +2,7 @@
 #include <thread>
 
 #include "intact.h"
+#include "io.h"
 #include "kinect.h"
 #include "logger.h"
 
@@ -16,11 +17,11 @@ void work(std::shared_ptr<Kinect> sptr_kinect)
     std::thread segmenting(intact::segment, std::ref(sptr_kinect));
 
     /** render in separate worker thread */
-    // std::thread rendering(intact::render, std::ref(sptr_kinect));
+    std::thread rendering(intact::render, std::ref(sptr_kinect));
 
     /** manage worker threads */
     segmenting.join();
-    // rendering.join();
+    rendering.join();
 }
 
 int main(int argc, char* argv[])
@@ -32,6 +33,9 @@ int main(int argc, char* argv[])
 
     /** start kinect */
     std::shared_ptr<Kinect> sptr_kinect(new Kinect);
+
+    /** grab image of scene */
+    // io::write(sptr_kinect->m_rgbImage);
 
     /** do multi-threaded work*/
     work(sptr_kinect);
