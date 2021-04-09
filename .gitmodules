@@ -33,3 +33,6 @@
 [submodule "libs/proposal"]
     path = libs/proposal
     url = https://github.com/edisonslightbulbs/proposal.git
+[submodule "libs/edge"]
+	path = libs/edge
+    url = https://github.com/edisonslightbulbs/edge.git
