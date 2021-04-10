@@ -14,7 +14,7 @@ std::shared_ptr<bool> RUN_SYSTEM;
 void work(std::shared_ptr<Kinect> sptr_kinect)
 {
     /** segment in separate worker thread */
-    std::thread segmenting(intact::segment, std::ref(sptr_kinect));
+    std::thread segmenting(intact::segmentContext, std::ref(sptr_kinect));
 
     /** render in separate worker thread */
     std::thread rendering(intact::render, std::ref(sptr_kinect));
