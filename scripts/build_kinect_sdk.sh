@@ -8,8 +8,8 @@
 # created: 2020-11-06 13:41
 # Github: https://github.com/antiqueeverett/
 
-PROJECT_DIR=$(dirname $(dirname $(dirname $(readlink -f "$0"))))
-echo "$PROJECT_DIR"
+PROJECT_DIR=$(dirname $(dirname $(readlink -f "$0")))
+echo "-- building Azure-Kinect-Sensor-SDK from: $PROJECT_DIR"
 
 # -- build directory
 build="$PROJECT_DIR/external/Azure-Kinect-Sensor-SDK/build"

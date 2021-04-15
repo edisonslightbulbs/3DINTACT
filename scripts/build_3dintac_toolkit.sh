@@ -9,6 +9,7 @@
 # Github: https://github.com/antiqueeverett/
 
 PROJECT_DIR=$(dirname $(dirname $(readlink -f "$0")))
+echo "-- building 3DINTACToolkit from: $PROJECT_DIR"
 
 # -- build directory
 build="$PROJECT_DIR/build"

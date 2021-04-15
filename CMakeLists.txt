@@ -23,7 +23,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 
 # build options
-option(EXECUTE_TARGET "Execute Project Target" OFF)             # default OFF
+option(EXECUTE_TARGET "Execute Project Target" ON)              # default OFF
 option(BUILD_SHARED_LIBS "Build Shared Library" ON)             # default ON
 option(K4A_SDK_BUILD  "Build the kinect SDK project" ON)        # default ON
 option(UPDATE_GIT_SUBMODULES "Update all git submodules " ON)   # default ON
@@ -84,7 +84,7 @@ if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
         endif()
 
         execute_process(
-            COMMAND /bin/bash ./scripts/setup-azure-kinect/build-project.sh -j 12
+            COMMAND /bin/bash ./scripts/build_kinect_sdk.sh -j 12
             WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
 
         if(NOT EXISTS "${EXT_DIR}/Azure-Kinect-Sensor-SDK/build/src/sdk/include/k4a/k4aversion.h")

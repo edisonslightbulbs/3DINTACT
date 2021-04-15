@@ -7,5 +7,5 @@
 # created: 2020-11-06 13:54
 # Github: https://github.com/antiqueeverett/
 
-sudo cp "$PWD/resources/libdepthengine.so.2.0" '/usr/lib/'
+sudo cp "$PWD/libdepthengine.so.2.0" '/usr/lib/'
 sudo ldconfig

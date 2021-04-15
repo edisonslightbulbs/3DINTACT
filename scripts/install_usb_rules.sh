@@ -7,4 +7,4 @@
 # created: 2020-11-06 13:56
 # Github: https://github.com/antiqueeverett/
 
-sudo cp "$PWD/resources/99-k4a.rules" '/etc/udev/rules.d/'
+sudo cp "$PWD/99-k4a.rules" '/etc/udev/rules.d/'
