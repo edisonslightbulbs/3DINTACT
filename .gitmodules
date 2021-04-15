@@ -34,5 +34,11 @@
     path = libs/proposal
     url = https://github.com/edisonslightbulbs/proposal.git
 [submodule "libs/edge"]
-	path = libs/edge
+    path = libs/edge
     url = https://github.com/edisonslightbulbs/edge.git
+[submodule "libs/dbscan"]
+    path = libs/dbscan
+    url = https://github.com/edisonslightbulbs/dbscan.git
+[submodule "libs/knn"]
+    path = libs/knn
+    url = https://github.com/edisonslightbulbs/knn.git
