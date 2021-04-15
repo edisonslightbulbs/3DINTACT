@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# run.sh:
-#     Runs the Azure-Kinect-Sensor-SDK
+# build_3dintact_toolkit.sh:
+#     Builds the 3DINTACToolkit
 #     cmake project using with -GNinja.
 #
 # author: Everett
@@ -9,6 +9,7 @@
 # Github: https://github.com/antiqueeverett/
 
 PROJECT_DIR=$(dirname $(dirname $(readlink -f "$0")))
+echo "-- building 3DINTACToolkit from: $PROJECT_DIR"
 
 # -- build directory
 build="$PROJECT_DIR/build"

@@ -1,11 +1,3 @@
-[submodule "external/Azure-Kinect-Sensor-SDK"]
-    path = external/Azure-Kinect-Sensor-SDK
-    url = https://github.com/microsoft/Azure-Kinect-Sensor-SDK.git
-    ignore = dirty
-[submodule "external/libjpeg-turbo"]
-    path = external/libjpeg-turbo
-    url = https://github.com/libjpeg-turbo/libjpeg-turbo.git
-    ignore = dirty
 [submodule "libs/utility"]
     path = libs/utility
     url = https://github.com/edisonslightbulbs/utility.git
@@ -21,24 +13,29 @@
 [submodule "libs/svd"]
     path = libs/svd
     url = https://github.com/edisonslightbulbs/svd.git
+    branch = main
 [submodule "libs/point"]
     path = libs/point
     url = https://github.com/edisonslightbulbs/point.git
+    branch = main
 [submodule "libs/intact"]
     path = libs/intact
     url = https://github.com/edisonslightbulbs/intact.git
+    branch = main
 [submodule "libs/viewer"]
     path = libs/viewer
     url = https://github.com/edisonslightbulbs/viewer.git
+    branch = main
 [submodule "libs/proposal"]
     path = libs/proposal
     url = https://github.com/edisonslightbulbs/proposal.git
+    branch = main
 [submodule "libs/edge"]
     path = libs/edge
     url = https://github.com/edisonslightbulbs/edge.git
-[submodule "libs/dbscan"]
-    path = libs/dbscan
-    url = https://github.com/edisonslightbulbs/dbscan.git
-[submodule "libs/knn"]
-    path = libs/knn
-    url = https://github.com/edisonslightbulbs/knn.git
+    branch = main
+[submodule "external/Azure-Kinect-Sensor-SDK"]
+	path = external/Azure-Kinect-Sensor-SDK
+	url = https://github.com/microsoft/Azure-Kinect-Sensor-SDK.git
+  branch = develop
+  ignore = dirty
