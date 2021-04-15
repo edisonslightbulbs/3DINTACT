@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# update_submodules.sh:
-#   Initializes and builds the Kinect SDK project.
+# initialize_azure_kinect_sensor_sdk.sh:
+#   Initializes the Kinect's SDK project.
 #
 # author: Everett
 # created: 2021-04-15 18:26

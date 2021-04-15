@@ -26,8 +26,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 option(EXECUTE_TARGET "Execute Project Target" ON)                 # default OFF
 option(BUILD_SHARED_LIBS "Build Shared Library" ON)                # default ON
 option(OPTIMIZE_PROJECT "Tidy up and optimize source code" OFF)    # default OFF
-option(INITIALIZE_K4A_SDK "Initialize the kinect SDK project" ON)  # default ON
-
+option(INITIALIZE_K4A_SDK "Initialize the kinect SDK project" OFF) # default ON
 
 if(OPTIMIZE_PROJECT)
     if(UNIX AND NOT APPLE)
@@ -40,11 +39,9 @@ if(OPTIMIZE_PROJECT)
     set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 endif()
 
-
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif()
-
 
 # dependencies
 find_package(Git REQUIRED)
@@ -53,7 +50,6 @@ find_package(OpenCV REQUIRED)
 find_package(gflags REQUIRED)
 find_package(Pangolin REQUIRED)
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
-
 
 # main project include paths
 set(PROJECT_DIR ${CMAKE_CURRENT_LIST_DIR})
@@ -76,7 +72,6 @@ set(K4A_LIBRARY ${K4A_SDK}/build)
 set(K4A_VERSION ${K4A_SDK}/build/src/sdk/include)
 set(K4A_INCLUDE ${K4A_SDK}/include)
 
-
 # find headers
 set (INCLUDE_DIRS "")
 file(GLOB_RECURSE HEADERS
@@ -88,10 +83,8 @@ foreach (HEADER ${HEADERS})
 endforeach()
 list(REMOVE_DUPLICATES INCLUDE_DIRS)
 
-
 # find src
 file(GLOB_RECURSE LIBS_SRC ${LIBS_DIR}/*.cpp)
-
 
 # set-up target
 add_executable(INTACToolkit
@@ -100,7 +93,6 @@ add_executable(INTACToolkit
     ${SRC_DIR}/main.cpp
     )
 
-
 # set-up target include directories
 target_include_directories(INTACToolkit PRIVATE
     ${K4A_VERSION}
@@ -108,7 +100,6 @@ target_include_directories(INTACToolkit PRIVATE
     ${INCLUDE_DIRS}
     ${OpenCV_INCLUDE_DIRS}
     )
-
 
 # link libraries
 target_link_libraries(INTACToolkit
@@ -120,16 +111,10 @@ target_link_libraries(INTACToolkit
     ${K4A_LIBRARY}/bin/libk4a.so
     )
 
-
 # link libraries
 if(EXECUTE_TARGET)
     add_custom_command(TARGET INTACToolkit
         POST_BUILD
-        COMMAND mkdir -p ./output
-        COMMAND rm -rf ./output/*.*
-        COMMAND ./build/bin/INTACToolkit --logtostderr=1
-        #COMMAND cloudcompare.CloudCompare ./output/rgb2depth.ply >/dev/null 2>&1 &
-        #COMMAND cloudcompare.CloudCompare ./output/depth2rgb.ply >/dev/null 2>&1 &
-        #COMMAND cloudcompare.CloudCompare ./output/context.ply >/dev/null 2>&1 &
+        COMMAND ./scripts/execute_3dintact.sh
         WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
 endif()
