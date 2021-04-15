@@ -40,5 +40,8 @@ int main(int argc, char* argv[])
     /** do multi-threaded work*/
     work(sptr_kinect);
 
+    sptr_kinect->release();
+    sptr_kinect->close();
+
     return PASS;
 }
