@@ -150,6 +150,6 @@ if(RUN)
         COMMAND ./build/bin/INTACToolkit --logtostderr=1
         #COMMAND cloudcompare.CloudCompare ./output/rgb2depth.ply >/dev/null 2>&1 &
         #COMMAND cloudcompare.CloudCompare ./output/depth2rgb.ply >/dev/null 2>&1 &
-        COMMAND cloudcompare.CloudCompare ./output/context.ply >/dev/null 2>&1 &
+        #COMMAND cloudcompare.CloudCompare ./output/context.ply >/dev/null 2>&1 &
         WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
 endif()
