@@ -9,6 +9,7 @@
 # Github: https://github.com/antiqueeverett/
 
 PROJECT_DIR=$(dirname $(dirname $(dirname $(readlink -f "$0"))))
+echo "$PROJECT_DIR"
 
 # -- build directory
 build="$PROJECT_DIR/external/Azure-Kinect-Sensor-SDK/build"
@@ -16,7 +17,7 @@ build="$PROJECT_DIR/external/Azure-Kinect-Sensor-SDK/build"
 # -- clean old build files
 if [ -d "$build" ]; then rm -Rf "$build"; fi
 
-# -- build with CMake
+# -- build with CMake -GNinja
 mkdir "$build" && cd "$build" || return
 cmake .. -GNinja
 ninja

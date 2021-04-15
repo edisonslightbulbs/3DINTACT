@@ -1,11 +1,3 @@
-[submodule "external/Azure-Kinect-Sensor-SDK"]
-    path = external/Azure-Kinect-Sensor-SDK
-    url = https://github.com/microsoft/Azure-Kinect-Sensor-SDK.git
-    ignore = dirty
-[submodule "external/libjpeg-turbo"]
-    path = external/libjpeg-turbo
-    url = https://github.com/libjpeg-turbo/libjpeg-turbo.git
-    ignore = dirty
 [submodule "libs/utility"]
     path = libs/utility
     url = https://github.com/edisonslightbulbs/utility.git
