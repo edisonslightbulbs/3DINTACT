@@ -13,18 +13,24 @@
 [submodule "libs/svd"]
     path = libs/svd
     url = https://github.com/edisonslightbulbs/svd.git
+    branch = main
 [submodule "libs/point"]
     path = libs/point
     url = https://github.com/edisonslightbulbs/point.git
+    branch = main
 [submodule "libs/intact"]
     path = libs/intact
     url = https://github.com/edisonslightbulbs/intact.git
+    branch = main
 [submodule "libs/viewer"]
     path = libs/viewer
     url = https://github.com/edisonslightbulbs/viewer.git
+    branch = main
 [submodule "libs/proposal"]
     path = libs/proposal
     url = https://github.com/edisonslightbulbs/proposal.git
+    branch = main
 [submodule "libs/edge"]
     path = libs/edge
     url = https://github.com/edisonslightbulbs/edge.git
+    branch = main
