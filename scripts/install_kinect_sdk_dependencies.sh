@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# dependencies-installer.sh:
+# install_kinect_sdk_dependencies.sh:
 #     Install necessary dependencies iff not available.
 #
 # author: Everett

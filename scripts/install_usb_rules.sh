@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# usb-driver-installer.sh:
+# install_usb_rules.sh
 #     Installs the Azure-Kinects' USB driver from the driver directory.
 #
 # author: Everett

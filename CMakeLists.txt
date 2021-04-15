@@ -23,11 +23,10 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 
 # build options
-option(EXECUTE_TARGET "Execute Project Target" ON)              # default OFF
-option(BUILD_SHARED_LIBS "Build Shared Library" ON)             # default ON
-option(K4A_SDK_BUILD  "Build the kinect SDK project" ON)        # default ON
-option(UPDATE_GIT_SUBMODULES "Update all git submodules " ON)   # default ON
-option(OPTIMIZE_PROJECT "Tidy up and optimize source code" OFF) # default OFF
+option(EXECUTE_TARGET "Execute Project Target" ON)                 # default OFF
+option(BUILD_SHARED_LIBS "Build Shared Library" ON)                # default ON
+option(OPTIMIZE_PROJECT "Tidy up and optimize source code" OFF)    # default OFF
+option(INITIALIZE_K4A_SDK "Initialize the kinect SDK project" ON)  # default ON
 
 
 if(OPTIMIZE_PROJECT)
@@ -62,43 +61,20 @@ set(SRC_DIR ${PROJECT_DIR}/src)
 set(EXT_DIR ${PROJECT_DIR}/external)
 set(LIBS_DIR ${PROJECT_DIR}/libs)
 
-
-# make sure submodule paths exist
+# initialize Azure-Kinect-Sensor-SDK submodule project
 if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
-    if(UPDATE_GIT_SUBMODULES)
-        message(STATUS "Updating submodule dependencies")
+    if(INITIALIZE_K4A_SDK)
         execute_process(
-            COMMAND ${GIT_EXECUTABLE} pull --recurse-submodules -j 12
-            COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive -j 12
-            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-            RESULT_VARIABLE GIT_SUBMODULE_RESULT)
-
-        if(NOT GIT_SUBMODULE_RESULT EQUAL "0")
-            message(FATAL_ERROR "Failed to update git submodules. ${GIT_SUBMODULE_RESULT}")
-        endif()
-    endif()
-
-    if(K4A_SDK_BUILD)
-        if(NOT EXISTS "${EXT_DIR}/Azure-Kinect-Sensor-SDK/CMakeLists.txt")
-            message(FATAL_ERROR "Please make sure the kinect SDK project is setup correctly.")
-        endif()
-
-        execute_process(
-            COMMAND /bin/bash ./scripts/build_kinect_sdk.sh -j 12
-            WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
-
-        if(NOT EXISTS "${EXT_DIR}/Azure-Kinect-Sensor-SDK/build/src/sdk/include/k4a/k4aversion.h")
-            message(FATAL_ERROR "Please build kinect SDK project manually.")
-        endif()
+                COMMAND /bin/bash ./scripts/initialize_azure_kinect_sensor_sdk.sh -j 12
+                WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
     endif()
 endif()
 
-
-# after making sure SDK directories are setup, set Kinect paths
-set(KINECT_SDK ${EXT_DIR}/Azure-Kinect-Sensor-SDK)
-set(K4A_LIBRARY ${KINECT_SDK}/build)
-set(K4A_VERSION ${KINECT_SDK}/build/src/sdk/include)
-set(K4A_INCLUDE ${KINECT_SDK}/include)
+# after SDK initialization setup K4A (kinect SDK) paths
+set(K4A_SDK ${EXT_DIR}/Azure-Kinect-Sensor-SDK)
+set(K4A_LIBRARY ${K4A_SDK}/build)
+set(K4A_VERSION ${K4A_SDK}/build/src/sdk/include)
+set(K4A_INCLUDE ${K4A_SDK}/include)
 
 
 # find headers

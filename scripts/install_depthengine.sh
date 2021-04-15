@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# depth-engine-installer.sh:
+# install_depthengine.sh:
 #     Installs the depth engine binary from ./bin directory.
 #
 # author: Everett

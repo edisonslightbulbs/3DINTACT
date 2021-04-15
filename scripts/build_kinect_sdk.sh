@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# run.sh:
-#     Runs the Azure-Kinect-Sensor-SDK
+# build_kinect_sdk.sh:
+#     Build the Azure-Kinect-Sensor-SDK submodule project
 #     cmake project using with -GNinja.
 #
 # author: Everett
