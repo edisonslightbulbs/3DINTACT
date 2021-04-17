@@ -42,3 +42,6 @@
 [submodule "libs/knn"]
 	path = libs/knn
 	url = git@github.com:edisonslightbulbs/knn.git
+[submodule "libs/dbscan"]
+	path = libs/dbscan
+	url = git@github.com:edisonslightbulbs/dbscan.git

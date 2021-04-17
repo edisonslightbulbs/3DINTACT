@@ -6,9 +6,6 @@
 #include "kinect.h"
 #include "logger.h"
 
-extern const int FAIL = -3;
-extern const int PASS = 0;
-
 std::shared_ptr<bool> RUN_SYSTEM;
 
 void work(std::shared_ptr<Kinect> sptr_kinect)
@@ -19,9 +16,14 @@ void work(std::shared_ptr<Kinect> sptr_kinect)
     /** render in separate worker thread */
     std::thread rendering(intact::render, std::ref(sptr_kinect));
 
+    /** cluster context  */
+    const float epsilon = 3.372;
+    std::thread clustering(intact::cluster, epsilon);
+
     /** manage worker threads */
     segmenting.join();
     rendering.join();
+    clustering.join();
 }
 
 int main(int argc, char* argv[])
@@ -43,5 +45,5 @@ int main(int argc, char* argv[])
     sptr_kinect->release();
     sptr_kinect->close();
 
-    return PASS;
+    return 0;
 }
