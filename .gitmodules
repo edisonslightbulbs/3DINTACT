@@ -39,3 +39,6 @@
 	url = https://github.com/microsoft/Azure-Kinect-Sensor-SDK.git
   branch = develop
   ignore = dirty
+[submodule "libs/knn"]
+	path = libs/knn
+	url = git@github.com:edisonslightbulbs/knn.git
