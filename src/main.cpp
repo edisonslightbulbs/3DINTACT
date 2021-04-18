@@ -11,19 +11,22 @@ std::shared_ptr<bool> RUN_SYSTEM;
 void work(std::shared_ptr<Kinect> sptr_kinect)
 {
     /** segment in separate worker thread */
-    std::thread segmenting(intact::segmentContext, std::ref(sptr_kinect));
+    std::thread segmentingWorker(intact::segmentContext, std::ref(sptr_kinect));
 
     /** render in separate worker thread */
-    std::thread rendering(intact::render, std::ref(sptr_kinect));
+    std::thread renderingWorker(intact::render, std::ref(sptr_kinect));
 
-    /** cluster context  */
+    // todo: introduce worker for detecting epsilon value autonomously
+    // std::thread parameterizingWorker(intact::render, std::ref(sptr_kinect));
+
+    /** cluster interaction context  */
     const float epsilon = 3.372;
-    std::thread clustering(intact::cluster, epsilon);
+    std::thread clusteringWorker(intact::cluster, epsilon);
 
     /** manage worker threads */
-    segmenting.join();
-    rendering.join();
-    clustering.join();
+    segmentingWorker.join();
+    renderingWorker.join();
+    clusteringWorker.join();
 }
 
 int main(int argc, char* argv[])
