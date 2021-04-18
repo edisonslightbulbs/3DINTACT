@@ -76,8 +76,8 @@ set(K4A_INCLUDE ${K4A_SDK}/include)
 set (INCLUDE_DIRS "")
 file(GLOB_RECURSE HEADERS
     ${LIBS_DIR}/*.h
-    ${LIBS_DIR}/knn/nanoflann/include/*.h
-    ${LIBS_DIR}/knn/nanoflann/include/*.hpp
+    ${EXT_DIR}/nanoflann/examples/*.h
+    ${EXT_DIR}/nanoflann/include/*.hpp
     )
 foreach (HEADER ${HEADERS})
     get_filename_component(DIR ${HEADER} PATH)
@@ -87,17 +87,7 @@ list(REMOVE_DUPLICATES INCLUDE_DIRS)
 
 # find src
 file(GLOB_RECURSE LIBS_SRC
-        ${LIBS_DIR}/knn/src/*.cpp
-        ${LIBS_DIR}/svd/src/*.cpp
-        ${LIBS_DIR}/edge/src/*.cpp
-        ${LIBS_DIR}/point/src/*.cpp
-        ${LIBS_DIR}/viewer/src/*.cpp
-        ${LIBS_DIR}/intact/src/*.cpp
-        ${LIBS_DIR}/dbscan/src/*.cpp
-        ${LIBS_DIR}/kinect/src/*.cpp
-        ${LIBS_DIR}/utility/src/*.cpp
-        ${LIBS_DIR}/proposal/src/*.cpp
-        ${LIBS_DIR}/outliers/src/*.cpp
+        ${LIBS_DIR}/*.cpp
         )
 
 # set-up target

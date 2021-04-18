@@ -45,3 +45,6 @@
 [submodule "libs/dbscan"]
 	path = libs/dbscan
 	url = git@github.com:edisonslightbulbs/dbscan.git
+[submodule "external/nanoflann"]
+	path = external/nanoflann
+	url = https://github.com/jlblancoc/nanoflann.git
