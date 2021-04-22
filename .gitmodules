@@ -52,3 +52,9 @@
     path = libs/dbscan
     url = git@github.com:edisonslightbulbs/dbscan.git
     branch = main
+[submodule "libs/region"]
+	path = libs/region
+	url = git@github.com:edisonslightbulbs/region.git
+[submodule "libs/cast"]
+	path = libs/cast
+	url = git@github.com:edisonslightbulbs/cast.git

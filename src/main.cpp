@@ -11,13 +11,13 @@ std::shared_ptr<bool> RUN_SYSTEM;
 void segment(
     std::shared_ptr<Kinect>& sptr_kinect, std::shared_ptr<Intact>& sptr_intact)
 {
-    sptr_intact->segmentContext(sptr_kinect, sptr_intact);
+    sptr_intact->segment(sptr_kinect, sptr_intact);
 }
 
 void render(
     std::shared_ptr<Kinect>& sptr_kinect, std::shared_ptr<Intact>& sptr_intact)
 {
-    sptr_intact->renderContext(sptr_kinect, sptr_intact);
+    sptr_intact->render(sptr_kinect, sptr_intact);
 }
 
 void estimate(std::shared_ptr<Intact>& sptr_intact)
