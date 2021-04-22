@@ -76,6 +76,8 @@ set(K4A_INCLUDE ${K4A_SDK}/include)
 set (INCLUDE_DIRS "")
 file(GLOB_RECURSE HEADERS
     ${LIBS_DIR}/*.h
+    ${EXT_DIR}/nanoflann/examples/*.h
+    ${EXT_DIR}/nanoflann/include/*.hpp
     )
 foreach (HEADER ${HEADERS})
     get_filename_component(DIR ${HEADER} PATH)
@@ -84,7 +86,9 @@ endforeach()
 list(REMOVE_DUPLICATES INCLUDE_DIRS)
 
 # find src
-file(GLOB_RECURSE LIBS_SRC ${LIBS_DIR}/*.cpp)
+file(GLOB_RECURSE LIBS_SRC
+        ${LIBS_DIR}/*.cpp
+        )
 
 # set-up target
 add_executable(INTACToolkit
