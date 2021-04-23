@@ -22,8 +22,8 @@ void render(
 
 void estimate(std::shared_ptr<Intact>& sptr_intact)
 {
-      const int K = 5; // <- kth nearest neighbour [ core + 4 nn ]
-      sptr_intact->estimateEpsilon(K, sptr_intact);
+    const int K = 5; // <- kth nearest neighbour [ core + 4 nn ]
+    sptr_intact->estimateEpsilon(K, sptr_intact);
 }
 
 void cluster(
@@ -48,25 +48,25 @@ int main(int argc, char* argv[])
     std::shared_ptr<Intact> sptr_intact(new Intact(sptr_kinect->m_numPoints));
 
     /** segment in separate worker thread */
-    std::thread segmentingWorker(
+    std::thread segmentWorker(
         segment, std::ref(sptr_kinect), std::ref(sptr_intact));
 
     /** render in separate worker thread */
-    std::thread renderingWorker(
+    std::thread renderWorker(
         render, std::ref(sptr_kinect), std::ref(sptr_intact));
 
     /** determine epsilon hyper-parameter */
-    std::thread parameterizingWorker(estimate, std::ref(sptr_intact));
+    std::thread epsilonWorker(estimate, std::ref(sptr_intact));
 
     /** cluster interaction context  */
-    std::thread clusteringWorker(
+    std::thread clusterWorker(
         cluster, std::ref(sptr_kinect), std::ref(sptr_intact));
 
     /** join worker threads */
-    segmentingWorker.join();
-    renderingWorker.join();
-    parameterizingWorker.join();
-    clusteringWorker.join();
+    segmentWorker.join();
+    renderWorker.join();
+    epsilonWorker.join();
+    clusterWorker.join();
 
     /** grab image of scene */
     // io::write(sptr_kinect->m_rgbImage);
