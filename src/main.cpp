@@ -1,19 +1,32 @@
+#include <chrono>
 #include <string>
 #include <thread>
-#include <chrono>
 
 #include "intact.h"
 #include "io.h"
 #include "kinect.h"
 #include "logger.h"
 
-std::shared_ptr<bool> RUN_SYSTEM;
-
-void sense( std::shared_ptr<Kinect>& sptr_kinect)
+void sense(
+    std::shared_ptr<Kinect>& sptr_kinect, std::shared_ptr<Intact>& sptr_intact)
 {
-    while(RUN_SYSTEM) {
-        /** capture point cloud using rgb-depth transformation */
-        sptr_kinect->record(RGB_TO_DEPTH);
+    bool init = true;
+    while (sptr_intact->isRun()) {
+        /** get next frame: */
+        sptr_kinect->getFrame(RGB_TO_DEPTH);
+        sptr_intact->buildPcl(
+            sptr_kinect->getPclImage(), sptr_kinect->getRgb2DepthImage());
+        sptr_kinect->release();
+
+        /** inform threads: init frame processing done */
+        if (init) {
+            init = false;
+            sptr_intact->raiseIntactReadyFlag();
+        }
+        if (sptr_intact->isStop()) {
+            sptr_intact->stop();
+            // sptr_kinect->close(); //TODO: What cause the error?
+        }
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 }
@@ -46,17 +59,19 @@ void cluster(
 
 int main(int argc, char* argv[])
 {
-    /** start system */
-    RUN_SYSTEM = std::make_shared<bool>(true);
     std::cout << "Press ESC to exit." << std::endl;
     logger(argc, argv);
 
-    /** start depth sensing with kinect */
+    /** initialize kinect */
     std::shared_ptr<Kinect> sptr_kinect(new Kinect);
-    //std::thread senseWorker(sense, std::ref(sptr_kinect));
 
-    /** initialize 3DINTACT */
+    /** initialize API */
     std::shared_ptr<Intact> sptr_intact(new Intact(sptr_kinect->m_numPoints));
+    sptr_intact->raiseRunFlag();
+
+    /** start sensing */
+    std::thread senseWorker(
+        sense, std::ref(sptr_kinect), std::ref(sptr_intact));
 
     /** segment in separate worker thread */
     std::thread segmentWorker(
@@ -74,7 +89,7 @@ int main(int argc, char* argv[])
         cluster, std::ref(sptr_kinect), std::ref(sptr_intact));
 
     /** join worker threads */
-    //senseWorker.join();
+    senseWorker.join();
     segmentWorker.join();
     renderWorker.join();
     epsilonWorker.join();
@@ -82,9 +97,5 @@ int main(int argc, char* argv[])
 
     /** grab image of scene */
     // io::write(sptr_kinect->m_rgbImage);
-
-    /** release resources */
-    sptr_kinect->release();
-    sptr_kinect->close();
     return 0;
 }
