@@ -25,8 +25,14 @@ void sense(
         }
         if (sptr_intact->isStop()) {
             sptr_intact->stop();
-            // sptr_kinect->close(); //TODO: What cause the error?
+            // sptr_kinect->close(); //TODO: undefined behaviour?
         }
+
+        // TODO: remove (currently used for testing)
+        // if (sptr_intact->isClustered()) {
+        //     sptr_intact->stop();
+        // }
+
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 }
@@ -52,7 +58,7 @@ void estimate(std::shared_ptr<Intact>& sptr_intact)
 void cluster(
     std::shared_ptr<Kinect>& sptr_kinect, std::shared_ptr<Intact>& sptr_intact)
 {
-    const float E = 3.317; // <- epsilon
+    const float E = 3.310; // <- epsilon
     const int N = 4;       // <- min points in epsilon neighbourhood
     sptr_intact->cluster(E, N, sptr_intact);
 }
