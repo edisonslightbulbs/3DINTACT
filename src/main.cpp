@@ -1,3 +1,4 @@
+#include <chrono>
 #include <string>
 #include <thread>
 
@@ -6,7 +7,35 @@
 #include "kinect.h"
 #include "logger.h"
 
-std::shared_ptr<bool> RUN_SYSTEM;
+void sense(
+    std::shared_ptr<Kinect>& sptr_kinect, std::shared_ptr<Intact>& sptr_intact)
+{
+    bool init = true;
+    while (sptr_intact->isRun()) {
+        /** get next frame: */
+        sptr_kinect->getFrame(RGB_TO_DEPTH);
+        sptr_intact->buildPcl(
+            sptr_kinect->getPclImage(), sptr_kinect->getRgb2DepthImage());
+        sptr_kinect->release();
+
+        /** inform threads: init frame processing done */
+        if (init) {
+            init = false;
+            sptr_intact->raiseIntactReadyFlag();
+        }
+        if (sptr_intact->isStop()) {
+            sptr_intact->stop();
+            // sptr_kinect->close(); //TODO: undefined behaviour?
+        }
+
+        // TODO: remove (currently used for testing)
+        // if (sptr_intact->isClustered()) {
+        //     sptr_intact->stop();
+        // }
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    }
+}
 
 void segment(
     std::shared_ptr<Kinect>& sptr_kinect, std::shared_ptr<Intact>& sptr_intact)
@@ -22,57 +51,57 @@ void render(
 
 void estimate(std::shared_ptr<Intact>& sptr_intact)
 {
-      const int K = 5; // <- kth nearest neighbour [ core + 4 nn ]
-      sptr_intact->estimateEpsilon(K, sptr_intact);
+    const int K = 5; // <- kth nearest neighbour [ core + 4 nn ]
+    sptr_intact->estimateEpsilon(K, sptr_intact);
 }
 
 void cluster(
     std::shared_ptr<Kinect>& sptr_kinect, std::shared_ptr<Intact>& sptr_intact)
 {
-    const float E = 3.317; // <- epsilon
+    const float E = 3.310; // <- epsilon
     const int N = 4;       // <- min points in epsilon neighbourhood
     sptr_intact->cluster(E, N, sptr_intact);
 }
 
 int main(int argc, char* argv[])
 {
-    /** start system */
-    RUN_SYSTEM = std::make_shared<bool>(true);
     std::cout << "Press ESC to exit." << std::endl;
     logger(argc, argv);
 
-    /** start kinect */
+    /** initialize kinect */
     std::shared_ptr<Kinect> sptr_kinect(new Kinect);
 
-    /** initialize 3DINTACT */
+    /** initialize API */
     std::shared_ptr<Intact> sptr_intact(new Intact(sptr_kinect->m_numPoints));
+    sptr_intact->raiseRunFlag();
+
+    /** start sensing */
+    std::thread senseWorker(
+        sense, std::ref(sptr_kinect), std::ref(sptr_intact));
 
     /** segment in separate worker thread */
-    std::thread segmentingWorker(
+    std::thread segmentWorker(
         segment, std::ref(sptr_kinect), std::ref(sptr_intact));
 
     /** render in separate worker thread */
-    std::thread renderingWorker(
+    std::thread renderWorker(
         render, std::ref(sptr_kinect), std::ref(sptr_intact));
 
     /** determine epsilon hyper-parameter */
-    std::thread parameterizingWorker(estimate, std::ref(sptr_intact));
+    std::thread epsilonWorker(estimate, std::ref(sptr_intact));
 
     /** cluster interaction context  */
-    std::thread clusteringWorker(
+    std::thread clusterWorker(
         cluster, std::ref(sptr_kinect), std::ref(sptr_intact));
 
     /** join worker threads */
-    segmentingWorker.join();
-    renderingWorker.join();
-    parameterizingWorker.join();
-    clusteringWorker.join();
+    senseWorker.join();
+    segmentWorker.join();
+    renderWorker.join();
+    epsilonWorker.join();
+    clusterWorker.join();
 
     /** grab image of scene */
     // io::write(sptr_kinect->m_rgbImage);
-
-    /** release resources */
-    sptr_kinect->release();
-    sptr_kinect->close();
     return 0;
 }
