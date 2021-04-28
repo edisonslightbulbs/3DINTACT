@@ -27,16 +27,21 @@ void sense(
             sptr_intact->stop();
             // sptr_kinect->close(); //TODO: undefined behaviour?
         }
-        if (sptr_intact->isCalibrated()) {
-            sptr_intact->stop();
-        }
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        // if (sptr_intact->isCalibrated()) {
+        //     sptr_intact->stop();
+        // }
+        // std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 }
 
 void calibrate(
     std::shared_ptr<Kinect>& sptr_kinect, std::shared_ptr<Intact>& sptr_intact)
 {
+    // todo: interface these calibration specifications
+    //  const float arucoSquareEdgeLength = 0.0565f;           // in meters
+    //  const float calibrationSquareEdgeLength = 0.02500f;    // in meters
+    //  const std::string calibrationFile = "calibration.txt"; // external file
+    //  for saving calibration
     sptr_intact->calibrate(sptr_kinect, sptr_intact);
 }
 

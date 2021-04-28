@@ -61,3 +61,6 @@
 [submodule "libs/surface"]
 	path = libs/surface
 	url = git@github.com:edisonslightbulbs/surface.git
+[submodule "libs/calibration"]
+	path = libs/calibration
+	url = git@github.com:edisonslightbulbs/calibration.git
