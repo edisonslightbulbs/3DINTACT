@@ -21,20 +21,28 @@ void sense(
         /** inform threads: init frame processing done */
         if (init) {
             init = false;
-            sptr_intact->raiseIntactReadyFlag();
+            sptr_intact->raiseKinectReadyFlag();
         }
         if (sptr_intact->isStop()) {
             sptr_intact->stop();
             // sptr_kinect->close(); //TODO: undefined behaviour?
         }
-
-        // TODO: remove (currently used for testing)
-        // if (sptr_intact->isClustered()) {
+        // if (sptr_intact->isCalibrated()) {
         //     sptr_intact->stop();
         // }
-
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        // std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
+}
+
+void calibrate(
+    std::shared_ptr<Kinect>& sptr_kinect, std::shared_ptr<Intact>& sptr_intact)
+{
+    // todo: interface these calibration specifications
+    //  const float arucoSquareEdgeLength = 0.0565f;           // in meters
+    //  const float calibrationSquareEdgeLength = 0.02500f;    // in meters
+    //  const std::string calibrationFile = "calibration.txt"; // external file
+    //  for saving calibration
+    sptr_intact->calibrate(sptr_kinect, sptr_intact);
 }
 
 void segment(
@@ -79,6 +87,10 @@ int main(int argc, char* argv[])
     std::thread senseWorker(
         sense, std::ref(sptr_kinect), std::ref(sptr_intact));
 
+    /** start sensing */ // todo: revision starts here
+    std::thread calibrateWorker(
+        calibrate, std::ref(sptr_kinect), std::ref(sptr_intact));
+
     /** segment in separate worker thread */
     std::thread segmentWorker(
         segment, std::ref(sptr_kinect), std::ref(sptr_intact));
@@ -100,6 +112,7 @@ int main(int argc, char* argv[])
     renderWorker.join();
     epsilonWorker.join();
     clusterWorker.join();
+    calibrateWorker.join();
 
     /** grab image of scene */
     // io::write(sptr_kinect->m_rgbImage);
