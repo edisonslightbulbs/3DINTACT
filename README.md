@@ -23,9 +23,7 @@ If already cloned without the `--recurse-submodules` flag,  use `git submodule u
 
 ### [2/3] Installing the dependencies
 
-***
-
-Make sure to install all the dependencies listed in the table. As a caveat, Microsoft's Azure Kinect has a ceremonious list dependencies. Be sure to install them all. 3 steps to help get started are given below:
+Make sure to install all the dependencies listed in the table. As a caveat, Microsoft's Azure Kinect has a ceremonious list. Be sure to install all those as well. Here are three pointers to help get started:
 
 ###### 1. The depth engine
 
@@ -58,10 +56,10 @@ make
 cd build/bin
 
 # run target
-./3DINTACT
+./INTACToolkit
 
 # to stdout logs [ optional ]
-# ./3DINTACT --logtostderr=1
+# ./INTACToolkit --logtostderr=1
 ```
 * * *
 
