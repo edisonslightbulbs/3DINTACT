@@ -37,12 +37,16 @@ void sense(
 
         const int N = sptr_intact->getNumPoints();
 
+        /** raw point cloud */
         std::vector<float> raw(N * 3);
         std::vector<uint8_t> rawColor(N * 3);
 
+        /** segmented interaction regions */
         std::vector<float> segment(N * 3);
         std::vector<uint8_t> segmentColor(N * 3);
 
+        /** largest interaction region:
+         *   vacant tabletop surface spaces */
         std::vector<float> region(N * 3);
         std::vector<uint8_t> regionColor(N * 3);
 
@@ -105,7 +109,7 @@ void sense(
             sptr_intact->setSegmentColor(segmentColor);
         }
 
-        /** release kinect resources after each frame */
+        /** release kinect resources */
         sptr_kinect->release();
 
         /** update initialization semaphore */
