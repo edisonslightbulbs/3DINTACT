@@ -25,36 +25,24 @@ void sense(
         }
         if (sptr_intact->isStop()) {
             sptr_intact->stop();
-            // sptr_kinect->close(); //TODO: undefined behaviour?
         }
-        // if (sptr_intact->isCalibrated()) {
-        //     sptr_intact->stop();
-        // }
-        // std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        std::this_thread::sleep_for(std::chrono::milliseconds(2));
     }
 }
 
-void calibrate(
-    std::shared_ptr<Kinect>& sptr_kinect, std::shared_ptr<Intact>& sptr_intact)
+void calibrate(std::shared_ptr<Intact>& sptr_intact)
 {
-    // todo: interface these calibration specifications
-    //  const float arucoSquareEdgeLength = 0.0565f;           // in meters
-    //  const float calibrationSquareEdgeLength = 0.02500f;    // in meters
-    //  const std::string calibrationFile = "calibration.txt"; // external file
-    //  for saving calibration
-    sptr_intact->calibrate(sptr_kinect, sptr_intact);
+    sptr_intact->calibrate(sptr_intact);
 }
 
-void segment(
-    std::shared_ptr<Kinect>& sptr_kinect, std::shared_ptr<Intact>& sptr_intact)
+void segment(std::shared_ptr<Intact>& sptr_intact)
 {
-    sptr_intact->segment(sptr_kinect, sptr_intact);
+    sptr_intact->segment(sptr_intact);
 }
 
-void render(
-    std::shared_ptr<Kinect>& sptr_kinect, std::shared_ptr<Intact>& sptr_intact)
+void render(std::shared_ptr<Intact>& sptr_intact)
 {
-    sptr_intact->render(sptr_kinect, sptr_intact);
+    sptr_intact->render(sptr_intact);
 }
 
 void estimate(std::shared_ptr<Intact>& sptr_intact)
@@ -63,8 +51,7 @@ void estimate(std::shared_ptr<Intact>& sptr_intact)
     sptr_intact->estimateEpsilon(K, sptr_intact);
 }
 
-void cluster(
-    std::shared_ptr<Kinect>& sptr_kinect, std::shared_ptr<Intact>& sptr_intact)
+void cluster(std::shared_ptr<Intact>& sptr_intact)
 {
     const float E = 3.310; // <- epsilon
     const int N = 4;       // <- min points in epsilon neighbourhood
@@ -84,29 +71,38 @@ int main(int argc, char* argv[])
     sptr_intact->raiseRunFlag();
 
     /** start sensing */
-    std::thread senseWorker(
-        sense, std::ref(sptr_kinect), std::ref(sptr_intact));
+    std::thread senseWorker(sense, std::ref(sptr_kinect), std::ref(sptr_intact));
+    // Here is the interesting bit:
+    // Your sensor of choice (which needn't be the Kinect) should
+    // handshake 3DINTACT's API. No adaptors are provided
+    // casting different point cloud data structures into the
+    // structure required by the API. This is something that
+    // has to be done manually for each specific point-cloud
+    // source. The only important thing to note is point-cloud
+    // data input to the API comprises of two vectors,
+    //   i) std::vector<float> points;
+    //      where points =
+    //      { x_0, y_0, z_0, x_1, y_1, z_1, ... }
+    //  ii) std::vector<uint8_t> color;
+    //      where color =
+    //      { r_0, g_0, b_0, r_1, g_1, b_1, ... }
 
-    /** start sensing */ // todo: revision starts here
-    std::thread calibrateWorker(
-        calibrate, std::ref(sptr_kinect), std::ref(sptr_intact));
 
-    /** segment in separate worker thread */
-    std::thread segmentWorker(
-        segment, std::ref(sptr_kinect), std::ref(sptr_intact));
+    /** sense */
+    std::thread calibrateWorker(calibrate, std::ref(sptr_intact));
 
-    /** render in separate worker thread */
-    std::thread renderWorker(
-        render, std::ref(sptr_kinect), std::ref(sptr_intact));
+    /** segment */
+    std::thread segmentWorker(segment, std::ref(sptr_intact));
 
-    /** determine epsilon hyper-parameter */
+    /** render */
+    std::thread renderWorker(render, std::ref(sptr_intact));
+
+    /** find epsilon */
     std::thread epsilonWorker(estimate, std::ref(sptr_intact));
 
-    /** cluster interaction context  */
-    std::thread clusterWorker(
-        cluster, std::ref(sptr_kinect), std::ref(sptr_intact));
+    /** cluster */
+    std::thread clusterWorker(cluster, std::ref(sptr_intact));
 
-    /** join worker threads */
     senseWorker.join();
     segmentWorker.join();
     renderWorker.join();
