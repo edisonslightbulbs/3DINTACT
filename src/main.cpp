@@ -183,6 +183,17 @@ int main(int argc, char* argv[])
     /** cluster */
     std::thread clusterWorker(cluster, std::ref(sptr_intact));
 
+    /** wait for segmenting to compete ~15ms */
+    while (!sptr_intact->isSegmented()) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(3));
+    }
+
+    // ------> do stuff with segmented region of interest here <------
+    sptr_intact->getSegment(); // std::make_shared<std::vector<float>>
+    sptr_intact->getSegmentColor(); //std::make_shared<std::vector<uint8_t>>
+    // ------> do stuff with segmented region of interest here <------
+
+
     senseWorker.join();
     segmentWorker.join();
     renderWorker.join();
