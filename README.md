@@ -1,4 +1,4 @@
-![](https://github.com/edisonslightbulbs/traceless/blob/main/doc/figures/concept.png)
+![](https://github.com/edisonslightbulbs/traceless/blob/API/doc/figures/concept.png)
 
 ### 3DINTACT: Toolkit for segmenting interaction regions on tabletop surfaces
 
@@ -60,10 +60,10 @@ make
 cd build/bin
 
 # run target
-./3DINTACT
+./3DINTACToolkit
 
 # to stdout logs [ optional ]
-# ./3DINTACT --logtostderr=1
+# ./3DINTACToolkit --logtostderr=1
 ```
 * * *
 
