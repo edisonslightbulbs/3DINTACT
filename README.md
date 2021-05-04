@@ -2,6 +2,8 @@
 
 ### 3DINTACT: Toolkit for segmenting interaction regions on tabletop surfaces
 
+![](https://github.com/edisonslightbulbs/traceless/blob/API/doc/figures/regions.png)
+
 #### Overview:
 
 |   Platform |   Hardware	|  Dependencies 	|
@@ -65,7 +67,12 @@ cd build/bin
 # to stdout logs [ optional ]
 # ./3DINTACToolkit --logtostderr=1
 ```
+
 * * *
 
 This project uses Microsoft's Azure Kinect to form a concrete example. The point cloud data source can, of course, be changed as [needed](/doc/README.md).
-The project documentation is under development, as is the project itself. Should one opt to try to use or contribute to the toolkit's development, we kindly ask for your patience with the official documentation. It goes without say, any issues, recommendations, and feature requests are more than welcome.
+The project documentation is under development, as is the project itself. We ask for your patience with official documentation. It goes without say, any issues, recommendations, and feature requests are welcome.
+
+* * *
+
+### VIDEO ILLUSTRATION [YouTube](https://youtu.be/mVYcAixiS-Q)
