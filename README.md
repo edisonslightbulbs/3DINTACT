@@ -1,8 +1,8 @@
 ![](https://github.com/edisonslightbulbs/traceless/blob/main/doc/figures/concept.png)
 
-## 3DINTACT: Toolkit for segmenting interaction regions on tabletop surfaces
+### 3DINTACT: Toolkit for segmenting interaction regions on tabletop surfaces
 
-### Overview:
+#### Overview:
 
 |   Platform |   Hardware	|  Dependencies 	|
 |---	|---	|---	|
@@ -23,7 +23,11 @@ If already cloned without the `--recurse-submodules` flag,  use `git submodule u
 
 ### [2/3] Installing the dependencies
 
-Make sure to install all the dependencies listed in the table. As a caveat, Microsoft's Azure Kinect has a ceremonious list. Be sure to install all those as well. Here are three pointers to help get started:
+Make sure to install all the dependencies listed in the table.
+
+###### Caveat (for developers using the AzureKinect)
+
+Microsoft's Azure Kinect has a ceremonious list dependencies. Be sure to install all those as well. Here are a few steps to give you a headstart.
 
 ###### 1. The depth engine
 
@@ -56,10 +60,10 @@ make
 cd build/bin
 
 # run target
-./INTACToolkit
+./3DINTACT
 
 # to stdout logs [ optional ]
-# ./INTACToolkit --logtostderr=1
+# ./3DINTACT --logtostderr=1
 ```
 * * *
 
