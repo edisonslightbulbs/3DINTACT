@@ -115,7 +115,7 @@ target_link_libraries(3DINTACToolkit
     ${K4A_LIBRARY}/bin/libk4a.so
     )
 
-# link libraries
+# execute target
 if(EXECUTE_TARGET)
     add_custom_command(TARGET 3DINTACToolkit
         POST_BUILD
