@@ -1,8 +1,18 @@
-*.log
-.idea/
+# build files
 build/
-cmake-build-debug/
-*.write
+
+# logs files
+*.log
+
+# miscellaneous
 *.csv
 *.png
 *.ply
+
+# CLion
+.idea/
+cmake-build-debug/
+
+# libtorch
+*.zip
+external/libtorch/
