@@ -16,7 +16,7 @@ void sense(
     // casting different point-cloud data structures into the
     // structure required by the API. This has to be done manually
     // per specific case. The only important thing to note is the
-    // API requires data two vectors data structures:
+    // API requires and expects two std vectors:
     //   1) std::vector<float> points;
     //      where points =
     //      { x_0, y_0, z_0, x_1, y_1, z_1, ..., x_n, y_n, z_n }
@@ -164,11 +164,11 @@ int main(int argc, char* argv[])
     std::shared_ptr<Intact> sptr_intact(new Intact(sptr_kinect->m_numPoints));
     sptr_intact->raiseRunFlag();
 
-    /** start sensing */
+    /** sense */
     std::thread senseWorker(
         sense, std::ref(sptr_kinect), std::ref(sptr_intact));
 
-    /** sense */
+    /** calibrate */
     std::thread calibrateWorker(calibrate, std::ref(sptr_intact));
 
     /** segment */
@@ -183,16 +183,22 @@ int main(int argc, char* argv[])
     /** cluster */
     std::thread clusterWorker(cluster, std::ref(sptr_intact));
 
-    /** wait for segmenting to compete ~15ms */
+    /** wait for segmentation ~15ms */
     while (!sptr_intact->isSegmented()) {
         std::this_thread::sleep_for(std::chrono::milliseconds(3));
     }
 
     // ------> do stuff with segmented region of interest here <------
-    sptr_intact->getSegment(); // std::make_shared<std::vector<float>>
-    sptr_intact->getSegmentColor(); //std::make_shared<std::vector<uint8_t>>
+    sptr_intact->getSegment();      // std::make_shared<std::vector<float>>
+    sptr_intact->getSegmentColor(); // std::make_shared<std::vector<uint8_t>>
+    //
+    // CAVEAT:
+    // Make sure access to the raw point cloud is thread safe.
+    // If unsure how, the API provides thread-safe access to the raw point cloud
+    //
+    sptr_intact->getRaw();      // std::make_shared<std::vector<float>>
+    sptr_intact->getRawColor(); // std::make_shared<std::vector<uint8_t>>
     // ------> do stuff with segmented region of interest here <------
-
 
     senseWorker.join();
     segmentWorker.join();
