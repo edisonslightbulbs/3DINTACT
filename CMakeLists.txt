@@ -9,9 +9,7 @@ set(MAJOR 0)
 set(MINOR 1)
 set(REMAP_VERSION ${MAJOR}.${MINOR})
 
-# CXX and C versions
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_C_STANDARD 99)
+# flags
 set(CMAKE_CXX_FLAGS "-pthread")
 
 # set cmake modules path
@@ -53,7 +51,6 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif()
 
-
 # find dependencies
 find_package(Git REQUIRED)
 find_package(glog REQUIRED)
@@ -62,8 +59,7 @@ find_package(gflags REQUIRED)
 find_package(Pangolin REQUIRED)
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 
-
-# initialize Azure-Kinect-Sensor-SDK submodule project
+# setup Azure-Kinect-Sensor-SDK
 if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
     if(SETUP_K4A_SDK)
         execute_process(
@@ -75,6 +71,20 @@ set(K4A_SDK ${EXT_DIR}/Azure-Kinect-Sensor-SDK)
 set(K4A_LIBRARY ${K4A_SDK}/build)
 set(K4A_INCLUDE ${K4A_SDK}/include)
 set(K4A_VERSION ${K4A_SDK}/build/src/sdk/include)
+
+# setup libtorch
+option(SETUP_LIBTORCH "Setup libtorch" ON)
+if(SETUP_LIBTORCH)
+    execute_process(
+        COMMAND /bin/bash ./scripts/get_libtorch.sh
+        WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
+endif()
+set(CMAKE_PREFIX_PATH ${EXT_DIR}/libtorch)
+set(CMAKE_CXX_FLAGS
+    ${CMAKE_CXX_FLAGS}
+    ${TORCH_CXX_FLAGS}
+    )
+find_package(Torch REQUIRED)
 
 # find header files
 set (INCLUDE_DIRS "")
@@ -117,6 +127,7 @@ target_link_libraries(3DINTACToolkit
     ${OpenCV_LIBS}
     ${Pangolin_LIBRARIES}
     ${K4A_LIBRARY}/bin/libk4a.so
+    ${TORCH_LIBRARIES}
     )
 
 # execute target
