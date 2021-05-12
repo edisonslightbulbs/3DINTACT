@@ -9,23 +9,29 @@
 #include "kinect.h"
 #include "logger.h"
 
+#define CAPTURE_USING_WEBCAM 0
+#define CAPTURE_USING_KINECT 1
 void sense(
     std::shared_ptr<Kinect>& sptr_kinect, std::shared_ptr<Intact>& sptr_intact)
 {
-    // Here is the interesting bit:
-    // Your sensor of choice (which needn't be the Kinect) should
-    // handshake 3DINTACT's API. No adapter is provided for
-    // casting different point-cloud data structures into the
-    // structure required by the API. This has to be done manually
-    // per specific case. The only important thing to note is the
-    // API requires and expects two std vectors:
-    //   1) std::vector<float> points;
-    //      where points =
-    //      { x_0, y_0, z_0, x_1, y_1, z_1, ..., x_n, y_n, z_n }
-    //   2) std::vector<uint8_t> color;
-    //      where color =
-    //      { r_0, g_0, b_0, r_1, g_1, b_1, ..., r_n, g_n, b_n }
-    //
+    /** configure torch for object detection with YOLO v5 */
+    const std::string torchScript = io::pwd() + "/resources/torchscript.pt";
+    const std::string cocoNames = io::pwd() + "/resources/coco.names";
+    torch::jit::script::Module module = torch::jit::load(torchScript);
+    std::vector<std::string> classnames;
+    std::ifstream f(cocoNames);
+    std::string name;
+
+    /** parse class names */
+    while (std::getline(f, name)) {
+        classnames.push_back(name);
+    }
+
+    // cv::VideoCapture cap = cv::VideoCapture(0);
+    // cap.set(cv::CAP_PROP_FRAME_WIDTH, 1920);
+    // cap.set(cv::CAP_PROP_FRAME_HEIGHT, 1080);
+    cv::Mat img, frame;
+
     bool init = true;
     while (sptr_intact->isRun()) {
 
@@ -33,11 +39,10 @@ void sense(
         sptr_kinect->getFrame(RGB_TO_DEPTH);
 
         /** hand over point cloud to API */
+        const int N = sptr_intact->getNumPoints();
         auto* data
             = (int16_t*)(void*)k4a_image_get_buffer(sptr_kinect->getPclImage());
         uint8_t* color = k4a_image_get_buffer(sptr_kinect->getRgb2DepthImage());
-
-        const int N = sptr_intact->getNumPoints();
 
         /** raw point cloud */
         std::vector<float> raw(N * 3);
@@ -111,6 +116,19 @@ void sense(
             sptr_intact->setSegmentColor(segmentColor);
         }
 
+        // cap.read(frame);
+
+        int w = k4a_image_get_width_pixels(sptr_kinect->m_rgbImageClone);
+        int h = k4a_image_get_height_pixels(sptr_kinect->m_rgbImageClone);
+        uint8_t* imgData = k4a_image_get_buffer(sptr_kinect->m_rgbImageClone);
+        cv::Mat kinectFrame
+            = cv::Mat(h, w, CV_8UC4, (void*)imgData, cv::Mat::AUTO_STEP)
+                  .clone();
+        cv::cvtColor(kinectFrame, frame, cv::COLOR_BGRA2BGR);
+
+        /** detect objects */
+        sptr_intact->detectObjects(classnames, module, frame, img, sptr_intact);
+
         /** release kinect resources */
         sptr_kinect->release();
 
@@ -122,7 +140,7 @@ void sense(
         if (sptr_intact->isStop()) {
             sptr_intact->stop();
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(2));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 }
 
@@ -152,32 +170,6 @@ void cluster(std::shared_ptr<Intact>& sptr_intact)
     const float E = 3.310; // <- epsilon
     const int N = 4;       // <- min points in epsilon neighbourhood
     sptr_intact->cluster(E, N, sptr_intact);
-}
-
-void processImages(std::shared_ptr<Intact>& sptr_intact)
-{
-    /** yolo .v5 object detection modules */
-    const std::string torchScript = io::pwd() + "/resources/torchscript.pt";
-    const std::string cocoNames = io::pwd() + "/resources/coco.names";
-    torch::jit::script::Module module = torch::jit::load(torchScript);
-    std::vector<std::string> classnames;
-    std::ifstream f(cocoNames);
-    std::string name;
-
-    /** parse class names */
-    while (std::getline(f, name)) {
-        classnames.push_back(name);
-    }
-
-    /** get images  */
-    cv::VideoCapture cap = cv::VideoCapture(0);
-    cap.set(cv::CAP_PROP_FRAME_WIDTH, 1920);
-    cap.set(cv::CAP_PROP_FRAME_HEIGHT, 1080);
-    cv::Mat frame, img;
-
-    /** detect objects */
-    sptr_intact->detectObjects(
-        classnames, module, cap, frame, img, sptr_intact);
 }
 
 int main(int argc, char* argv[])
@@ -228,16 +220,12 @@ int main(int argc, char* argv[])
     sptr_intact->getRawColor(); // std::make_shared<std::vector<uint8_t>>
     // ------> do stuff with segmented region of interest here <------
 
-    /** detect objects */
-    std::thread imageWorker(processImages, std::ref(sptr_intact));
-
     senseWorker.join();
     segmentWorker.join();
     renderWorker.join();
     epsilonWorker.join();
     clusterWorker.join();
     calibrateWorker.join();
-    imageWorker.join();
 
     /** snap scene image */
     // io::write(sptr_kinect->m_rgbImage);
