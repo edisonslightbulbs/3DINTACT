@@ -64,3 +64,6 @@
 [submodule "libs/calibration"]
 	path = libs/calibration
 	url = git@github.com:edisonslightbulbs/calibration.git
+[submodule "libs/object-detection"]
+	path = libs/object-detection
+	url = git@github.com:edisonslightbulbs/object-detection.git
