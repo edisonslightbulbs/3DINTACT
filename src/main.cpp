@@ -1,6 +1,8 @@
 #include <chrono>
+#include <opencv2/opencv.hpp>
 #include <string>
 #include <thread>
+#include <torch/script.h>
 
 #include "intact.h"
 #include "io.h"
@@ -152,6 +154,32 @@ void cluster(std::shared_ptr<Intact>& sptr_intact)
     sptr_intact->cluster(E, N, sptr_intact);
 }
 
+void processImages(std::shared_ptr<Intact>& sptr_intact)
+{
+    /** yolo .v5 object detection modules */
+    const std::string torchScript = io::pwd() + "/resources/torchscript.pt";
+    const std::string cocoNames = io::pwd() + "/resources/coco.names";
+    torch::jit::script::Module module = torch::jit::load(torchScript);
+    std::vector<std::string> classnames;
+    std::ifstream f(cocoNames);
+    std::string name;
+
+    /** parse class names */
+    while (std::getline(f, name)) {
+        classnames.push_back(name);
+    }
+
+    /** get images  */
+    cv::VideoCapture cap = cv::VideoCapture(0);
+    cap.set(cv::CAP_PROP_FRAME_WIDTH, 1920);
+    cap.set(cv::CAP_PROP_FRAME_HEIGHT, 1080);
+    cv::Mat frame, img;
+
+    /** detect objects */
+    sptr_intact->detectObjects(
+        classnames, module, cap, frame, img, sptr_intact);
+}
+
 int main(int argc, char* argv[])
 {
     std::cout << "Press ESC to exit." << std::endl;
@@ -200,14 +228,18 @@ int main(int argc, char* argv[])
     sptr_intact->getRawColor(); // std::make_shared<std::vector<uint8_t>>
     // ------> do stuff with segmented region of interest here <------
 
+    /** detect objects */
+    std::thread imageWorker(processImages, std::ref(sptr_intact));
+
     senseWorker.join();
     segmentWorker.join();
     renderWorker.join();
     epsilonWorker.join();
     clusterWorker.join();
     calibrateWorker.join();
+    imageWorker.join();
 
-    /** grab image of scene */
+    /** snap scene image */
     // io::write(sptr_kinect->m_rgbImage);
     return 0;
 }
