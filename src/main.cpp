@@ -8,6 +8,10 @@
 #include "kinect.h"
 #include "logger.h"
 
+
+void chromakey(){
+}
+
 void synchronize(std::shared_ptr<Intact>& sptr_intact,
     const std::vector<float>& raw, const std::vector<uint8_t>& rawColor,
     const std::vector<float>& segment, const std::vector<uint8_t>& segmentColor)
@@ -81,11 +85,6 @@ void configTorch(
 void daq(
     std::shared_ptr<Kinect>& sptr_kinect, std::shared_ptr<Intact>& sptr_intact)
 {
-    /** configure torch for object detection (using yolo) */
-    std::vector<std::string> classNames;
-    torch::jit::script::Module module;
-    configTorch(classNames, module);
-
     bool init = true;
     while (sptr_intact->isRun()) {
 
@@ -120,12 +119,8 @@ void daq(
             acquire(i, segment, segmentColor, data, color);
         }
 
-        /** update share point cloud */
+        /** synchronize point cloud */
         synchronize(sptr_intact, raw, rawColor, segment, segmentColor);
-
-        /** execute object detection */
-        sptr_intact->detectObjects(
-            classNames, module, sptr_kinect->m_rgbImage, sptr_intact);
 
         /** release kinect resources */
         sptr_kinect->release();
@@ -169,6 +164,18 @@ void cluster(std::shared_ptr<Intact>& sptr_intact)
     sptr_intact->cluster(E, N, sptr_intact);
 }
 
+void detect(std::shared_ptr<Intact>& sptr_intact, std::shared_ptr<Kinect>& sptr_kinect)
+{
+    /** configure torch  */
+    std::vector<std::string> classNames;
+    torch::jit::script::Module module;
+    configTorch(classNames, module);
+
+    /** detect objects */
+    sptr_intact->detectObjects(classNames, module, sptr_intact, sptr_kinect);
+
+}
+
 int main(int argc, char* argv[])
 {
     std::cout << "Press ESC to exit." << std::endl;
@@ -199,6 +206,9 @@ int main(int argc, char* argv[])
 
     /** cluster */
     std::thread clusteringWorker(cluster, std::ref(sptr_intact));
+
+    /** find objects */
+    std::thread detectionWorker(detect, std::ref(sptr_intact), std::ref(sptr_kinect));
 
     /** wait for segmentation ~15ms */
     while (!sptr_intact->isSegmented()) {
