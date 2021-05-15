@@ -7,78 +7,9 @@
 #include "io.h"
 #include "kinect.h"
 #include "logger.h"
+#include "utility.hpp"
 
-void synchronize(std::shared_ptr<Intact>& sptr_intact,
-    const std::vector<float>& raw, const std::vector<uint8_t>& rawColor,
-    const std::vector<float>& segment, const std::vector<uint8_t>& segmentColor)
-{
-    sptr_intact->setPcl(raw);
-    sptr_intact->setImg(rawColor);
-    if (sptr_intact->getSegmentBoundary().second.m_xyz[2] == __FLT_MAX__
-        || sptr_intact->getSegmentBoundary().first.m_xyz[2] == __FLT_MIN__) {
-        sptr_intact->setSegmentPcl(raw);
-        sptr_intact->setSegmentImg(rawColor);
-    } else {
-        sptr_intact->setSegmentPcl(segment);
-        sptr_intact->setSegmentImg(segmentColor);
-    }
-}
-
-bool outOfBounds(
-    const int& index, const short* ptr_data, const Point& min, const Point& max)
-{
-    if (max.m_xyz[2] == __FLT_MAX__ || min.m_xyz[2] == __FLT_MIN__) {
-        return true;
-    }
-    if ((float)ptr_data[3 * index + 0] > max.m_xyz[0]
-        || (float)ptr_data[3 * index + 0] < min.m_xyz[0]
-        || (float)ptr_data[3 * index + 1] > max.m_xyz[1]
-        || (float)ptr_data[3 * index + 1] < min.m_xyz[1]
-        || (float)ptr_data[3 * index + 2] > max.m_xyz[2]
-        || (float)ptr_data[3 * index + 2] < min.m_xyz[2]) {
-        return true;
-    }
-    return false;
-}
-
-void acquire(const int& index, std::vector<float>& pcl,
-    std::vector<uint8_t>& pclCol, const short* ptr_data, const uint8_t* ptr_col)
-{
-    pcl[3 * index + 0] = (float)ptr_data[3 * index + 0];
-    pcl[3 * index + 1] = (float)ptr_data[3 * index + 1];
-    pcl[3 * index + 2] = (float)ptr_data[3 * index + 2];
-    /** n.b., kinect colors reversed */
-    pclCol[3 * index + 2] = ptr_col[4 * index + 0];
-    pclCol[3 * index + 1] = ptr_col[4 * index + 1];
-    pclCol[3 * index + 0] = ptr_col[4 * index + 2];
-}
-
-void acquire(const int& index, std::vector<float>& pcl,
-    std::vector<uint8_t>& pclCol, const uint8_t* ptr_col)
-{
-    pcl[3 * index + 0] = 0.0f;
-    pcl[3 * index + 1] = 0.0f;
-    pcl[3 * index + 2] = 0.0f;
-    /** n.b., kinect colors reversed */
-    pclCol[3 * index + 2] = ptr_col[4 * index + 0];
-    pclCol[3 * index + 1] = ptr_col[4 * index + 1];
-    pclCol[3 * index + 0] = ptr_col[4 * index + 2];
-}
-
-void configTorch(
-    std::vector<std::string>& classNames, torch::jit::script::Module& module)
-{
-    const std::string scriptName = io::pwd() + "/resources/torchscript.pt";
-    const std::string cocoNames = io::pwd() + "/resources/coco.names";
-    module = torch::jit::load(scriptName);
-    std::ifstream f(cocoNames);
-    std::string name;
-    while (std::getline(f, name)) {
-        classNames.push_back(name);
-    }
-}
-
-// sense data acquisition
+// image data acquisition
 void daq(
     std::shared_ptr<Kinect>& sptr_kinect, std::shared_ptr<Intact>& sptr_intact)
 {
@@ -94,35 +25,53 @@ void daq(
         std::vector<uint8_t> img(N * 3);
 
         /** initialize segmented point cloud container */
-        std::vector<float> segment(N * 3);
-        std::vector<uint8_t> segmentColor(N * 3);
+        std::vector<float> segmentedPcl(N * 3);
+        std::vector<uint8_t> segmentedImg(N * 3);
+        // std::vector<uint8_t> segmentedImgData(N * 3);
 
-        /** get point cloud */
-        auto* data
+        /** point cloud data */
+        auto* pclData
             = (int16_t*)(void*)k4a_image_get_buffer(sptr_kinect->getPcl());
-        uint8_t* color = k4a_image_get_buffer(sptr_kinect->getRgb2DepthImg());
 
-        /** process point cloud */
+        /** image data (rgb to depth)*/
+        uint8_t* imgData = k4a_image_get_buffer(sptr_kinect->getRgb2DepthImg());
+        uint8_t* data = k4a_image_get_buffer(sptr_kinect->getRgb2DepthImg());
+
         for (int i = 0; i < N; i++) {
-            if (data[3 * i + 2] == 0) {
-                /** zero invalid points */
-                acquire(i, pcl, img, color);
+            /** get raw point cloud */
+            if (pclData[3 * i + 2] == 0) {
+                zeroPoint(i, pcl);
+                zeroPixel(i, img);
+                zeroData(i, data); // todo: [checked]
                 continue;
             }
-            acquire(i, pcl, img, data, color);
+            getPoint(i, pcl, pclData);
+            getPixel(i, img, imgData);
 
-            if (outOfBounds(i, data, sptr_intact->getSegmentBoundary().first,
+            /** get segmented tabletop region */
+            if (outsideSegment(i, pclData,
+                    sptr_intact->getSegmentBoundary().first,
                     sptr_intact->getSegmentBoundary().second)) {
+                zeroData(i, data); // todo: [checked]
                 continue;
             }
-            acquire(i, segment, segmentColor, data, color);
+            getPoint(i, segmentedPcl, pclData);
+            getPixel(i, segmentedImg, imgData);
         }
 
-        /** synchronize point cloud */
-        synchronize(sptr_intact, pcl, img, segment, segmentColor);
+        // todo: [checked]
+        int w = k4a_image_get_width_pixels(sptr_kinect->getDepthImg());
+        int h = k4a_image_get_height_pixels(sptr_kinect->getDepthImg());
+        cv::Mat frame
+            = cv::Mat(h, w, CV_8UC4, (void*)data, cv::Mat::AUTO_STEP).clone();
+        sptr_intact->setSegmentedImgData(frame);
 
         /** release kinect resources */
         sptr_kinect->release();
+
+        /** update tabletop segment */
+        updateSegment(sptr_intact, pcl, img, segmentedPcl,
+            segmentedImg); // todo: [checked]
 
         /** update flow-control semaphore */
         if (init) {
@@ -172,7 +121,7 @@ void detect(
     configTorch(classNames, module);
 
     /** detect objects */
-    sptr_intact->detectObjects(classNames, module, sptr_intact, sptr_kinect);
+    sptr_intact->detectObjects(classNames, module, sptr_intact);
 }
 
 int main(int argc, char* argv[])
@@ -187,50 +136,55 @@ int main(int argc, char* argv[])
     std::shared_ptr<Intact> sptr_intact(new Intact(sptr_kinect->m_numPoints));
     sptr_intact->raiseRunFlag();
 
-    /** sense */
-    std::thread dataAcquisitionWorker(
-        daq, std::ref(sptr_kinect), std::ref(sptr_intact));
+    try {
+        /** sense */
+        std::thread dataAcquisitionWorker(
+            daq, std::ref(sptr_kinect), std::ref(sptr_intact));
 
-    /** calibrate */
-    std::thread calibrationWorker(calibrate, std::ref(sptr_intact));
+        /** calibrate */
+        std::thread calibrationWorker(calibrate, std::ref(sptr_intact));
 
-    /** segment */
-    std::thread segmentationWorker(segment, std::ref(sptr_intact));
+        /** segment */
+        std::thread segmentationWorker(segment, std::ref(sptr_intact));
 
-    /** render */
-    std::thread renderingWorker(render, std::ref(sptr_intact));
+        /** render */
+        std::thread renderingWorker(render, std::ref(sptr_intact));
 
-    /** find epsilon */
-    std::thread epsilonWorker(estimate, std::ref(sptr_intact));
+        /** find epsilon */
+        std::thread epsilonWorker(estimate, std::ref(sptr_intact));
 
-    /** cluster */
-    std::thread clusteringWorker(cluster, std::ref(sptr_intact));
+        /** cluster */
+        std::thread clusteringWorker(cluster, std::ref(sptr_intact));
 
-    /** find objects */
-    std::thread detectionWorker(
-        detect, std::ref(sptr_intact), std::ref(sptr_kinect));
+        /** find objects */
+        std::thread detectionWorker(
+            detect, std::ref(sptr_intact), std::ref(sptr_kinect));
 
-    /** wait for segmentation ~15ms */
-    while (!sptr_intact->isSegmented()) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(3));
+        /** wait for segmentation ~15ms */
+        while (!sptr_intact->isSegmented()) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(3));
+        }
+
+        // ------> do stuff with raw point cloud and segment <------
+        // ..... access pcl and use it
+        sptr_intact->getPcl(); // std::make_shared<std::vector<float>>
+        sptr_intact->getImg(); // std::make_shared<std::vector<uint8_t>>
+        sptr_intact->getSegmentedPcl(); // std::make_shared<std::vector<float>>
+        sptr_intact
+            ->getSegmentedImg(); // std::make_shared<std::vector<uint8_t>>
+        // ------> do stuff with raw point cloud and segment <------
+
+        dataAcquisitionWorker.join();
+        segmentationWorker.join();
+        renderingWorker.join();
+        epsilonWorker.join();
+        clusteringWorker.join();
+        calibrationWorker.join();
+        return 0;
+
+    } catch (...) {
+        sptr_kinect->release();
+        // sptr_kinect->releaseClones();
+        return -1;
     }
-
-    // ------> do stuff with raw point cloud and segment <------
-    // ..... access pcl and use it
-    sptr_intact->getPcl();        // std::make_shared<std::vector<float>>
-    sptr_intact->getImg();        // std::make_shared<std::vector<uint8_t>>
-    sptr_intact->getSegmentPcl(); // std::make_shared<std::vector<float>>
-    sptr_intact->getSegmentImg(); // std::make_shared<std::vector<uint8_t>>
-    // ------> do stuff with raw point cloud and segment <------
-
-    dataAcquisitionWorker.join();
-    segmentationWorker.join();
-    renderingWorker.join();
-    epsilonWorker.join();
-    clusteringWorker.join();
-    calibrationWorker.join();
-
-    /** snap scene image */
-    // io::write(sptr_kinect->m_rgbImage);
-    return 0;
 }
