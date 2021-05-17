@@ -71,10 +71,6 @@ void updateSegment(std::shared_ptr<Intact>& sptr_intact,
     const std::vector<float>& segmentPcl,
     const std::vector<uint8_t>& segmentImg)
 {
-    sptr_intact->setPcl(pcl);
-    sptr_intact->setImg(img);
-    // sptr_intact->setSegmentedImgData(segmentedImgData); // todo: [checked]
-
     if (sptr_intact->getSegmentBoundary().second.m_xyz[2] == __FLT_MAX__
         || sptr_intact->getSegmentBoundary().first.m_xyz[2] == __FLT_MIN__) {
         sptr_intact->setSegmentedPcl(pcl);
