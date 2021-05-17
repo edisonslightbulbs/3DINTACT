@@ -36,12 +36,19 @@ void getPixel(
     img[3 * index + 0] = ptr_data[4 * index + 2];
 }
 
-void zeroData(const int& index, uint8_t* data)
+void zeroPixelData(const int& index, uint8_t* ptr_data)
 {
-    data[4 * index + 0] = 0; // blue
-    data[4 * index + 1] = 0; // green
-    data[4 * index + 2] = 0; // red
-    data[4 * index + 3] = 0; // alpha
+    ptr_data[4 * index + 0] = 0; // blue
+    ptr_data[4 * index + 1] = 0; // green
+    ptr_data[4 * index + 2] = 0; // red
+    ptr_data[4 * index + 3] = 0; // alpha
+}
+
+void zeroPointData(const int& index, int16_t* ptr_data)
+{
+    ptr_data[3 * index + 0] = 0; // x
+    ptr_data[3 * index + 1] = 0; // y
+    ptr_data[3 * index + 2] = 0; // z
 }
 
 void zeroPoint(const int& index, std::vector<float>& pcl)
@@ -58,14 +65,6 @@ void zeroPixel(const int& index, std::vector<uint8_t>& img)
     img[3 * index + 0] = 0;
 }
 
-void getPixelData(
-    const int& index, std::vector<uint8_t>& img, const uint8_t* ptr_data)
-{
-    img[4 * index + 0] = ptr_data[4 * index + 0];
-    img[4 * index + 1] = ptr_data[4 * index + 1];
-    img[4 * index + 2] = ptr_data[4 * index + 2];
-    img[4 * index + 3] = ptr_data[4 * index + 3];
-}
 void updateSegment(std::shared_ptr<Intact>& sptr_intact,
     const std::vector<float>& pcl, const std::vector<uint8_t>& img,
     const std::vector<float>& segmentPcl,
