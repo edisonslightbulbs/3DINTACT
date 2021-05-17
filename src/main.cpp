@@ -13,11 +13,7 @@
 void daq(
     std::shared_ptr<Kinect>& sptr_kinect, std::shared_ptr<Intact>& sptr_intact)
 {
-    int pclSize = sptr_intact->getNumPoints() * 3; // x, y, z
-    int imgSize = sptr_intact->getNumPoints() * 4; // r, g, b, a
-    // auto* ptr_pclData = (int16_t*)malloc(sizeof(int16_t) * pclSize);
-    // auto* ptr_imgData = (uint8_t*)malloc(sizeof(uint8_t) * imgSize);
-    // auto* ptr_segmentedImgData = (uint8_t*)malloc(sizeof(uint8_t) * imgSize);
+    int size = sptr_intact->getNumPoints() * 3;
 
     bool init = true;
     while (sptr_intact->isRun()) {
@@ -28,69 +24,61 @@ void daq(
         int width = k4a_image_get_width_pixels(sptr_kinect->getDepthImg());
         int height = k4a_image_get_height_pixels(sptr_kinect->getDepthImg());
 
-        // std::memcpy(ptr_pclData,
-        // (int16_t*)(void*)k4a_image_get_buffer(sptr_kinect->getPcl()),
-        // sizeof(uint16_t) * pclSize); std::memcpy(ptr_imgData,
-        // k4a_image_get_buffer(sptr_kinect->getRgb2DepthImg()), sizeof(uint8_t)
-        // * imgSize); std::memcpy(ptr_segmentedImgData,
-        // k4a_image_get_buffer(sptr_kinect->getRgb2DepthImg()), sizeof(uint8_t)
-        // * imgSize);
-
         /** std structures for arithmetic computations */
-        std::vector<float> pcl(pclSize);   // raw point-cloud vector
-        std::vector<uint8_t> img(pclSize); // raw image vector
-        std::vector<float> segmentedPcl(
-            pclSize); // segmented point-cloud vector
-        std::vector<uint8_t> segmentedImg(pclSize); // segmented image vector
+        std::vector<float> pclVec(size);            // raw pcl
+        std::vector<uint8_t> imgVec(size);          // raw img
+        std::vector<float> segmentedPclVec(size);   // segmented pcl
+        std::vector<uint8_t> segmentedImgVec(size); // segmented img
 
         auto* ptr_pclData
             = (int16_t*)(void*)k4a_image_get_buffer(sptr_kinect->getPcl());
         auto* ptr_imgData
             = k4a_image_get_buffer(sptr_kinect->getRgb2DepthImg());
-        auto* ptr_segmentedImgData
-            = k4a_image_get_buffer(sptr_kinect->getRgb2DepthImg());
 
-        /** populate data structures */
+        /** assert valid data */
         for (int i = 0; i < sptr_intact->getNumPoints(); i++) {
             if (ptr_pclData[3 * i + 2] == 0) {
-                zeroPoint(i, pcl);
-                zeroPixel(i, img);
-                zeroData(i, ptr_segmentedImgData);
+                zeroPoint(i, pclVec);
+                zeroPixel(i, imgVec);
+                zeroPointData(i, ptr_pclData);
+                zeroPixelData(i, ptr_imgData);
                 continue;
             }
-            getPoint(i, pcl, ptr_pclData);
-            getPixel(i, img, ptr_imgData);
+            getPoint(i, pclVec, ptr_pclData);
+            getPixel(i, imgVec, ptr_imgData);
 
-            /** filter segment */
+            /** segment tabletop surface */
             if (outsideSegment(i, ptr_pclData,
                     sptr_intact->getSegmentBoundary().first,
                     sptr_intact->getSegmentBoundary().second)) {
-                zeroData(i, ptr_segmentedImgData);
+                zeroPointData(i, ptr_pclData);
+                zeroPixelData(i, ptr_imgData);
                 continue;
             }
-            getPoint(i, segmentedPcl, ptr_pclData);
-            getPixel(i, segmentedImg, ptr_imgData);
+            getPoint(i, segmentedPclVec, ptr_pclData);
+            getPixel(i, segmentedImgVec, ptr_imgData);
         }
 
         /** create image for segmented tabletop in cv::Mat format */
-        cv::Mat frame = cv::Mat(height, width, CV_8UC4,
-            (void*)ptr_segmentedImgData, cv::Mat::AUTO_STEP)
+        cv::Mat frame = cv::Mat(
+            height, width, CV_8UC4, (void*)ptr_imgData, cv::Mat::AUTO_STEP)
                             .clone();
 
         /** pass raw data to API */
-        sptr_intact->setPcl(pcl);
-        sptr_intact->setImg(img);
-        sptr_intact->setImgData(ptr_imgData);
-        sptr_intact->setPclData(ptr_pclData);
-        sptr_intact->setSegmentedImgFrame(frame);
+        sptr_intact->setPclVec(pclVec);
+        sptr_intact->setImgVec(imgVec);
         sptr_intact->setDepthImgWidth(width);
         sptr_intact->setDepthImgHeight(height);
+        sptr_intact->setSegmentedImgFrame(frame);
+        sptr_intact->setSegmentedImgData(ptr_imgData);
+        sptr_intact->setSegmentedPclData(ptr_pclData);
+
+        /** update tabletop segment */
+        updateSegment(
+            sptr_intact, pclVec, imgVec, segmentedPclVec, segmentedImgVec);
 
         /** release kinect resources */
         sptr_kinect->release();
-
-        /** update tabletop segment */
-        updateSegment(sptr_intact, pcl, img, segmentedPcl, segmentedImg);
 
         /** update flow-control semaphore */
         if (init) {
@@ -131,60 +119,16 @@ void cluster(std::shared_ptr<Intact>& sptr_intact)
     sptr_intact->cluster(E, N, sptr_intact);
 }
 
-#define CHROMAKEY 0
+#define CHROMAKEY 1
 void chromakey(std::shared_ptr<Intact>& sptr_intact)
 {
 #if CHROMAKEY == 1
     bool init = true;
-    while (sptr_intact->isRun()) {
-
-        const int N = sptr_intact->getNumPoints();
-
-        // /** initialize segmented point cloud container */
-        // std::vector<float> tabletopPcl(N * 3);
-        // std::vector<uint8_t> tabletopImg(N * 3);
-
-        /** get point cloud and image data */
-        int16_t* tabletopPclData = *sptr_intact->getPclData();
-        uint8_t* tabletopImgData = *sptr_intact->getImgData();
-
-        // for (int i = 0; i < N; i++) {
-        //     /** get raw point cloud */
-        //     if (tabletopPclData[3 * i + 2] == 0) {
-        //         //zeroPoint(i, pcl);
-        //         //zeroPixel(i, img);
-        //         //zeroData(i, tabletopImgData); // todo: [checked]
-        //         continue;
-        //     }
-        //     //getPoint(i, pcl, pclData);
-        //     //getPixel(i, img, imgData);
-
-        //     /** get segmented tabletop region */
-        //     if (outsideSegment(i, tabletopPclData,
-        //                        sptr_intact->getSegmentBoundary().first,
-        //                        sptr_intact->getSegmentBoundary().second)) {
-        //         //zeroData(i, tabletopImgData); // todo: [checked]
-        //         continue;
-        //     }
-        //     // getPoint(i, segmentedPcl, pclData);
-        //     // getPixel(i, segmentedImg, imgData);
-        // }
-
-        //   // todo: [checked]
-        // uint8
-        int w = sptr_intact->getDepthImgWidth();
-        int h = sptr_intact->getDepthImgHeight();
-        cv::Mat frame
-            = cv::Mat(h, w, CV_8UC4, (void*)tabletopImgData, cv::Mat::AUTO_STEP)
-                  .clone();
-        sptr_intact->setTabletopImgData(frame);
-
-        /** update flow-control semaphore */
-        if (init) {
-            init = false;
-            sptr_intact->raiseChromakeyedFlag();
-        }
+    while (!sptr_intact->isClustered()) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(3));
     }
+
+    while (sptr_intact->isRun()) { }
 #endif
 }
 
