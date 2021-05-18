@@ -15,7 +15,9 @@ void daq(
 {
     int size = sptr_intact->getNumPoints() * 3;
     int imgSize = sptr_intact->getNumPoints() * 4; // r, g, b, a
+    int pclSize = sptr_intact->getNumPoints() * 3; // x, y, z
     auto* ptr_segmentedImgData = (uint8_t*)malloc(sizeof(uint8_t) * imgSize);
+    auto* ptr_segmentedPclData = (int16_t*)malloc(sizeof(int16_t) * pclSize);
 
     bool init = true;
     while (sptr_intact->isRun()) {
@@ -71,9 +73,10 @@ void daq(
         sptr_intact->setDepthImgWidth(width);
         sptr_intact->setDepthImgHeight(height);
         sptr_intact->setSegmentedImgFrame(frame);
-        sptr_intact->setSegmentedPclData(ptr_pclData);
         sptr_intact->setSegmentedImgData(
             ptr_segmentedImgData, ptr_imgData, imgSize);
+        sptr_intact->setSegmentedPclData(
+            ptr_segmentedPclData, ptr_pclData, pclSize);
 
         /** update tabletop segment */
         updateSegment(
