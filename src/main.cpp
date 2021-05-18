@@ -7,7 +7,7 @@
 #include "io.h"
 #include "kinect.h"
 #include "logger.h"
-#include "utility.hpp"
+#include "utils.hpp"
 
 // main loop for getting pcl and rgba image data
 void daq(
@@ -68,15 +68,13 @@ void daq(
                             .clone();
 
         /** pass raw data to API */
-        sptr_intact->setPclVec(pclVec);
-        sptr_intact->setImgVec(imgVec);
+        sptr_intact->setRawPcl(pclVec);
+        sptr_intact->setRawImg(imgVec);
         sptr_intact->setDepthImgWidth(width);
         sptr_intact->setDepthImgHeight(height);
-        sptr_intact->setSegmentedImgFrame(frame);
-        sptr_intact->setSegmentedImgData(
-            ptr_segmentedImgData, ptr_imgData, imgSize);
-        sptr_intact->setSegmentedPclData(
-            ptr_segmentedPclData, ptr_pclData, pclSize);
+        sptr_intact->setSegFrame(frame);
+        sptr_intact->setSegImgBuf(ptr_segmentedImgData, ptr_imgData, imgSize);
+        sptr_intact->setSegPclBuf(ptr_segmentedPclData, ptr_pclData, pclSize);
 
         /** update tabletop segment */
         updateSegment(
@@ -179,10 +177,10 @@ int main(int argc, char* argv[])
     std::thread detectionWorker(detect, std::ref(sptr_intact));
 
     // ------> do stuff with raw point cloud and segment <------
-    sptr_intact->getPcl();          // raw point cloud
-    sptr_intact->getImg();          // raw rgb image
-    sptr_intact->getSegmentedPcl(); // segmented point cloud
-    sptr_intact->getSegmentedImg(); // segmented rgb image
+    sptr_intact->getRawPcl(); // raw point cloud
+    sptr_intact->getRawImg(); // raw rgb image
+    sptr_intact->getSegPcl(); // segmented point cloud
+    sptr_intact->getSegImg(); // segmented rgb image
     // ------> do stuff with raw point cloud and segment <------
 
     dataAcquisitionWorker.join();
