@@ -14,6 +14,8 @@ void daq(
     std::shared_ptr<Kinect>& sptr_kinect, std::shared_ptr<Intact>& sptr_intact)
 {
     int size = sptr_intact->getNumPoints() * 3;
+    int imgSize = sptr_intact->getNumPoints() * 4; // r, g, b, a
+    auto* ptr_segmentedImgData = (uint8_t*)malloc(sizeof(uint8_t) * imgSize);
 
     bool init = true;
     while (sptr_intact->isRun()) {
@@ -58,7 +60,6 @@ void daq(
             getPoint(i, segmentedPclVec, ptr_pclData);
             getPixel(i, segmentedImgVec, ptr_imgData);
         }
-
         /** create image for segmented tabletop in cv::Mat format */
         cv::Mat frame = cv::Mat(
             height, width, CV_8UC4, (void*)ptr_imgData, cv::Mat::AUTO_STEP)
@@ -70,8 +71,9 @@ void daq(
         sptr_intact->setDepthImgWidth(width);
         sptr_intact->setDepthImgHeight(height);
         sptr_intact->setSegmentedImgFrame(frame);
-        sptr_intact->setSegmentedImgData(ptr_imgData);
         sptr_intact->setSegmentedPclData(ptr_pclData);
+        sptr_intact->setSegmentedImgData(
+            ptr_segmentedImgData, ptr_imgData, imgSize);
 
         /** update tabletop segment */
         updateSegment(
@@ -88,6 +90,7 @@ void daq(
         if (sptr_intact->isStop()) {
             sptr_intact->stop();
         }
+        std::this_thread::sleep_for(std::chrono::microseconds(500));
     }
 }
 
@@ -119,17 +122,9 @@ void cluster(std::shared_ptr<Intact>& sptr_intact)
     sptr_intact->cluster(E, N, sptr_intact);
 }
 
-#define CHROMAKEY 1
 void chromakey(std::shared_ptr<Intact>& sptr_intact)
 {
-#if CHROMAKEY == 1
-    bool init = true;
-    while (!sptr_intact->isClustered()) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(3));
-    }
-
-    while (sptr_intact->isRun()) { }
-#endif
+    sptr_intact->chroma(sptr_intact);
 }
 
 void detect(std::shared_ptr<Intact>& sptr_intact)
@@ -173,11 +168,6 @@ int main(int argc, char* argv[])
 
     /** cluster */
     std::thread clusteringWorker(cluster, std::ref(sptr_intact));
-
-    /** wait for completion of segmentation task */
-    while (!sptr_intact->isSegmented()) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(3));
-    }
 
     /** chromakey */
     std::thread chromakeyWorker(chromakey, std::ref(sptr_intact));
