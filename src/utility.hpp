@@ -20,7 +20,8 @@ void configTorch(
     }
 }
 
-void getPoint(const int& index, std::vector<float>& pcl, const short* ptr_data)
+void getPoint(
+    const int& index, std::vector<float>& pcl, const int16_t* ptr_data)
 {
     pcl[3 * index + 0] = (float)ptr_data[3 * index + 0];
     pcl[3 * index + 1] = (float)ptr_data[3 * index + 1];
