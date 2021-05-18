@@ -55,12 +55,24 @@
 [submodule "libs/region"]
 	path = libs/region
 	url = git@github.com:edisonslightbulbs/region.git
+    branch = main
 [submodule "libs/cast"]
 	path = libs/cast
 	url = git@github.com:edisonslightbulbs/cast.git
+    branch = main
 [submodule "libs/surface"]
 	path = libs/surface
 	url = git@github.com:edisonslightbulbs/surface.git
+    branch = main
 [submodule "libs/calibration"]
 	path = libs/calibration
 	url = git@github.com:edisonslightbulbs/calibration.git
+    branch = main
+[submodule "libs/object-detection"]
+	path = libs/object-detection
+	url = git@github.com:edisonslightbulbs/object-detection.git
+    branch = main
+[submodule "libs/searcher"]
+	path = libs/searcher
+	url = git@github.com:edisonslightbulbs/searcher.git
+    branch = main
