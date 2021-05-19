@@ -8,10 +8,6 @@
     url = https://github.com/jlblancoc/nanoflann.git
     branch = master
     ignore = dirty
-[submodule "libs/utility"]
-    path = libs/utility
-    url = git@github.com:edisonslightbulbs/utility.git
-    branch = main
 [submodule "libs/kinect"]
     path = libs/kinect
     url = git@github.com:edisonslightbulbs/kinect.git
@@ -76,3 +72,6 @@
 	path = libs/searcher
 	url = git@github.com:edisonslightbulbs/searcher.git
     branch = main
+[submodule "libs/utility"]
+	path = libs/utility
+	url = git@github.com:edisonslightbulbs/utility.git

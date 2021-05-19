@@ -3,11 +3,11 @@
 #include <thread>
 #include <torch/script.h>
 
+#include "helpers.hpp"
 #include "intact.h"
 #include "io.h"
 #include "kinect.h"
 #include "logger.h"
-#include "utility.hpp"
 
 // main loop for getting pcl and rgba image data
 void daq(
@@ -44,19 +44,18 @@ void daq(
             if (ptr_pclData[3 * i + 2] == 0) {
                 zeroPoint(i, pclVec);
                 zeroPixel(i, imgVec);
-                zeroPointData(i, ptr_pclData);
-                zeroPixelData(i, ptr_imgData);
+                zeroPoint(i, ptr_pclData);
+                zeroPixel(i, ptr_imgData);
                 continue;
             }
             getPoint(i, pclVec, ptr_pclData);
             getPixel(i, imgVec, ptr_imgData);
 
             /** segment tabletop surface */
-            if (outsideSegment(i, ptr_pclData,
-                    sptr_intact->getSegmentBoundary().first,
-                    sptr_intact->getSegmentBoundary().second)) {
-                zeroPointData(i, ptr_pclData);
-                zeroPixelData(i, ptr_imgData);
+            if (!inSegment(i, ptr_pclData, sptr_intact->getSegBoundary().first,
+                    sptr_intact->getSegBoundary().second)) {
+                zeroPoint(i, ptr_pclData);
+                zeroPixel(i, ptr_imgData);
                 continue;
             }
             getPoint(i, segmentedPclVec, ptr_pclData);
@@ -68,15 +67,13 @@ void daq(
                             .clone();
 
         /** pass raw data to API */
-        sptr_intact->setPclVec(pclVec);
-        sptr_intact->setImgVec(imgVec);
+        sptr_intact->setRawPcl(pclVec);
+        sptr_intact->setRawImg(imgVec);
         sptr_intact->setDepthImgWidth(width);
         sptr_intact->setDepthImgHeight(height);
-        sptr_intact->setSegmentedImgFrame(frame);
-        sptr_intact->setSegmentedImgData(
-            ptr_segmentedImgData, ptr_imgData, imgSize);
-        sptr_intact->setSegmentedPclData(
-            ptr_segmentedPclData, ptr_pclData, pclSize);
+        sptr_intact->setSegFrame(frame);
+        sptr_intact->setSegImgBuf(ptr_segmentedImgData, ptr_imgData, imgSize);
+        sptr_intact->setSegPclBuf(ptr_segmentedPclData, ptr_pclData, pclSize);
 
         /** update tabletop segment */
         updateSegment(
@@ -93,7 +90,6 @@ void daq(
         if (sptr_intact->isStop()) {
             sptr_intact->stop();
         }
-        std::this_thread::sleep_for(std::chrono::microseconds(500));
     }
 }
 
@@ -115,7 +111,7 @@ void render(std::shared_ptr<Intact>& sptr_intact)
 void estimate(std::shared_ptr<Intact>& sptr_intact)
 {
     const int K = 5; // <- kth nearest neighbour [ core + 4 nn ]
-    sptr_intact->estimateEpsilon(K, sptr_intact);
+    sptr_intact->approxEpsilon(K, sptr_intact);
 }
 
 void cluster(std::shared_ptr<Intact>& sptr_intact)
@@ -179,10 +175,10 @@ int main(int argc, char* argv[])
     std::thread detectionWorker(detect, std::ref(sptr_intact));
 
     // ------> do stuff with raw point cloud and segment <------
-    sptr_intact->getPcl();          // raw point cloud
-    sptr_intact->getImg();          // raw rgb image
-    sptr_intact->getSegmentedPcl(); // segmented point cloud
-    sptr_intact->getSegmentedImg(); // segmented rgb image
+    sptr_intact->getRawPcl(); // raw point cloud
+    sptr_intact->getRawImg(); // raw rgb image
+    sptr_intact->getSegPcl(); // segmented point cloud
+    sptr_intact->getSegImg(); // segmented rgb image
     // ------> do stuff with raw point cloud and segment <------
 
     dataAcquisitionWorker.join();
