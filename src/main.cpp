@@ -3,11 +3,11 @@
 #include <thread>
 #include <torch/script.h>
 
+#include "helpers.hpp"
 #include "intact.h"
 #include "io.h"
 #include "kinect.h"
 #include "logger.h"
-#include "utils.hpp"
 
 // main loop for getting pcl and rgba image data
 void daq(
@@ -44,19 +44,19 @@ void daq(
             if (ptr_pclData[3 * i + 2] == 0) {
                 zeroPoint(i, pclVec);
                 zeroPixel(i, imgVec);
-                zeroPointData(i, ptr_pclData);
-                zeroPixelData(i, ptr_imgData);
+                zeroPoint(i, ptr_pclData);
+                zeroPixel(i, ptr_imgData);
                 continue;
             }
             getPoint(i, pclVec, ptr_pclData);
             getPixel(i, imgVec, ptr_imgData);
 
             /** segment tabletop surface */
-            if (outsideSegment(i, ptr_pclData,
+            if (!inSegment(i, ptr_pclData,
                     sptr_intact->getSegmentBoundary().first,
                     sptr_intact->getSegmentBoundary().second)) {
-                zeroPointData(i, ptr_pclData);
-                zeroPixelData(i, ptr_imgData);
+                zeroPoint(i, ptr_pclData);
+                zeroPixel(i, ptr_imgData);
                 continue;
             }
             getPoint(i, segmentedPclVec, ptr_pclData);
@@ -91,7 +91,6 @@ void daq(
         if (sptr_intact->isStop()) {
             sptr_intact->stop();
         }
-        std::this_thread::sleep_for(std::chrono::microseconds(500));
     }
 }
 
@@ -113,7 +112,7 @@ void render(std::shared_ptr<Intact>& sptr_intact)
 void estimate(std::shared_ptr<Intact>& sptr_intact)
 {
     const int K = 5; // <- kth nearest neighbour [ core + 4 nn ]
-    sptr_intact->estimateEpsilon(K, sptr_intact);
+    sptr_intact->approxEpsilon(K, sptr_intact);
 }
 
 void cluster(std::shared_ptr<Intact>& sptr_intact)
