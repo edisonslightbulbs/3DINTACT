@@ -52,9 +52,8 @@ void daq(
             getPixel(i, imgVec, ptr_imgData);
 
             /** segment tabletop surface */
-            if (!inSegment(i, ptr_pclData,
-                    sptr_intact->getSegmentBoundary().first,
-                    sptr_intact->getSegmentBoundary().second)) {
+            if (!inSegment(i, ptr_pclData, sptr_intact->getSegBoundary().first,
+                    sptr_intact->getSegBoundary().second)) {
                 zeroPoint(i, ptr_pclData);
                 zeroPixel(i, ptr_imgData);
                 continue;
