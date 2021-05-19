@@ -6,6 +6,7 @@
 #include <torch/script.h>
 
 #include "intact.h"
+#include "io.h"
 
 void configTorch(
     std::vector<std::string>& classNames, torch::jit::script::Module& module)
