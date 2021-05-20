@@ -110,15 +110,15 @@ void render(std::shared_ptr<Intact>& sptr_intact)
 
 void estimate(std::shared_ptr<Intact>& sptr_intact)
 {
-    const int K = 5; // <- kth nearest neighbour [ core + 4 nn ]
+    const int K = 5; // <- k nearest neighbours + core
     sptr_intact->approxEpsilon(K, sptr_intact);
 }
 
 void cluster(std::shared_ptr<Intact>& sptr_intact)
 {
-    const float E = 3.310; // <- epsilon
-    const int N = 4;       // <- min points in epsilon neighbourhood
-    sptr_intact->cluster(E, N, sptr_intact);
+    int minPoints = 4;
+    const float epsilon = 3.208;
+    sptr_intact->cluster(epsilon, minPoints, sptr_intact);
 }
 
 void chromakey(std::shared_ptr<Intact>& sptr_intact)
