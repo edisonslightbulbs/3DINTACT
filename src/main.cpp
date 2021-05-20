@@ -150,7 +150,7 @@ int main(int argc, char* argv[])
     sptr_intact->raiseRunFlag();
 
     /** get image and point cloud data */
-    std::thread dataAcquisitionWorker(
+    std::thread kinectWorker(
         daq, std::ref(sptr_kinect), std::ref(sptr_intact));
 
     /** calibrate */
@@ -181,7 +181,7 @@ int main(int argc, char* argv[])
     sptr_intact->getSegImg(); // segmented rgb image
     // ------> do stuff with raw point cloud and segment <------
 
-    dataAcquisitionWorker.join();
+    kinectWorker.join();
     calibrationWorker.join();
     segmentationWorker.join();
     renderingWorker.join();
