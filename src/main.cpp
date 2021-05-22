@@ -35,11 +35,6 @@ void cluster(std::shared_ptr<Intact>& sptr_intact)
     sptr_intact->cluster(epsilon, minPoints, sptr_intact);
 }
 
-// void chromakey(std::shared_ptr<Intact>& sptr_intact)
-// {
-//     sptr_intact->chroma(sptr_intact);
-// }
-
 void siftSegment(std::shared_ptr<Intact>& sptr_intact)
 {
     int numPts = sptr_intact->m_numPts;
@@ -84,7 +79,7 @@ void siftSegment(std::shared_ptr<Intact>& sptr_intact)
             pcl.emplace_back(point);
         }
 
-        sptr_intact->setIntactPts(pcl);
+        // sptr_intact->setIntactPts(pcl);
         sptr_intact->setIntactPcl(pclBuf);
         sptr_intact->setIntactImg_GL(imgBuf_GL);
         sptr_intact->setIntactImg_CV(imgBuf_CV);
@@ -171,26 +166,19 @@ int main(int argc, char* argv[])
     // sift segment
     std::thread siftSegmentWorker(siftSegment, std::ref(sptr_intact));
 
-    /** cluster */
-    // std::thread clusteringWorker(cluster, std::ref(sptr_intact));
-
-    /** chromakey */
-    // std::thread chromakeyWorker(chromakey, std::ref(sptr_intact));
+    // cluster
+    std::thread clusterWorker(cluster, std::ref(sptr_intact));
 
     k4aCaptureWorker.join();
     renderWorker.join();
     // detectWorker.join();
     segmentWorker.join();
     siftSegmentWorker.join();
-    // clusteringWorker.join();
-    // chromakeyWorker.join();
+    clusterWorker.join();
 
-    // ------> do stuff with raw point cloud and segment <------
-    // sptr_intact->getRawPcl(); // raw point cloud
-    // sptr_intact->getRawImg(); // raw rgb image
-    // sptr_intact->getSegPcl(); // segmented point cloud
-    // sptr_intact->getSegImg(); // segmented rgb image
-    // ------> do stuff with raw point cloud and segment <------
+    // ------> do stuff with tabletop environment <------
+
+    // ------> do stuff with tabletop environment <------
 
     return 0;
 }
