@@ -21,80 +21,100 @@ void configTorch(
     }
 }
 
-void getPoint(
-    const int& index, std::vector<float>& pcl, const int16_t* ptr_data)
+void adapt(const int& index, Point& point, const int16_t* ptr_pcl,
+    const uint8_t* ptr_img)
 {
-    pcl[3 * index + 0] = (float)ptr_data[3 * index + 0];
-    pcl[3 * index + 1] = (float)ptr_data[3 * index + 1];
-    pcl[3 * index + 2] = (float)ptr_data[3 * index + 2];
+
+    int16_t x = ptr_pcl[3 * index + 0];
+    int16_t y = ptr_pcl[3 * index + 1];
+    int16_t z = ptr_pcl[3 * index + 2];
+
+    uint8_t r = ptr_img[4 * index + 2];
+    uint8_t g = ptr_img[4 * index + 1];
+    uint8_t b = ptr_img[4 * index + 0];
+    uint8_t a = ptr_img[4 * index + 3];
+
+    int16_t xyz[3] = { x, y, z };
+    uint8_t rgb[3] = { r, g, b };
+    uint8_t bgra[4] = { b, g, r, a };
+
+    point.setPoint(xyz);
+    point.setPixel_GL(rgb);
+    point.setPixel_CV(bgra);
 }
 
-void getPixel(
-    const int& index, std::vector<uint8_t>& img, const uint8_t* ptr_data)
+bool isZero(const int& index, const int16_t* ptr_pcl, const uint8_t* ptr_img)
 {
-    /** n.b., kinect colors reversed */
-    img[3 * index + 2] = ptr_data[4 * index + 0];
-    img[3 * index + 1] = ptr_data[4 * index + 1];
-    img[3 * index + 0] = ptr_data[4 * index + 2];
-}
-
-void zeroPixel(const int& index, uint8_t* ptr_data)
-{
-    ptr_data[4 * index + 0] = 0; // blue
-    ptr_data[4 * index + 1] = 0; // green
-    ptr_data[4 * index + 2] = 0; // red
-    ptr_data[4 * index + 3] = 0; // alpha
-}
-
-void zeroPoint(const int& index, int16_t* ptr_data)
-{
-    ptr_data[3 * index + 0] = 0; // x
-    ptr_data[3 * index + 1] = 0; // y
-    ptr_data[3 * index + 2] = 0; // z
-}
-
-void zeroPoint(const int& index, std::vector<float>& pcl)
-{
-    pcl[3 * index + 0] = 0.0f;
-    pcl[3 * index + 1] = 0.0f;
-    pcl[3 * index + 2] = 0.0f;
-}
-
-void zeroPixel(const int& index, std::vector<uint8_t>& img)
-{
-    img[3 * index + 2] = 0;
-    img[3 * index + 1] = 0;
-    img[3 * index + 0] = 0;
-}
-
-
-void updateSegment(std::shared_ptr<Intact>& sptr_intact,
-    const std::vector<float>& pcl, const std::vector<uint8_t>& img,
-    const std::vector<float>& segmentPcl,
-    const std::vector<uint8_t>& segmentImg)
-{
-    if (sptr_intact->getSegBoundary().second.m_xyz[2] == __FLT_MAX__
-        || sptr_intact->getSegBoundary().first.m_xyz[2] == __FLT_MIN__) {
-        sptr_intact->setSegPcl(pcl);
-        sptr_intact->setSegImg(img);
-    } else {
-        sptr_intact->setSegPcl(segmentPcl);
-        sptr_intact->setSegImg(segmentImg);
+    if (ptr_pcl[3 * index + 0] == 0 && ptr_pcl[3 * index + 1] == 0
+        && ptr_pcl[3 * index + 2] == 0) {
+        return true;
     }
+
+    if (ptr_img[4 * index + 0] == 0 && ptr_img[4 * index + 1] == 0
+        && ptr_img[4 * index + 2] == 0 && ptr_img[4 * index + 3] == 0) {
+        return true;
+    }
+    return false;
+}
+
+void zeroPoint(const int& index, int16_t* ptr_pcl)
+{
+    ptr_pcl[3 * index + 0] = 0;
+    ptr_pcl[3 * index + 1] = 0;
+    ptr_pcl[3 * index + 2] = 0;
+}
+
+void addPoint(const int& index, const int16_t* ptr_pclSrc, int16_t* ptr_pclDest)
+{
+    ptr_pclDest[3 * index + 0] = ptr_pclSrc[3 * index + 0];
+    ptr_pclDest[3 * index + 1] = ptr_pclSrc[3 * index + 1];
+    ptr_pclDest[3 * index + 2] = ptr_pclSrc[3 * index + 2];
+}
+
+void addPixel_CV(
+    const int& index, const uint8_t* ptr_imgSrc, uint8_t* ptr_imgDest)
+{
+    ptr_imgDest[4 * index + 0] = ptr_imgSrc[4 * index + 0];
+    ptr_imgDest[4 * index + 1] = ptr_imgSrc[4 * index + 1];
+    ptr_imgDest[4 * index + 2] = ptr_imgSrc[4 * index + 2];
+    ptr_imgDest[4 * index + 3] = ptr_imgSrc[4 * index + 3];
+}
+
+void addPixel_GL(
+    const int& index, const uint8_t* ptr_imgSrc, uint8_t* ptr_imgDest)
+{
+    ptr_imgDest[3 * index + 2] = ptr_imgSrc[4 * index + 0];
+    ptr_imgDest[3 * index + 1] = ptr_imgSrc[4 * index + 1];
+    ptr_imgDest[3 * index + 0] = ptr_imgSrc[4 * index + 2];
+}
+
+void zeroPixel_CV(const int& index, uint8_t* ptr_img)
+{
+    ptr_img[4 * index + 0] = 0; // blue
+    ptr_img[4 * index + 1] = 0; // green
+    ptr_img[4 * index + 2] = 0; // red
+    ptr_img[4 * index + 3] = 0; // alpha
+}
+
+void zeroPixel_GL(const int& index, uint8_t* ptr_img)
+{
+    ptr_img[3 * index + 0] = 0; // blue
+    ptr_img[3 * index + 1] = 0; // green
+    ptr_img[3 * index + 2] = 0; // red
 }
 
 bool inSegment(
     const int& index, const short* ptr_data, const Point& min, const Point& max)
 {
-    if (max.m_xyz[2] == __FLT_MAX__ || min.m_xyz[2] == __FLT_MIN__) {
+    if (max.m_xyz[2] == SHRT_MAX || min.m_xyz[2] == SHRT_MIN) {
         return false;
     }
-    if ((float)ptr_data[3 * index + 0] > max.m_xyz[0]
-        || (float)ptr_data[3 * index + 0] < min.m_xyz[0]
-        || (float)ptr_data[3 * index + 1] > max.m_xyz[1]
-        || (float)ptr_data[3 * index + 1] < min.m_xyz[1]
-        || (float)ptr_data[3 * index + 2] > max.m_xyz[2]
-        || (float)ptr_data[3 * index + 2] < min.m_xyz[2]) {
+    if ((int16_t)ptr_data[3 * index + 0] > max.m_xyz[0]
+        || (int16_t)ptr_data[3 * index + 0] < min.m_xyz[0]
+        || (int16_t)ptr_data[3 * index + 1] > max.m_xyz[1]
+        || (int16_t)ptr_data[3 * index + 1] < min.m_xyz[1]
+        || (int16_t)ptr_data[3 * index + 2] > max.m_xyz[2]
+        || (int16_t)ptr_data[3 * index + 2] < min.m_xyz[2]) {
         return false;
     }
     return true;
