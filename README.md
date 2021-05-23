@@ -5,9 +5,8 @@
 
 ![](https://github.com/edisonslightbulbs/traceless/blob/API/doc/figures/regions.png)
 
-##### Overview:
+##### `Overview:`
 
-***
 
 |   Platform |   Hardware	|  Dependencies 	|
 |---	|---	|---	|
