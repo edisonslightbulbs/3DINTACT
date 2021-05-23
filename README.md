@@ -70,11 +70,8 @@ cd build/bin
 ```
 
 * * *
-
-This project uses Microsoft's Azure Kinect to form a concrete example. The point cloud data source can, of course, be changed as [needed](/doc/README.md).
-The project documentation is under development, as is the project itself. We ask for your patience with official documentation. It goes without say, any issues, recommendations, and feature requests are welcome.
-
-* * *
+This project uses Microsoft's Azure Kinect to form a concrete example. The point cloud data source can, of course, be [adapted](/doc/README.md).
+Please note that project documentation is underway. In the meantime, please feel free to request support and submit issues and feature requests.
 
 * [YouTube] illustration (https://youtu.be/mVYcAixiS-Q)
 
