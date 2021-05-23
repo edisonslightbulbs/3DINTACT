@@ -14,6 +14,7 @@
 ||| :white_square_button:  [ Azure Kinect SDK ](https://github.com/microsoft/Azure-Kinect-Sensor-SDK) |
 ||| :white_square_button:  [ opencv ](https://github.com/opencv/opencv) |
 ||| :white_square_button:  [ Pangolin ](https://github.com/stevenlovegrove/Pangolin) |
+||| :white_square_button:  [ pytorch ](https://github.com/pytorch/pytorch) |
 
 ### [1/3] Getting started
 
@@ -76,3 +77,14 @@ The project documentation is under development, as is the project itself. We ask
 * * *
 
 ### VIDEO ILLUSTRATION [YouTube](https://youtu.be/mVYcAixiS-Q)
+
+* cite as:
+```
+3DINTACT: an open-source CXX_11 project for segmenting interaction regions on tabletop surfaces near real-time
+@misc{3DINTACToolkit2021,
+author = {Anonymous},
+title = {{3DINTACT: an open-source CXX{\_}11 project for segmenting interaction regions on tabletop surfaces near real-time}},
+url = {https://github.com/researchers-anonymous/3DINTACT},
+year = {2021}
+}
+```
