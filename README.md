@@ -5,7 +5,9 @@
 
 ![](https://github.com/edisonslightbulbs/traceless/blob/API/doc/figures/regions.png)
 
-#### Overview:
+##### Overview:
+
+***
 
 |   Platform |   Hardware	|  Dependencies 	|
 |---	|---	|---	|
@@ -26,6 +28,8 @@ Clone this repository using `--recurse-submodules` flag.
 If already cloned without the `--recurse-submodules` flag,  use `git submodule update --init --recursive` to initialize the submodules.
 
 ##### `[2/3] Installing the dependencies`
+
+***
 
 Make sure to install all the dependencies listed in the table.
 
