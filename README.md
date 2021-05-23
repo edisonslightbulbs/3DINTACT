@@ -1,10 +1,11 @@
 ![](https://github.com/edisonslightbulbs/traceless/blob/API/doc/figures/concept.png)
 
-#### 3DINTACT: an open-source CXX_11 project for segmenting interaction regions on tabletop surfaces near real-time
+# 3DINTACT
+#### An open-source CXX_11 project for segmenting interaction regions on tabletop surfaces near real-time
 
 ![](https://github.com/edisonslightbulbs/traceless/blob/API/doc/figures/regions.png)
 
-##### Overview:
+#### Overview:
 
 |   Platform |   Hardware	|  Dependencies 	|
 |---	|---	|---	|
@@ -16,7 +17,7 @@
 ||| :white_square_button:  [ Pangolin ](https://github.com/stevenlovegrove/Pangolin) |
 ||| :white_square_button:  [ pytorch ](https://github.com/pytorch/pytorch) |
 
-##### [1/3] Getting started
+##### `[1/3] Getting started`
 
 ***
 
@@ -24,7 +25,7 @@ Clone this repository using `--recurse-submodules` flag.
 
 If already cloned without the `--recurse-submodules` flag,  use `git submodule update --init --recursive` to initialize the submodules.
 
-##### [2/3] Installing the dependencies
+##### `[2/3] Installing the dependencies`
 
 Make sure to install all the dependencies listed in the table.
 
@@ -44,7 +45,7 @@ For convenience, the USB rules can be installed by running this [`install_usb_ru
 
 For convenience, run this [`install_kinect_sdk_dependencies.sh`](./scripts/) helper script to install the Kinect dependencies.
 
-##### [3/3] Building the project
+##### `[3/3] Building the project`
 
 ***
 
@@ -69,11 +70,11 @@ cd build/bin
 # ./3DINTACToolkit --logtostderr=1
 ```
 
-* * *
-This project uses Microsoft's Azure Kinect to form a concrete example. The point cloud data source can, of course, be [adapted](/doc/README.md).
-Please note that project documentation is underway. In the meantime, please feel free to request support and submit issues and feature requests.
+## Good to know
+This project uses Microsoft's Azure Kinect to form a concrete example. The point cloud can be [adapted](/doc/README.md).
+The project documentation is underway. In the meantime, please feel free to request support and submit issues and any feature requests.
 
-* [YouTube] illustration (https://youtu.be/mVYcAixiS-Q)
+* check out an illustration of what this project offers over on [YouTube](https://youtu.be/mVYcAixiS-Q)
 
 * cite as:
 ```tex
