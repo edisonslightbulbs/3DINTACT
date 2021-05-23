@@ -29,21 +29,22 @@ void adapt(const int& index, Point& point, const int16_t* ptr_pcl,
     int16_t y = ptr_pcl[3 * index + 1];
     int16_t z = ptr_pcl[3 * index + 2];
 
-    uint8_t r = ptr_img[4 * index + 2];
-    uint8_t g = ptr_img[4 * index + 1];
     uint8_t b = ptr_img[4 * index + 0];
+    uint8_t g = ptr_img[4 * index + 1];
+    uint8_t r = ptr_img[4 * index + 2];
     uint8_t a = ptr_img[4 * index + 3];
 
     int16_t xyz[3] = { x, y, z };
     uint8_t rgb[3] = { r, g, b };
     uint8_t bgra[4] = { b, g, r, a };
 
+    point.m_id = index;
     point.setPoint(xyz);
     point.setPixel_GL(rgb);
     point.setPixel_CV(bgra);
 }
 
-bool isZero(const int& index, const int16_t* ptr_pcl, const uint8_t* ptr_img)
+bool invalid(const int& index, const int16_t* ptr_pcl, const uint8_t* ptr_img)
 {
     if (ptr_pcl[3 * index + 0] == 0 && ptr_pcl[3 * index + 1] == 0
         && ptr_pcl[3 * index + 2] == 0) {
@@ -57,14 +58,14 @@ bool isZero(const int& index, const int16_t* ptr_pcl, const uint8_t* ptr_img)
     return false;
 }
 
-void zeroPoint(const int& index, int16_t* ptr_pcl)
+void addPoint(const int& index, int16_t* ptr_pcl)
 {
     ptr_pcl[3 * index + 0] = 0;
     ptr_pcl[3 * index + 1] = 0;
     ptr_pcl[3 * index + 2] = 0;
 }
 
-void addPoint(const int& index, const int16_t* ptr_pclSrc, int16_t* ptr_pclDest)
+void addPoint(const int& index, int16_t* ptr_pclDest, const int16_t* ptr_pclSrc)
 {
     ptr_pclDest[3 * index + 0] = ptr_pclSrc[3 * index + 0];
     ptr_pclDest[3 * index + 1] = ptr_pclSrc[3 * index + 1];
@@ -72,7 +73,7 @@ void addPoint(const int& index, const int16_t* ptr_pclSrc, int16_t* ptr_pclDest)
 }
 
 void addPixel_CV(
-    const int& index, const uint8_t* ptr_imgSrc, uint8_t* ptr_imgDest)
+    const int& index, uint8_t* ptr_imgDest, const uint8_t* ptr_imgSrc)
 {
     ptr_imgDest[4 * index + 0] = ptr_imgSrc[4 * index + 0];
     ptr_imgDest[4 * index + 1] = ptr_imgSrc[4 * index + 1];
@@ -81,14 +82,14 @@ void addPixel_CV(
 }
 
 void addPixel_GL(
-    const int& index, const uint8_t* ptr_imgSrc, uint8_t* ptr_imgDest)
+    const int& index, uint8_t* ptr_imgDest, const uint8_t* ptr_imgSrc)
 {
     ptr_imgDest[3 * index + 2] = ptr_imgSrc[4 * index + 0];
     ptr_imgDest[3 * index + 1] = ptr_imgSrc[4 * index + 1];
     ptr_imgDest[3 * index + 0] = ptr_imgSrc[4 * index + 2];
 }
 
-void zeroPixel_CV(const int& index, uint8_t* ptr_img)
+void addPixel_CV(const int& index, uint8_t* ptr_img)
 {
     ptr_img[4 * index + 0] = 0; // blue
     ptr_img[4 * index + 1] = 0; // green
@@ -96,7 +97,7 @@ void zeroPixel_CV(const int& index, uint8_t* ptr_img)
     ptr_img[4 * index + 3] = 0; // alpha
 }
 
-void zeroPixel_GL(const int& index, uint8_t* ptr_img)
+void addPixel_GL(const int& index, uint8_t* ptr_img)
 {
     ptr_img[3 * index + 0] = 0; // blue
     ptr_img[3 * index + 1] = 0; // green
@@ -104,17 +105,22 @@ void zeroPixel_GL(const int& index, uint8_t* ptr_img)
 }
 
 bool inSegment(
-    const int& index, const short* ptr_data, const Point& min, const Point& max)
+    const int& index, const short* ptr_pcl, const Point& min, const Point& max)
 {
+    if (ptr_pcl[3 * index + 2] == 0) {
+        return false;
+    }
+
     if (max.m_xyz[2] == SHRT_MAX || min.m_xyz[2] == SHRT_MIN) {
         return false;
     }
-    if ((int16_t)ptr_data[3 * index + 0] > max.m_xyz[0]
-        || (int16_t)ptr_data[3 * index + 0] < min.m_xyz[0]
-        || (int16_t)ptr_data[3 * index + 1] > max.m_xyz[1]
-        || (int16_t)ptr_data[3 * index + 1] < min.m_xyz[1]
-        || (int16_t)ptr_data[3 * index + 2] > max.m_xyz[2]
-        || (int16_t)ptr_data[3 * index + 2] < min.m_xyz[2]) {
+
+    if ((int16_t)ptr_pcl[3 * index + 0] > max.m_xyz[0]
+        || (int16_t)ptr_pcl[3 * index + 0] < min.m_xyz[0]
+        || (int16_t)ptr_pcl[3 * index + 1] > max.m_xyz[1]
+        || (int16_t)ptr_pcl[3 * index + 1] < min.m_xyz[1]
+        || (int16_t)ptr_pcl[3 * index + 2] > max.m_xyz[2]
+        || (int16_t)ptr_pcl[3 * index + 2] < min.m_xyz[2]) {
         return false;
     }
     return true;
