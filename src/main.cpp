@@ -37,7 +37,7 @@ void cluster(std::shared_ptr<Intact>& sptr_intact)
 
 void siftSegment(std::shared_ptr<Intact>& sptr_intact)
 {
-    int numPts = sptr_intact->m_numPts;
+    int numPts = sptr_intact->m_numPoints;
     int pclsize = sptr_intact->m_pclsize;
     int imgsize = sptr_intact->m_imgsize;
 
@@ -51,39 +51,19 @@ void siftSegment(std::shared_ptr<Intact>& sptr_intact)
         auto* ptr_pcl = *sptr_intact->getSensorPcl();
         auto* ptr_img = *sptr_intact->getSensorImg_CV();
 
-        std::vector<Point> pcl;
-
         for (int i = 0; i < numPts; i++) {
-            Point point;
-            if (isZero(i, ptr_pcl, ptr_img)) {
-                addPoint(i, ptr_pcl, pclBuf);
-                addPixel_GL(i, ptr_img, imgBuf_GL);
-                addPixel_CV(i, ptr_img, imgBuf_CV);
-                adapt(i, point, pclBuf, imgBuf_CV);
-                pcl.emplace_back(point);
-                continue;
-            }
             if (!inSegment(i, ptr_pcl, sptr_intact->getIntactBoundary().first,
                     sptr_intact->getIntactBoundary().second)) {
-                zeroPoint(i, pclBuf);
-                zeroPixel_GL(i, imgBuf_GL);
-                zeroPixel_CV(i, imgBuf_CV);
-                adapt(i, point, pclBuf, imgBuf_CV);
-                pcl.emplace_back(point);
+                addPixel_CV(i, imgBuf_CV);
                 continue;
             }
-            addPoint(i, ptr_pcl, pclBuf);
-            addPixel_GL(i, ptr_img, imgBuf_GL);
-            addPixel_CV(i, ptr_img, imgBuf_CV);
-            adapt(i, point, pclBuf, imgBuf_CV);
-            pcl.emplace_back(point);
+            addPoint(i, pclBuf, ptr_pcl);
+            addPixel_GL(i, imgBuf_GL, ptr_img);
+            addPixel_CV(i, imgBuf_CV, ptr_img);
         }
-
-        // sptr_intact->setIntactPts(pcl);
-        sptr_intact->setIntactPcl(pclBuf);
+        sptr_intact->setIntactPcl(ptr_pcl);
         sptr_intact->setIntactImg_GL(imgBuf_GL);
         sptr_intact->setIntactImg_CV(imgBuf_CV);
-
         INTACT_READY
         POLLING_EXIT_STATUS
     }
@@ -92,7 +72,7 @@ void siftSegment(std::shared_ptr<Intact>& sptr_intact)
 void k4aCapture(
     std::shared_ptr<Kinect>& sptr_kinect, std::shared_ptr<Intact>& sptr_intact)
 {
-    int numPts = sptr_intact->m_numPts;
+    int numPts = sptr_intact->m_numPoints;
     int pclsize = sptr_intact->m_pclsize;
     int imgsize = sptr_intact->m_imgsize;
 
@@ -110,29 +90,29 @@ void k4aCapture(
         int width = k4a_image_get_width_pixels(sptr_kinect->getDepthImg());
         int height = k4a_image_get_height_pixels(sptr_kinect->getDepthImg());
 
-        std::vector<Point> pcl;
-
+        std::vector<Point> refinedPoints;
+        std::vector<Point> unrefinedPoints;
         for (int i = 0; i < numPts; i++) {
             Point point;
+            addPoint(i, pclBuf, ptr_pcl);
+            addPixel_GL(i, imgBuf_GL, ptr_img);
+            addPixel_CV(i, imgBuf_CV, ptr_img);
+            adapt(i, point, pclBuf, imgBuf_CV);
+            unrefinedPoints.emplace_back(point);
+
             if (ptr_pcl[3 * i + 2] == 0) {
-                zeroPoint(i, pclBuf);
-                zeroPixel_GL(i, imgBuf_GL);
-                zeroPixel_CV(i, imgBuf_CV);
                 continue;
             }
-            addPoint(i, ptr_pcl, pclBuf);
-            addPixel_GL(i, ptr_img, imgBuf_GL);
-            addPixel_CV(i, ptr_img, imgBuf_CV);
-            adapt(i, point, pclBuf, imgBuf_CV);
-            pcl.emplace_back(point);
+            refinedPoints.emplace_back(point);
         }
         sptr_kinect->release();
-        sptr_intact->setSensorPts(pcl);
         sptr_intact->setDepthImgWidth(width);
         sptr_intact->setDepthImgHeight(height);
         sptr_intact->setSensorPcl(pclBuf);
         sptr_intact->setSensorImg_GL(imgBuf_GL);
         sptr_intact->setSensorImg_CV(imgBuf_CV);
+        sptr_intact->setRefinedPoints(refinedPoints);
+        sptr_intact->setUnrefinedPoints(unrefinedPoints);
         KINECT_READY
         POLLING_EXIT_STATUS
     }
