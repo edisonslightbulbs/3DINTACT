@@ -138,7 +138,7 @@ int main(int argc, char* argv[])
     std::thread renderWorker(render, std::ref(sptr_intact));
 
     // detect objects
-    // std::thread detectWorker(detect, std::ref(sptr_intact));
+    std::thread detectWorker(detect, std::ref(sptr_intact));
 
     // segment
     std::thread segmentWorker(segment, std::ref(sptr_intact));
@@ -151,7 +151,7 @@ int main(int argc, char* argv[])
 
     k4aCaptureWorker.join();
     renderWorker.join();
-    // detectWorker.join();
+    detectWorker.join();
     segmentWorker.join();
     siftSegmentWorker.join();
     clusterWorker.join();
