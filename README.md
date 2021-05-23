@@ -1,6 +1,6 @@
 ![](https://github.com/edisonslightbulbs/traceless/blob/API/doc/figures/concept.png)
 
-### 3DINTACT: Toolkit for segmenting interaction regions on tabletop surfaces
+### 3DINTACT: an open-source CXX_11 project for segmenting interaction regions on tabletop surfaces near real-time
 
 ![](https://github.com/edisonslightbulbs/traceless/blob/API/doc/figures/regions.png)
 
@@ -76,11 +76,10 @@ The project documentation is under development, as is the project itself. We ask
 
 * * *
 
-### VIDEO ILLUSTRATION [YouTube](https://youtu.be/mVYcAixiS-Q)
+* [YouTube](https://youtu.be/mVYcAixiS-Q)
 
 * cite as:
-```
-3DINTACT: an open-source CXX_11 project for segmenting interaction regions on tabletop surfaces near real-time
+```tex
 @misc{3DINTACToolkit2021,
 author = {Anonymous},
 title = {{3DINTACT: an open-source CXX{\_}11 project for segmenting interaction regions on tabletop surfaces near real-time}},
