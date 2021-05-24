@@ -3,7 +3,7 @@
 #include <thread>
 #include <torch/script.h>
 
-#include "helpers.hpp"
+#include "i3d.h"
 #include "intact.h"
 #include "io.h"
 #include "kinect.h"
@@ -19,7 +19,7 @@ void detect(std::shared_ptr<Intact>& sptr_intact)
 {
     std::vector<std::string> classNames;
     torch::jit::script::Module module;
-    configTorch(classNames, module);
+    i3d::configTorch(classNames, module);
     sptr_intact->showObjects(classNames, module, sptr_intact);
 }
 
@@ -28,45 +28,16 @@ void segment(std::shared_ptr<Intact>& sptr_intact)
     sptr_intact->segment(sptr_intact);
 }
 
+void sift(std::shared_ptr<Intact>& sptr_intact)
+{
+    sptr_intact->sift(sptr_intact);
+}
+
 void cluster(std::shared_ptr<Intact>& sptr_intact)
 {
     int minPoints = 4;
     const float epsilon = 3.170;
     sptr_intact->cluster(epsilon, minPoints, sptr_intact);
-}
-
-void siftSegment(std::shared_ptr<Intact>& sptr_intact)
-{
-    int numPts = sptr_intact->m_numPoints;
-    int pclsize = sptr_intact->m_pclsize;
-    int imgsize = sptr_intact->m_imgsize;
-
-    int16_t pclBuf[pclsize];
-    uint8_t imgBuf_GL[pclsize];
-    uint8_t imgBuf_CV[imgsize];
-
-    WHILE_SEGMENT_READY
-    START
-    while (sptr_intact->isRun()) {
-        auto* ptr_pcl = *sptr_intact->getSensorPcl();
-        auto* ptr_img = *sptr_intact->getSensorImg_CV();
-
-        for (int i = 0; i < numPts; i++) {
-            if (!inSegment(i, ptr_pcl, sptr_intact->getIntactBoundary().first,
-                    sptr_intact->getIntactBoundary().second)) {
-                addPixel_CV(i, imgBuf_CV);
-                continue;
-            }
-            addPoint(i, pclBuf, ptr_pcl);
-            addPixel_GL(i, imgBuf_GL, ptr_img);
-            addPixel_CV(i, imgBuf_CV, ptr_img);
-        }
-        sptr_intact->setIntactPcl(ptr_pcl);
-        sptr_intact->setIntactImg_GL(imgBuf_GL);
-        sptr_intact->setIntactImg_CV(imgBuf_CV);
-        INTACT_READY
-        POLLING_EXIT_STATUS
-    }
 }
 
 void k4aCapture(
@@ -94,10 +65,10 @@ void k4aCapture(
         std::vector<Point> unrefinedPoints;
         for (int i = 0; i < numPts; i++) {
             Point point;
-            addPoint(i, pclBuf, ptr_pcl);
-            addPixel_GL(i, imgBuf_GL, ptr_img);
-            addPixel_CV(i, imgBuf_CV, ptr_img);
-            adapt(i, point, pclBuf, imgBuf_CV);
+            i3d::addPoint(i, pclBuf, ptr_pcl);
+            i3d::addPixel_GL(i, imgBuf_GL, ptr_img);
+            i3d::addPixel_CV(i, imgBuf_CV, ptr_img);
+            i3d::adapt(i, point, pclBuf, imgBuf_CV);
             unrefinedPoints.emplace_back(point);
 
             if (ptr_pcl[3 * i + 2] == 0) {
@@ -144,7 +115,7 @@ int main(int argc, char* argv[])
     std::thread segmentWorker(segment, std::ref(sptr_intact));
 
     // sift segment
-    std::thread siftSegmentWorker(siftSegment, std::ref(sptr_intact));
+    std::thread siftWorker(sift, std::ref(sptr_intact));
 
     // cluster
     std::thread clusterWorker(cluster, std::ref(sptr_intact));
@@ -153,7 +124,7 @@ int main(int argc, char* argv[])
     renderWorker.join();
     detectWorker.join();
     segmentWorker.join();
-    siftSegmentWorker.join();
+    siftWorker.join();
     clusterWorker.join();
 
     // ------> do stuff with tabletop environment <------

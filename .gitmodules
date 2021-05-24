@@ -32,10 +32,6 @@
     path = libs/viewer
     url = git@github.com:edisonslightbulbs/viewer.git
     branch = main
-[submodule "libs/proposal"]
-    path = libs/proposal
-    url = git@github.com:edisonslightbulbs/proposal.git
-    branch = main
 [submodule "libs/edge"]
     path = libs/edge
     url = git@github.com:edisonslightbulbs/edge.git
@@ -51,14 +47,6 @@
 [submodule "libs/region"]
 	path = libs/region
 	url = git@github.com:edisonslightbulbs/region.git
-    branch = main
-[submodule "libs/cast"]
-	path = libs/cast
-	url = git@github.com:edisonslightbulbs/cast.git
-    branch = main
-[submodule "libs/surface"]
-	path = libs/surface
-	url = git@github.com:edisonslightbulbs/surface.git
     branch = main
 [submodule "libs/calibration"]
 	path = libs/calibration
