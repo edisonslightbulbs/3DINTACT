@@ -44,10 +44,6 @@
     path = libs/dbscan
     url = git@github.com:edisonslightbulbs/dbscan.git
     branch = main
-[submodule "libs/region"]
-	path = libs/region
-	url = git@github.com:edisonslightbulbs/region.git
-    branch = main
 [submodule "libs/calibration"]
 	path = libs/calibration
 	url = git@github.com:edisonslightbulbs/calibration.git
@@ -62,3 +58,6 @@
 [submodule "libs/searcher"]
 	path = libs/searcher
 	url = git@github.com:edisonslightbulbs/searcher.git
+[submodule "libs/segment"]
+	path = libs/segment
+	url = git@github.com:edisonslightbulbs/segment.git

@@ -33,6 +33,11 @@ void sift(std::shared_ptr<Intact>& sptr_intact)
     sptr_intact->sift(sptr_intact);
 }
 
+void chromakey(std::shared_ptr<Intact>& sptr_intact)
+{
+    sptr_intact->chromakey(sptr_intact);
+}
+
 void cluster(std::shared_ptr<Intact>& sptr_intact)
 {
     int minPoints = 4;
@@ -120,12 +125,16 @@ int main(int argc, char* argv[])
     // cluster
     std::thread clusterWorker(cluster, std::ref(sptr_intact));
 
+    /* example: chroma-keying the tabletop surface */
+    std::thread chromakeyWorker(chromakey, std::ref(sptr_intact));
+
     k4aCaptureWorker.join();
     renderWorker.join();
     detectWorker.join();
     segmentWorker.join();
     siftWorker.join();
     clusterWorker.join();
+    chromakeyWorker.join();
 
     // ------> do stuff with tabletop environment <------
 
