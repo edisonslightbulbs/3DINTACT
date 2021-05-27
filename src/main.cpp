@@ -58,6 +58,7 @@ void k4aCapture(
     int h = k4a_image_get_height_pixels(sptr_kinect->m_depth);
 
     while (sptr_i3d->isRun()) {
+        START_TIMER
         sptr_kinect->capture();
         sptr_kinect->depthCapture();
         sptr_kinect->pclCapture();
@@ -86,6 +87,7 @@ void k4aCapture(
         sptr_kinect->releaseK4aCapture();
         RAISE_SENSOR_RESOURCES_READY_FLAG
         POLL_EXIT_STATUS
+        STOP_TIMER(" main driver thread: ")
     }
 }
 
