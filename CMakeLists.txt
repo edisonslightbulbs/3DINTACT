@@ -134,6 +134,6 @@ target_link_libraries(3DINTACToolkit
 if(EXECUTE_TARGET)
     add_custom_command(TARGET 3DINTACToolkit
         POST_BUILD
-        COMMAND ./scripts/execute_3dintact.sh
+        COMMAND ./scripts/run_i3d.sh
         WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
 endif()
