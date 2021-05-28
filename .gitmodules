@@ -44,10 +44,6 @@
 	path = libs/calibration
 	url = git@github.com:edisonslightbulbs/calibration.git
     branch = main
-[submodule "libs/object-detection"]
-	path = libs/object-detection
-	url = git@github.com:edisonslightbulbs/object-detection.git
-    branch = main
 [submodule "libs/searcher"]
 	path = libs/searcher
 	url = git@github.com:edisonslightbulbs/searcher.git
@@ -57,3 +53,6 @@
 [submodule "libs/i3d"]
 	path = libs/i3d
 	url = git@github.com:edisonslightbulbs/i3d.git
+[submodule "libs/or"]
+	path = libs/or
+	url = git@github.com:edisonslightbulbs/or.git
