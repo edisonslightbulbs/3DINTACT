@@ -52,9 +52,6 @@
 	path = libs/object-detection
 	url = git@github.com:edisonslightbulbs/object-detection.git
     branch = main
-[submodule "libs/utility"]
-	path = libs/utility
-	url = git@github.com:edisonslightbulbs/utility.git
 [submodule "libs/searcher"]
 	path = libs/searcher
 	url = git@github.com:edisonslightbulbs/searcher.git

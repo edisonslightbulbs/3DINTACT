@@ -4,52 +4,58 @@
 #include <thread>
 #include <torch/script.h>
 
+#include "helpers.h"
 #include "i3d.h"
-#include "intact.h"
 #include "io.h"
 #include "kinect.h"
 #include "macros.hpp"
 
 std::mutex m;
 
-void render(std::shared_ptr<Intact>& sptr_i3d) { sptr_i3d->render(sptr_i3d); }
+void render(std::shared_ptr<i3d>& sptr_i3d)
+{
+    sptr_i3d->renderRegion(sptr_i3d);
+}
 
-void detect(std::shared_ptr<Intact>& sptr_intact)
+void detect(std::shared_ptr<i3d>& sptr_intact)
 {
     std::vector<std::string> classNames;
     torch::jit::script::Module module;
-    i3d::configTorch(classNames, module);
-    sptr_intact->findObjects(classNames, module, sptr_intact);
+    utils::configTorch(classNames, module);
+    sptr_intact->findRegionObjects(classNames, module, sptr_intact);
 }
 
-void findRegion(std::shared_ptr<Intact>& sptr_i3d)
+void findRegion(std::shared_ptr<i3d>& sptr_i3d)
 {
-    sptr_i3d->region(sptr_i3d);
+    sptr_i3d->proposeRegion(sptr_i3d);
 }
 
-void segment(std::shared_ptr<Intact>& sptr_i3d) { sptr_i3d->segment(sptr_i3d); }
+void segment(std::shared_ptr<i3d>& sptr_i3d)
+{
+    sptr_i3d->segmentRegion(sptr_i3d);
+}
 
-void frame(std::shared_ptr<Intact>& sptr_i3d) { sptr_i3d->frame(sptr_i3d); }
+void frame(std::shared_ptr<i3d>& sptr_i3d) { sptr_i3d->frameRegion(sptr_i3d); }
 
-void chromakey(std::shared_ptr<Intact>& sptr_i3d)
+void chromakey(std::shared_ptr<i3d>& sptr_i3d)
 {
     sptr_i3d->chromakey(sptr_i3d);
 }
 
-void cluster(std::shared_ptr<Intact>& sptr_i3d)
+void cluster(std::shared_ptr<i3d>& sptr_i3d)
 {
     int minPoints = 4;
     const float epsilon = 3.170;
-    sptr_i3d->cluster(epsilon, minPoints, sptr_i3d);
+    sptr_i3d->clusterRegion(epsilon, minPoints, sptr_i3d);
 }
 
-void buildPcl(std::shared_ptr<Intact>& sptr_i3d)
+void buildPcl(std::shared_ptr<i3d>& sptr_i3d)
 {
     sptr_i3d->buildPCloud(sptr_i3d);
 }
 
 void k4aCapture(
-    std::shared_ptr<Kinect>& sptr_kinect, std::shared_ptr<Intact>& sptr_i3d)
+    std::shared_ptr<Kinect>& sptr_kinect, std::shared_ptr<i3d>& sptr_i3d)
 {
     START
     sptr_kinect->capture();
@@ -102,7 +108,7 @@ int main(int argc, char* argv[])
     std::shared_ptr<Kinect> sptr_kinect(new Kinect);
 
     // initialize the 3dintact API
-    std::shared_ptr<Intact> sptr_i3d(new Intact());
+    std::shared_ptr<i3d> sptr_i3d(new i3d());
     sptr_i3d->raiseRunFlag();
 
     // capture using depth sensor
@@ -116,31 +122,31 @@ int main(int argc, char* argv[])
     std::thread findRegionWorker(findRegion, std::ref(sptr_i3d));
 
     // create GL and CV specific frames
-    std::thread frameWorker(frame, std::ref(sptr_i3d));
+    std::thread frameRegionWorker(frame, std::ref(sptr_i3d));
 
     // segment
-    std::thread segmentWorker(segment, std::ref(sptr_i3d));
+    std::thread segmentRegionWorker(segment, std::ref(sptr_i3d));
 
     // render
-    std::thread renderWorker(render, std::ref(sptr_i3d));
+    std::thread renderRegionWorker(render, std::ref(sptr_i3d));
 
     // find objects
-    std::thread detectWorker(detect, std::ref(sptr_i3d));
+    std::thread findRegionObjectsWorker(detect, std::ref(sptr_i3d));
 
     // cluster
-    std::thread clusterWorker(cluster, std::ref(sptr_i3d));
+    std::thread clusterRegionWorker(cluster, std::ref(sptr_i3d));
 
     /* example: chroma-keying the tabletop surface */
     std::thread chromakeyWorker(chromakey, std::ref(sptr_i3d));
 
     k4aCaptureWorker.join();
     buildPCloudWorker.join();
-    renderWorker.join();
-    detectWorker.join();
+    renderRegionWorker.join();
+    findRegionObjectsWorker.join();
     findRegionWorker.join();
-    segmentWorker.join();
-    frameWorker.join();
-    clusterWorker.join();
+    segmentRegionWorker.join();
+    frameRegionWorker.join();
+    clusterRegionWorker.join();
     chromakeyWorker.join();
 
     // ------> do stuff with tabletop environment <------
