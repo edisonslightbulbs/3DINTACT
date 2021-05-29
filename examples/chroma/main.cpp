@@ -119,64 +119,68 @@ int main(int argc, char* argv[])
         uint8_t bgra[4] = { chromagreen[2], chromagreen[1], chromagreen[0], 0 };
 
         // cast 'index clusters' to 'point clusters'
-        std::vector<std::vector<Point>> pointClusters(indexClusters.size());
-        for (int i = 0; i < indexClusters.size(); i++) {
-            std::vector<Point> heap(indexClusters[i].size());
-            for (int j = 0; j < indexClusters[i].size(); j++) {
-                heap[j] = points[indexClusters[i][j]];
+        std::vector<std::vector<Point>> pointClusters;
+        for (const auto& cluster : indexClusters) {
+
+            std::vector<Point> heap;
+            for (const auto& index : cluster) {
+                heap.emplace_back(points[index]);
             }
-            pointClusters[i] = heap;
+
+            pointClusters.emplace_back(heap);
         }
+
+        // extract the lower height of the vacant surface
+        std::vector<float> zMeasures(pointClusters[0].size());
+        for (int i = 0; i < pointClusters.size(); i++) {
+            zMeasures[i] = pointClusters[0][i].m_xyz[2];
+        }
+        int16_t lowerLimit
+            = *std::min_element(zMeasures.begin(), zMeasures.end());
+        int16_t upperLimit
+            = *std::max_element(zMeasures.begin(), zMeasures.end());
 
         /** use SVD norm to find stitch vacant tabletop surface */
         // config flags for svd computation
         int flag = Eigen::ComputeThinU | Eigen::ComputeThinV;
 
-        // heap norms for each cluster
-        std::vector<Eigen::Vector3d> normals(pointClusters.size());
-        for (int i = 0; i < pointClusters.size(); i++) {
-            SVD usv(pointClusters[i], flag);
-            normals[i] = usv.getV3Normal();
+        // heap the normals of each cluster
+        std::vector<Eigen::Vector3d> normals;
+        for (const auto& cluster : pointClusters) {
+            SVD usv(cluster, flag);
+            normals.emplace_back(usv.getV3Normal());
         }
+
+        Eigen::Vector3d n1 = normals[0]; // n1 = vacantSurfaceNorm
+        normals.erase(normals.begin());
 
         // evaluate coplanarity between clusters
+        std::vector<Point> vacantTabletop = pointClusters[0];
+
+        int index = 0;
+        const int GIVE_WAY = 2; // height of vacant surface in mm
         const float ARGMIN = 0.4;
-        int clusterIndex = 0;
-        std::vector<Point> tabletop = pointClusters[0];
-        for (const auto& normal : normals) {
-            double a = normals[0].dot(normal);
-            double b = normals[0].norm() * normal.norm();
-            double solution = std::acos(a / b);
+        for (const auto& n2 : normals) {
+            double numerator = n1.dot(n2);
+            double denominator = n1.norm() * n2.norm();
+            double solution = std::acos(numerator / denominator);
 
-            if (!std::isnan(solution) && solution < ARGMIN && solution > -ARGMIN
-                && pointClusters[clusterIndex].size() < 25) {
-                tabletop.insert(tabletop.end(),
-                    pointClusters[clusterIndex].begin(),
-                    pointClusters[clusterIndex].end());
+            if (!std::isnan(solution) && solution < ARGMIN
+                && solution > -ARGMIN) {
+
+                for (const auto& point : pointClusters[index]) {
+                    if (point.m_xyz[2] > upperLimit - GIVE_WAY) {
+                        vacantTabletop.emplace_back(point);
+                    }
+                }
             }
-            clusterIndex++;
+            index++;
         }
 
-        // find the upper and lower z limits
-        std::vector<float> zMeasures(pointClusters.size());
-        for (int i = 0; i < pointClusters.size(); i++) {
-            zMeasures[i] = pointClusters[0][i].m_xyz[2];
-        }
-        int16_t maxH = *std::max_element(zMeasures.begin(), zMeasures.end());
-        int16_t minH = *std::min_element(zMeasures.begin(), zMeasures.end());
-
-        // use limits to refine tabletop points
-        std::vector<Point> bkgd; //
-        for (const auto& point : tabletop) {
-            if (point.m_xyz[2] > maxH || point.m_xyz[2] < minH) {
-                continue;
-            }
-            bkgd.emplace_back(point);
-        }
         std::vector<Point> frame = *sptr_i3d->getPCloud();
 
-        // use clustered indexes to chromakey a selected cluster
-        for (const auto& point : bkgd) {
+        // chromakey vacant tabletop surface
+        for (const auto& point : vacantTabletop) {
             int id = point.m_id;
             frame[id].setPixel_GL(rgb);
             frame[id].setPixel_CV(bgra);
