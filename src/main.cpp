@@ -88,7 +88,7 @@ void k4aCapture(
         sptr_kinect->releaseK4aCapture();
         RAISE_SENSOR_RESOURCES_READY_FLAG
         EXIT_CALLBACK
-        STOP_TIMER(" main driver thread: ")
+        STOP_TIMER(" k4a driver thread: runtime @ ")
     }
 }
 
@@ -131,6 +131,10 @@ int main(int argc, char* argv[])
     // cluster
     std::thread clusterRegionWorker(cluster, std::ref(sptr_i3d));
 
+    // ------> do stuff with tabletop environment <------
+
+    // ------> do stuff with tabletop environment <------
+
     k4aCaptureWorker.join();
     buildPCloudWorker.join();
     renderRegionWorker.join();
@@ -139,109 +143,5 @@ int main(int argc, char* argv[])
     segmentRegionWorker.join();
     frameRegionWorker.join();
     clusterRegionWorker.join();
-
-    // ------> do stuff with tabletop environment <------
-
-    // while (sptr_intact->isRun()) {
-
-    //     // get un-edited image
-    //     std::vector<Point> frame = *sptr_intact->getRefinedPoints();
-
-    //     // get clusters
-    //     auto clusters = sptr_intact->getClusters();
-    //     auto indexClusters = clusters->second;
-    //     std::vector<Point> points = clusters->first;
-
-    //     // define chromakey color for tabletop surface
-    //     uint8_t rgb[3] = { chromagreen[0], chromagreen[1], chromagreen[2] };
-    //     uint8_t bgra[4] = { chromagreen[2], chromagreen[1], chromagreen[0], 0
-    //     };
-
-    //     // cast clusters of indexed to clusters of points
-    //     std::vector<std::vector<Point>> pointClusters;
-    //     for (const auto& cluster : indexClusters) {
-    //         std::vector<Point> heap;
-    //         for (const auto& index : cluster) {
-    //             heap.emplace_back(points[index]);
-    //         }
-    //         pointClusters.emplace_back(heap);
-    //     }
-
-    //     // config flags for svd computation
-    //     int flag = Eigen::ComputeThinU | Eigen::ComputeThinV;
-
-    //     // heap norms for each cluster
-    //     std::vector<Eigen::Vector3d> normals;
-    //     for (const auto& cluster : pointClusters) {
-    //         SVD usv(cluster, flag);
-    //         normals.emplace_back(usv.getV3Normal());
-    //     }
-
-    //     const float ARGMIN = 0.4;
-    //     // evaluate coplanarity between clusters
-    //     int clusterIndex = 0;
-    //     std::vector<Point> tabletop = pointClusters[0];
-    //     for (const auto& normal : normals) {
-    //         double a = normals[0].dot(normal);
-    //         double b = normals[0].norm() * normal.norm();
-    //         double solution = std::acos(a / b);
-
-    //         if (!std::isnan(solution) && solution < ARGMIN && solution >
-    //         -ARGMIN
-    //             && pointClusters[clusterIndex].size() < 25) {
-    //             tabletop.insert(tabletop.end(),
-    //                             pointClusters[clusterIndex].begin(),
-    //                             pointClusters[clusterIndex].end());
-    //         }
-    //         clusterIndex++;
-    //     }
-
-    //     // find the upper and lower z limits
-    //     std::vector<float> zMeasures;
-    //     for (const auto& point : pointClusters[0]) {
-    //         zMeasures.emplace_back(point.m_xyz[2]);
-    //     }
-    //     int16_t maxH = *std::max_element(zMeasures.begin(), zMeasures.end());
-    //     int16_t minH = *std::min_element(zMeasures.begin(), zMeasures.end());
-
-    //     // use limits to refine tabletop points
-    //     std::vector<Point> bkgd; //
-    //     for (const auto& point : tabletop) {
-    //         if (point.m_xyz[2] > maxH || point.m_xyz[2] < minH) {
-    //             continue;
-    //         }
-    //         bkgd.emplace_back(point);
-    //     }
-    //     ///////////////////////////////////////////////////
-    //     /////////////// beta testing //////////////////////
-    //     ///////////////////////////////////////////////////
-
-    //     // use clustered indexes to chromakey a selected cluster
-    //     for (const auto& point : bkgd) {
-    //         int id = point.m_id;
-    //         frame[id].setPixel_GL(rgb);
-    //         frame[id].setPixel_CV(bgra);
-    //     }
-
-    //     // sizes
-    //     const int numPoints = sptr_intact->m_numPoints;
-    //     const uint32_t pclsize = numPoints * 3;
-    //     const uint32_t imgsize = numPoints * 4;
-
-    //     int16_t pclBuf[pclsize];
-    //     uint8_t imgBuf_GL[pclsize];
-    //     uint8_t imgBuf_CV[imgsize];
-
-    //     // stitch images from processed point cloud
-    //     for (int i = 0; i < numPoints; i++) {
-    //         i3d::stitch(i, frame[i], pclBuf, imgBuf_GL, imgBuf_CV);
-    //     }
-    //     sptr_intact->setChromaBkgdPoints(frame);
-    //     sptr_intact->setChromaBkgdPcl(pclBuf);
-    //     sptr_intact->setChromaBkgdImg_GL(imgBuf_GL);
-    //     sptr_intact->setChromaBkgdImg_CV(imgBuf_CV);
-    //     CHROMABACKGROUND_READY
-    // // ------> do stuff with tabletop environment <------
-
     return 0;
 }
