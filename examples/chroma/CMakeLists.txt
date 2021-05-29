@@ -21,18 +21,18 @@ set(K4A_VERSION ${K4A_SDK}/build/src/sdk/include)
 
 set(CMAKE_PREFIX_PATH ${EXT_DIR}/libtorch)
 set(CMAKE_CXX_FLAGS
-        ${CMAKE_CXX_FLAGS}
-        ${TORCH_CXX_FLAGS}
-        )
+    ${CMAKE_CXX_FLAGS}
+    ${TORCH_CXX_FLAGS}
+    )
 find_package(Torch REQUIRED)
 
 # find header files
 set (INCLUDE_DIRS "")
 file(GLOB_RECURSE HEADERS
-        ${LIB_DIR}/*.h
-        ${EXT_DIR}/nanoflann/examples/*.h
-        ${EXT_DIR}/nanoflann/include/*.hpp
-        )
+    ${LIB_DIR}/*.h
+    ${EXT_DIR}/nanoflann/examples/*.h
+    ${EXT_DIR}/nanoflann/include/*.hpp
+    )
 foreach (HEADER ${HEADERS})
     get_filename_component(DIR ${HEADER} PATH)
     list (APPEND INCLUDE_DIRS ${DIR})
@@ -41,26 +41,28 @@ list(REMOVE_DUPLICATES INCLUDE_DIRS)
 
 # find source files
 file(GLOB_RECURSE LIBS_SRC
-        ${LIB_DIR}/*.cpp
-        )
+    ${LIB_DIR}/*.cpp
+    )
 
-# setup target
-add_executable(chroma
+option(BUILD_CHROMA_EXAMPLE "Build chroma example" OFF)            # default OFF
+if(BUILD_CHROMA_EXAMPLE)
+    # setup target
+    add_executable(chroma
         ${EXT_SRC}
         ${LIBS_SRC}
         main.cpp
         )
 
-# include directories
-target_include_directories(chroma PRIVATE
+    # include directories
+    target_include_directories(chroma PRIVATE
         ${K4A_VERSION}
         ${K4A_INCLUDE}
         ${INCLUDE_DIRS}
         ${OpenCV_INCLUDE_DIRS}
         )
 
-# link libraries
-target_link_libraries(chroma
+    # link libraries
+    target_link_libraries(chroma
         glog
         gflags
         Eigen3::Eigen
@@ -70,10 +72,12 @@ target_link_libraries(chroma
         ${TORCH_LIBRARIES}
         )
 
-# execute target
-if(EXECUTE_TARGET)
-    add_custom_command(TARGET chroma
-        POST_BUILD
-        COMMAND ./scripts/run_chromaexample.sh
-        WORKING_DIRECTORY ${ROOT})
+    # execute target
+    option(EXECUTE_TARGET "Execute chroma example" OFF)            # default OFF
+    if(EXECUTE_TARGET)
+        add_custom_command(TARGET chroma
+            POST_BUILD
+            COMMAND ./scripts/run_chromaexample.sh
+            WORKING_DIRECTORY ${ROOT})
+    endif()
 endif()
