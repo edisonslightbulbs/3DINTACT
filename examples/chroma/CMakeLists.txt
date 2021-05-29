@@ -44,40 +44,40 @@ file(GLOB_RECURSE LIBS_SRC
     ${LIB_DIR}/*.cpp
     )
 
-option(BUILD_CHROMA_EXAMPLE "Build chroma example" OFF)            # default OFF
-if(BUILD_CHROMA_EXAMPLE)
-    # setup target
-    add_executable(chroma
-        ${EXT_SRC}
-        ${LIBS_SRC}
-        main.cpp
-        )
+# option(BUILD_CHROMA_EXAMPLE "Build chroma example" ON)            # default OFF
+# if(BUILD_CHROMA_EXAMPLE)
+# setup target
+add_executable(chroma
+    ${EXT_SRC}
+    ${LIBS_SRC}
+    main.cpp
+    )
 
-    # include directories
-    target_include_directories(chroma PRIVATE
-        ${K4A_VERSION}
-        ${K4A_INCLUDE}
-        ${INCLUDE_DIRS}
-        ${OpenCV_INCLUDE_DIRS}
-        )
+# include directories
+target_include_directories(chroma PRIVATE
+    ${K4A_VERSION}
+    ${K4A_INCLUDE}
+    ${INCLUDE_DIRS}
+    ${OpenCV_INCLUDE_DIRS}
+    )
 
-    # link libraries
-    target_link_libraries(chroma
-        glog
-        gflags
-        Eigen3::Eigen
-        ${OpenCV_LIBS}
-        ${Pangolin_LIBRARIES}
-        ${K4A_LIBRARY}/bin/libk4a.so
-        ${TORCH_LIBRARIES}
-        )
+# link libraries
+target_link_libraries(chroma
+    glog
+    gflags
+    Eigen3::Eigen
+    ${OpenCV_LIBS}
+    ${Pangolin_LIBRARIES}
+    ${K4A_LIBRARY}/bin/libk4a.so
+    ${TORCH_LIBRARIES}
+    )
 
-    # execute target
-    option(EXECUTE_TARGET "Execute chroma example" OFF)            # default OFF
-    if(EXECUTE_TARGET)
-        add_custom_command(TARGET chroma
-            POST_BUILD
-            COMMAND ./scripts/run_chromaexample.sh
-            WORKING_DIRECTORY ${ROOT})
-    endif()
+# execute target
+option(EXECUTE_TARGET "Execute chroma example" ON)            # default OFF
+if(EXECUTE_TARGET)
+    add_custom_command(TARGET chroma
+        POST_BUILD
+        COMMAND ./scripts/run_chromaexample.sh
+        WORKING_DIRECTORY ${ROOT})
 endif()
+# endif()
