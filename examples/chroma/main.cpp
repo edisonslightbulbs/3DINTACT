@@ -1,15 +1,15 @@
+#include <Eigen/Dense>
 #include <chrono>
 #include <mutex>
 #include <string>
 #include <thread>
-#include <Eigen/Dense>
 
 #include "helpers.h"
 #include "i3d.h"
 #include "io.h"
-#include "svd.h"
 #include "kinect.h"
 #include "macros.hpp"
+#include "svd.h"
 
 std::mutex m;
 
@@ -76,7 +76,7 @@ void k4aCapture(
         sptr_kinect->releaseK4aCapture();
         RAISE_SENSOR_RESOURCES_READY_FLAG
         EXIT_CALLBACK
-        STOP_TIMER(" main driver thread: ")
+        STOP_TIMER(" k4a driver thread: runtime @ ")
     }
 }
 
@@ -187,7 +187,6 @@ int main(int argc, char* argv[])
         // }
         // std::vector<Point> frame = *sptr_i3d->getPCloud();
 
-
         // // use clustered indexes to chromakey a selected cluster
         // for (const auto& point : bkgd) {
         //     int id = point.m_id;
@@ -203,7 +202,8 @@ int main(int argc, char* argv[])
         //             utils::stitch(i, frame[i], imgBuf_CV);
         //         }
 
-        cv::Mat img = cv::Mat(h, w, CV_8UC4, (void*)*sptr_i3d->getSensorImgData(), cv::Mat::AUTO_STEP);
+        cv::Mat img = cv::Mat(h, w, CV_8UC4,
+            (void*)*sptr_i3d->getSensorImgData(), cv::Mat::AUTO_STEP);
         utils::displayCV(img, sptr_i3d, start);
     }
 
@@ -216,4 +216,3 @@ int main(int argc, char* argv[])
 
     return 0;
 }
-
