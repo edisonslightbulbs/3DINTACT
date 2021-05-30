@@ -1,21 +1,12 @@
 #include <chrono>
 #include <string>
 #include <thread>
-#include <torch/script.h>
 
 #include "helpers.h"
 #include "i3d.h"
 #include "io.h"
 #include "kinect.h"
 #include "macros.hpp"
-
-void findRegionObjects(std::shared_ptr<I3d>& sptr_intact)
-{
-    std::vector<std::string> classNames;
-    torch::jit::script::Module module;
-    utils::configTorch(classNames, module);
-    sptr_intact->findRegionObjects(classNames, module, sptr_intact);
-}
 
 void clusterRegion(std::shared_ptr<I3d>& sptr_i3d)
 {
@@ -109,9 +100,6 @@ int main(int argc, char* argv[])
     // segment region
     std::thread segmentRegionWorker(segmentRegion, std::ref(sptr_i3d));
 
-    // find objects in region
-    std::thread findRegionObjectsWorker(findRegionObjects, std::ref(sptr_i3d));
-
     // cluster segmented region
     std::thread clusterRegionWorker(clusterRegion, std::ref(sptr_i3d));
 
@@ -121,7 +109,6 @@ int main(int argc, char* argv[])
 
     k4aCaptureWorker.join();
     buildPCloudWorker.join();
-    findRegionObjectsWorker.join();
     proposeRegionWorker.join();
     segmentRegionWorker.join();
     clusterRegionWorker.join();
