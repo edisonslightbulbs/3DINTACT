@@ -2,7 +2,6 @@
 #include <string>
 #include <thread>
 
-#include "helpers.h"
 #include "i3d.h"
 #include "io.h"
 #include "kinect.h"
