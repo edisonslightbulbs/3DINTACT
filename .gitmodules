@@ -24,17 +24,9 @@
     path = libs/point
     url = git@github.com:edisonslightbulbs/point.git
     branch = main
-[submodule "libs/intact"]
-    path = libs/intact
-    url = git@github.com:edisonslightbulbs/intact.git
-    branch = main
 [submodule "libs/viewer"]
     path = libs/viewer
     url = git@github.com:edisonslightbulbs/viewer.git
-    branch = main
-[submodule "libs/proposal"]
-    path = libs/proposal
-    url = git@github.com:edisonslightbulbs/proposal.git
     branch = main
 [submodule "libs/edge"]
     path = libs/edge
@@ -48,30 +40,16 @@
     path = libs/dbscan
     url = git@github.com:edisonslightbulbs/dbscan.git
     branch = main
-[submodule "libs/region"]
-	path = libs/region
-	url = git@github.com:edisonslightbulbs/region.git
-    branch = main
-[submodule "libs/cast"]
-	path = libs/cast
-	url = git@github.com:edisonslightbulbs/cast.git
-    branch = main
-[submodule "libs/surface"]
-	path = libs/surface
-	url = git@github.com:edisonslightbulbs/surface.git
-    branch = main
 [submodule "libs/calibration"]
 	path = libs/calibration
 	url = git@github.com:edisonslightbulbs/calibration.git
     branch = main
-[submodule "libs/object-detection"]
-	path = libs/object-detection
-	url = git@github.com:edisonslightbulbs/object-detection.git
-    branch = main
-[submodule "libs/searcher"]
-	path = libs/searcher
-	url = git@github.com:edisonslightbulbs/searcher.git
-    branch = main
-[submodule "libs/utility"]
-	path = libs/utility
-	url = git@github.com:edisonslightbulbs/utility.git
+[submodule "libs/segment"]
+	path = libs/segment
+	url = git@github.com:edisonslightbulbs/segment.git
+[submodule "libs/i3d"]
+	path = libs/i3d
+	url = git@github.com:edisonslightbulbs/i3d.git
+[submodule "libs/or"]
+	path = libs/or
+	url = git@github.com:edisonslightbulbs/or.git

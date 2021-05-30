@@ -2,6 +2,8 @@
 #include <string>
 #include <thread>
 
+#include "helpers.h"
+#include "viewer.h"
 #include "i3d.h"
 #include "io.h"
 #include "kinect.h"
@@ -103,6 +105,10 @@ int main(int argc, char* argv[])
     std::thread clusterRegionWorker(clusterRegion, std::ref(sptr_i3d));
 
     // ------> do stuff with tabletop environment <------
+
+    SLEEP_UNTIL_SEGMENT_READY
+    viewer::render(sptr_i3d);
+    // use CTRL + c to cycle through different perspective views
 
     // ------> do stuff with tabletop environment <------
 

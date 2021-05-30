@@ -16,11 +16,7 @@ set(CMAKE_CXX_FLAGS "-pthread")
 list(APPEND CMAKE_MODULE_PATH "$ENV{CMAKE_MODULE_PATH}")
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
-# build options
-option(EXECUTE_TARGET "Execute Project Target" ON)            # default OFF
 option(BUILD_SHARED_LIBS "Build Shared Library" ON)           # default ON
-option(TIDY_PROJECT "Tidy up and optimize source code" OFF)   # default OFF
-option(SETUP_K4A_SDK "Initialize the kinect SDK project" ON)  # default ON
 
 # set path variables
 set(PROJECT_DIR ${CMAKE_CURRENT_LIST_DIR})
@@ -36,6 +32,7 @@ set(EXT_DIR ${PROJECT_DIR}/external)
 set(INCLUDE_DIR ${PROJECT_DIR}/include)
 
 # tidy project
+option(TIDY_PROJECT "Tidy up and optimize code base" OFF)   # default OFF
 if(TIDY_PROJECT)
     if(UNIX AND NOT APPLE)
         set(CMAKE_CXX_CLANG_TIDY
@@ -59,8 +56,11 @@ find_package(gflags REQUIRED)
 find_package(Pangolin REQUIRED)
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 
+add_subdirectory(examples)
+
 # setup Azure-Kinect-Sensor-SDK
 if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
+    option(SETUP_K4A_SDK "Initialize the kinect SDK project" ON)  # default ON
     if(SETUP_K4A_SDK)
         execute_process(
             COMMAND /bin/bash ./scripts/initialize_azure_kinect_sensor_sdk.sh -j 12
@@ -104,36 +104,41 @@ file(GLOB_RECURSE LIBS_SRC
     ${LIB_DIR}/*.cpp
     )
 
-# setup target
-add_executable(3DINTACToolkit
-    ${EXT_SRC}
-    ${LIBS_SRC}
-    ${SRC_DIR}/main.cpp
-    )
+option(BUILD_3DINTACT "Build Project" OFF)            # default OFF
+if(BUILD_3DINTACT)
+    # setup target
+    add_executable(3DINTACToolkit
+        ${EXT_SRC}
+        ${LIBS_SRC}
+        ${SRC_DIR}/main.cpp
+        )
 
-# include directories
-target_include_directories(3DINTACToolkit PRIVATE
-    ${K4A_VERSION}
-    ${K4A_INCLUDE}
-    ${INCLUDE_DIRS}
-    ${OpenCV_INCLUDE_DIRS}
-    )
+    # include directories
+    target_include_directories(3DINTACToolkit PRIVATE
+        ${K4A_VERSION}
+        ${K4A_INCLUDE}
+        ${INCLUDE_DIRS}
+        ${OpenCV_INCLUDE_DIRS}
+        )
 
-# link libraries
-target_link_libraries(3DINTACToolkit
-    glog
-    gflags
-    Eigen3::Eigen
-    ${OpenCV_LIBS}
-    ${Pangolin_LIBRARIES}
-    ${K4A_LIBRARY}/bin/libk4a.so
-    ${TORCH_LIBRARIES}
-    )
+    # link libraries
+    target_link_libraries(3DINTACToolkit
+        glog
+        gflags
+        Eigen3::Eigen
+        ${OpenCV_LIBS}
+        ${Pangolin_LIBRARIES}
+        ${K4A_LIBRARY}/bin/libk4a.so
+        ${TORCH_LIBRARIES}
+        )
 
-# execute target
-if(EXECUTE_TARGET)
-    add_custom_command(TARGET 3DINTACToolkit
-        POST_BUILD
-        COMMAND ./scripts/execute_3dintact.sh
-        WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
+    # execute target
+    option(EXECUTE_TARGET "Execute Project Target" OFF)            # default OFF
+    if(EXECUTE_TARGET)
+        add_custom_command(TARGET 3DINTACToolkit
+            POST_BUILD
+            COMMAND ./scripts/run_i3d.sh
+            WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
+    endif()
 endif()
+

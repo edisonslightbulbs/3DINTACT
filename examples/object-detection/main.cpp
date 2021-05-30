@@ -1,10 +1,13 @@
 #include <chrono>
 #include <string>
 #include <thread>
+#include <torch/script.h>
 
+#include "helpers.h"
 #include "i3d.h"
 #include "io.h"
 #include "kinect.h"
+#include "yolov5.h"
 #include "macros.hpp"
 
 void clusterRegion(std::shared_ptr<I3d>& sptr_i3d)
@@ -104,6 +107,65 @@ int main(int argc, char* argv[])
 
     // ------> do stuff with tabletop environment <------
 
+    SLEEP_UNTIL_SENSOR_DATA_READY
+    std::vector<std::string> classnames;
+    torch::jit::script::Module module;
+    utils::configTorch(classnames, module);
+
+    uint8_t* ptr_img;
+    while (sptr_i3d->isRun()) {
+        clock_t start = clock();
+        int w = sptr_i3d->getDepthWidth();
+        int h = sptr_i3d->getDepthHeight();
+
+        ptr_img = *sptr_i3d->getSensorImgData();
+
+        // create image frame
+        cv::Mat img;
+        cv::Mat frame
+            = cv::Mat(h, w, CV_8UC4, (void*)ptr_img, cv::Mat::AUTO_STEP)
+                  .clone();
+
+        // format frame for tensor input
+        cv::resize(frame, img, cv::Size(640, 384));
+        cv::cvtColor(img, img, cv::COLOR_BGR2RGB);
+        torch::Tensor imgTensor = torch::from_blob(
+            img.data, { img.rows, img.cols, 3 }, torch::kByte);
+        imgTensor = imgTensor.permute({ 2, 0, 1 });
+        imgTensor = imgTensor.toType(torch::kFloat);
+        imgTensor = imgTensor.div(255);
+        imgTensor = imgTensor.unsqueeze(0);
+
+        torch::Tensor preds // preds: [?, 15120, 9]
+            = module.forward({ imgTensor }).toTuple()->elements()[0].toTensor();
+        std::vector<torch::Tensor> dets
+            = yolo::non_max_suppression(preds, 0.4, 0.5);
+
+        // show objects
+        if (!dets.empty()) {
+            for (size_t i = 0; i < dets[0].sizes()[0]; ++i) {
+                float left
+                    = dets[0][i][0].item().toFloat() * (float)frame.cols / 640;
+                float top
+                    = dets[0][i][1].item().toFloat() * (float)frame.rows / 384;
+                float right
+                    = dets[0][i][2].item().toFloat() * (float)frame.cols / 640;
+                float bottom
+                    = dets[0][i][3].item().toFloat() * (float)frame.rows / 384;
+                float score = dets[0][i][4].item().toFloat();
+                int classID = dets[0][i][5].item().toInt();
+
+                cv::rectangle(frame,
+                    cv::Rect(left, top, (right - left), (bottom - top)),
+                    cv::Scalar(0, 255, 0), 2);
+                cv::putText(frame,
+                    classnames[classID] + ": " + cv::format("%.2f", score),
+                    cv::Point(left, top), cv::FONT_HERSHEY_SIMPLEX,
+                    (right - left) / 200, cv::Scalar(0, 255, 0), 2);
+            }
+        }
+        utils::cvDisplay(frame, sptr_i3d, start);
+    }
     // ------> do stuff with tabletop environment <------
 
     k4aCaptureWorker.join();
