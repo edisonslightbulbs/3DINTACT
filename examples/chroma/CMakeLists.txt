@@ -44,7 +44,7 @@ file(GLOB_RECURSE LIBS_SRC
     ${LIB_DIR}/*.cpp
     )
 
-option(BUILD_CHROMA_EXAMPLE "Build chroma example" OFF)            # default OFF
+option(BUILD_CHROMA_EXAMPLE "Build chroma example" ON)            # default OFF
 if(BUILD_CHROMA_EXAMPLE)
     # setup target
     add_executable(chroma

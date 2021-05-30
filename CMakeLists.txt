@@ -104,7 +104,7 @@ file(GLOB_RECURSE LIBS_SRC
     ${LIB_DIR}/*.cpp
     )
 
-option(BUILD_3DINTACT "Build Project" OFF)            # default OFF
+option(BUILD_3DINTACT "Build Project" ON)            # default OFF
 if(BUILD_3DINTACT)
     # setup target
     add_executable(3DINTACToolkit

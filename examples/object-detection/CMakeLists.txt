@@ -44,40 +44,40 @@ file(GLOB_RECURSE LIBS_SRC
     ${LIB_DIR}/*.cpp
     )
 
-# option(BUILD_RENDER_EXAMPLE "Build render example" ON)            # default OFF
-# if(BUILD_RENDER_EXAMPLE)
-      #setup target
-      add_executable(od
-          ${EXT_SRC}
-          ${LIBS_SRC}
-          main.cpp
-          )
+option(BUILD_RENDER_EXAMPLE "Build render example" ON)            # default OFF
+if(BUILD_RENDER_EXAMPLE)
+    #setup target
+    add_executable(od
+        ${EXT_SRC}
+        ${LIBS_SRC}
+        main.cpp
+        )
 
-      # include directories
-      target_include_directories(od PRIVATE
-          ${K4A_VERSION}
-          ${K4A_INCLUDE}
-          ${INCLUDE_DIRS}
-          ${OpenCV_INCLUDE_DIRS}
-          )
+    # include directories
+    target_include_directories(od PRIVATE
+        ${K4A_VERSION}
+        ${K4A_INCLUDE}
+        ${INCLUDE_DIRS}
+        ${OpenCV_INCLUDE_DIRS}
+        )
 
-      # link libraries
-      target_link_libraries(od
-          glog
-          gflags
-          Eigen3::Eigen
-          ${OpenCV_LIBS}
-          ${Pangolin_LIBRARIES}
-          ${K4A_LIBRARY}/bin/libk4a.so
-          ${TORCH_LIBRARIES}
-          )
+    # link libraries
+    target_link_libraries(od
+        glog
+        gflags
+        Eigen3::Eigen
+        ${OpenCV_LIBS}
+        ${Pangolin_LIBRARIES}
+        ${K4A_LIBRARY}/bin/libk4a.so
+        ${TORCH_LIBRARIES}
+        )
 
-      # execute target
-      option(EXECUTE_TARGET "Execute object detection example" ON)            # default OFF
-      if(EXECUTE_TARGET)
-          add_custom_command(TARGET od
-              POST_BUILD
-              COMMAND ./scripts/run_odexample.sh
-              WORKING_DIRECTORY ${ROOT})
-      endif()
-# endif()
+    # execute target
+    option(EXECUTE_TARGET "Execute object detection example" OFF)            # default OFF
+    if(EXECUTE_TARGET)
+        add_custom_command(TARGET od
+            POST_BUILD
+            COMMAND ./scripts/run_odexample.sh
+            WORKING_DIRECTORY ${ROOT})
+    endif()
+endif()
