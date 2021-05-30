@@ -9,7 +9,7 @@
 #include "kinect.h"
 #include "macros.hpp"
 
-void findRegionObjects(std::shared_ptr<i3d>& sptr_intact)
+void findRegionObjects(std::shared_ptr<I3d>& sptr_intact)
 {
     std::vector<std::string> classNames;
     torch::jit::script::Module module;
@@ -17,35 +17,30 @@ void findRegionObjects(std::shared_ptr<i3d>& sptr_intact)
     sptr_intact->findRegionObjects(classNames, module, sptr_intact);
 }
 
-void renderRegion(std::shared_ptr<i3d>& sptr_i3d)
-{
-    sptr_i3d->renderRegion(sptr_i3d);
-}
-
-void clusterRegion(std::shared_ptr<i3d>& sptr_i3d)
+void clusterRegion(std::shared_ptr<I3d>& sptr_i3d)
 {
     int minPoints = 4;
     const float epsilon = 3.170;
     sptr_i3d->clusterRegion(epsilon, minPoints, sptr_i3d);
 }
 
-void segmentRegion(std::shared_ptr<i3d>& sptr_i3d)
+void segmentRegion(std::shared_ptr<I3d>& sptr_i3d)
 {
     sptr_i3d->segmentRegion(sptr_i3d);
 }
 
-void proposeRegion(std::shared_ptr<i3d>& sptr_i3d)
+void proposeRegion(std::shared_ptr<I3d>& sptr_i3d)
 {
     sptr_i3d->proposeRegion(sptr_i3d);
 }
 
-void buildPcl(std::shared_ptr<i3d>& sptr_i3d)
+void buildPcl(std::shared_ptr<I3d>& sptr_i3d)
 {
     sptr_i3d->buildPCloud(sptr_i3d);
 }
 
 void k4aCapture(
-    std::shared_ptr<Kinect>& sptr_kinect, std::shared_ptr<i3d>& sptr_i3d)
+    std::shared_ptr<Kinect>& sptr_kinect, std::shared_ptr<I3d>& sptr_i3d)
 {
     START
     sptr_kinect->capture();
@@ -98,7 +93,7 @@ int main(int argc, char* argv[])
     std::shared_ptr<Kinect> sptr_kinect(new Kinect);
 
     // initialize the 3dintact
-    std::shared_ptr<i3d> sptr_i3d(new i3d());
+    std::shared_ptr<I3d> sptr_i3d(new I3d());
     sptr_i3d->raiseRunFlag();
 
     // capture using k4a depth sensor
@@ -114,9 +109,6 @@ int main(int argc, char* argv[])
     // segment region
     std::thread segmentRegionWorker(segmentRegion, std::ref(sptr_i3d));
 
-    // render region
-    std::thread renderRegionWorker(renderRegion, std::ref(sptr_i3d));
-
     // find objects in region
     std::thread findRegionObjectsWorker(findRegionObjects, std::ref(sptr_i3d));
 
@@ -129,7 +121,6 @@ int main(int argc, char* argv[])
 
     k4aCaptureWorker.join();
     buildPCloudWorker.join();
-    renderRegionWorker.join();
     findRegionObjectsWorker.join();
     proposeRegionWorker.join();
     segmentRegionWorker.join();
