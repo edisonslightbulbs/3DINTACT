@@ -44,8 +44,8 @@ file(GLOB_RECURSE LIBS_SRC
     ${LIB_DIR}/*.cpp
     )
 
-# option(BUILD_RENDER_EXAMPLE "Build render example" ON)            # default OFF
-# if(BUILD_RENDER_EXAMPLE)
+option(BUILD_VIEWER_EXAMPLE "Build viewer example" OFF)            # default OFF
+if(BUILD_VIEWER_EXAMPLE)
     #setup target
     add_executable(render
         ${EXT_SRC}
@@ -73,11 +73,11 @@ file(GLOB_RECURSE LIBS_SRC
         )
 
     # execute target
-    option(EXECUTE_TARGET "Execute chroma example" ON)            # default OFF
+    option(EXECUTE_TARGET "Execute viewer example" OFF)            # default OFF
     if(EXECUTE_TARGET)
         add_custom_command(TARGET render
             POST_BUILD
             COMMAND ./scripts/run_viewerexample.sh
             WORKING_DIRECTORY ${ROOT})
     endif()
-# endif()
+endif()
