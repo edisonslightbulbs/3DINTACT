@@ -44,9 +44,6 @@
 	path = libs/calibration
 	url = git@github.com:edisonslightbulbs/calibration.git
     branch = main
-[submodule "libs/searcher"]
-	path = libs/searcher
-	url = git@github.com:edisonslightbulbs/searcher.git
 [submodule "libs/segment"]
 	path = libs/segment
 	url = git@github.com:edisonslightbulbs/segment.git
