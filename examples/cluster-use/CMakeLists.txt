@@ -1,4 +1,4 @@
-project(od)
+project(cluster)
 
 set(ROOT ${CMAKE_SOURCE_DIR})
 set(SRC_DIR ${ROOT}/src)
@@ -44,17 +44,17 @@ file(GLOB_RECURSE LIBS_SRC
     ${LIB_DIR}/*.cpp
     )
 
-option(BUILD_RENDER_EXAMPLE "Build render example" OFF)            # default OFF
-if(BUILD_RENDER_EXAMPLE)
+# option(BUILD_VIEWER_EXAMPLE "Build viewer example" ON)            # default OFF
+# if(BUILD_VIEWER_EXAMPLE)
     #setup target
-    add_executable(od
+    add_executable(cluster
         ${EXT_SRC}
         ${LIBS_SRC}
         main.cpp
         )
 
     # include directories
-    target_include_directories(od PRIVATE
+    target_include_directories(cluster PRIVATE
         ${K4A_VERSION}
         ${K4A_INCLUDE}
         ${INCLUDE_DIRS}
@@ -62,7 +62,7 @@ if(BUILD_RENDER_EXAMPLE)
         )
 
     # link libraries
-    target_link_libraries(od
+    target_link_libraries(cluster
         glog
         gflags
         Eigen3::Eigen
@@ -73,11 +73,11 @@ if(BUILD_RENDER_EXAMPLE)
         )
 
     # execute target
-    option(EXECUTE_TARGET "Execute object detection example" OFF)            # default OFF
+    option(EXECUTE_TARGET "Execute cluster example" ON)            # default OFF
     if(EXECUTE_TARGET)
-        add_custom_command(TARGET od
+        add_custom_command(TARGET cluster
             POST_BUILD
-            COMMAND ./scripts/run_odexample.sh
+            COMMAND ./scripts/run_clusterexample.sh
             WORKING_DIRECTORY ${ROOT})
     endif()
-endif()
+# endif()
