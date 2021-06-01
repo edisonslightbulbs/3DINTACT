@@ -3,8 +3,6 @@
 # 3DINTACT
 #### An open-source CXX_11 project for segmenting interaction regions on tabletop surfaces near real-time
 
-![](https://github.com/edisonslightbulbs/traceless/blob/API/doc/figures/regions.png)
-
 ##### `Overview:`
 
 
@@ -73,7 +71,7 @@ cd build/bin
 # ./3DINTACToolkit --logtostderr=1
 ```
 
-## Good to know
+## Notes
 This project uses Microsoft's Azure Kinect to form a concrete example. The point cloud can be [adapted](/doc/README.md).
 The project documentation is underway. In the meantime, please feel free to request support and submit issues and any feature requests.
 
