@@ -1,4 +1,4 @@
-![](https://github.com/edisonslightbulbs/traceless/blob/API/doc/figures/concept.png)
+![](https://github.com/edisonslightbulbs/traceless/blob/cluster-apps/doc/figures/README_illustration.png)
 
 # 3DINTACT
 #### An open-source CXX_11 project for segmenting interaction regions on tabletop surfaces near real-time
