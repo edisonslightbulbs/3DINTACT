@@ -54,7 +54,7 @@ if(BUILD_VIEWER_EXAMPLE)
         )
 
     # include directories
-    target_include_directories(render PRIVATE
+    target_include_directories(viewer PRIVATE
         ${K4A_VERSION}
         ${K4A_INCLUDE}
         ${INCLUDE_DIRS}
@@ -62,7 +62,7 @@ if(BUILD_VIEWER_EXAMPLE)
         )
 
     # link libraries
-    target_link_libraries(render
+    target_link_libraries(viewer
         glog
         gflags
         Eigen3::Eigen
@@ -75,7 +75,7 @@ if(BUILD_VIEWER_EXAMPLE)
     # execute target
     option(EXECUTE_TARGET "Execute viewer example" OFF)            # default OFF
     if(EXECUTE_TARGET)
-        add_custom_command(TARGET render
+        add_custom_command(TARGET viewer
             POST_BUILD
             COMMAND ./scripts/run_viewerexample.sh
             WORKING_DIRECTORY ${ROOT})
