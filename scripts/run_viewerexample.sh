@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# run_renderexample.sh:
+# run_viewerexample.sh:
 #   executes toolkit
 #
 # author: Everett
@@ -13,6 +13,6 @@ PROJECT_DIR=$(dirname $(dirname $(readlink -f "$0")))
 cd "$PROJECT_DIR" || return
 
 mkdir -p ./output
-rm -rf ./output/render
-./build/bin/render --logtostderr=1
+rm -rf ./output/viewer
+./build/bin/viewer --logtostderr=1
 #cloudcompare.CloudCompare ./output/context.ply >/dev/null 2>&1 &
