@@ -44,10 +44,10 @@ file(GLOB_RECURSE LIBS_SRC
     ${LIB_DIR}/*.cpp
     )
 
-option(BUILD_VIEWER_EXAMPLE "Build viewer example" ON)            # default OFF
+option(BUILD_VIEWER_EXAMPLE "Build viewer example" OFF)            # default OFF
 if(BUILD_VIEWER_EXAMPLE)
     #setup target
-    add_executable(render
+    add_executable(viewer
         ${EXT_SRC}
         ${LIBS_SRC}
         main.cpp
