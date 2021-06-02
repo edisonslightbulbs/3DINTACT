@@ -13,6 +13,6 @@ PROJECT_DIR=$(dirname $(dirname $(readlink -f "$0")))
 cd "$PROJECT_DIR" || return
 
 mkdir -p ./output
-rm -rf ./output/cluster
-./build/bin/cluster --logtostderr=1
+rm -rf ./output/cluster-use
+./build/bin/cluster-use --logtostderr=1
 # cloudcompare.CloudCompare ./output/context.ply >/dev/null 2>&1 &
