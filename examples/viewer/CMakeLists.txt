@@ -1,4 +1,4 @@
-project(render)
+project(viewer)
 
 set(ROOT ${CMAKE_SOURCE_DIR})
 set(SRC_DIR ${ROOT}/src)
@@ -44,7 +44,7 @@ file(GLOB_RECURSE LIBS_SRC
     ${LIB_DIR}/*.cpp
     )
 
-option(BUILD_VIEWER_EXAMPLE "Build viewer example" OFF)            # default OFF
+option(BUILD_VIEWER_EXAMPLE "Build viewer example" OFF) # default OFF
 if(BUILD_VIEWER_EXAMPLE)
     #setup target
     add_executable(viewer
@@ -73,11 +73,11 @@ if(BUILD_VIEWER_EXAMPLE)
         )
 
     # execute target
-    option(EXECUTE_TARGET "Execute viewer example" OFF)            # default OFF
+    option(EXECUTE_TARGET "Execute viewer example" OFF) # default OFF
     if(EXECUTE_TARGET)
         add_custom_command(TARGET viewer
             POST_BUILD
-            COMMAND ./scripts/run_viewerexample.sh
+            COMMAND ./scripts/run_viewer_example.sh
             WORKING_DIRECTORY ${ROOT})
     endif()
 endif()
