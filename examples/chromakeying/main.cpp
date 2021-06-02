@@ -3,37 +3,37 @@
 #include <string>
 #include <thread>
 
-#include "helpers.h"
 #include "i3d.h"
 #include "io.h"
 #include "kinect.h"
 #include "macros.hpp"
 #include "svd.h"
+#include "utilities.h"
 
-void clusterRegion(std::shared_ptr<i3d>& sptr_i3d)
+void clusterRegion(std::shared_ptr<I3d>& sptr_i3d)
 {
     int minPoints = 4;
     const float epsilon = 3.170;
     sptr_i3d->clusterRegion(epsilon, minPoints, sptr_i3d);
 }
 
-void segmentRegion(std::shared_ptr<i3d>& sptr_i3d)
+void segmentRegion(std::shared_ptr<I3d>& sptr_i3d)
 {
     sptr_i3d->segmentRegion(sptr_i3d);
 }
 
-void proposeRegion(std::shared_ptr<i3d>& sptr_i3d)
+void proposeRegion(std::shared_ptr<I3d>& sptr_i3d)
 {
     sptr_i3d->proposeRegion(sptr_i3d);
 }
 
-void buildPcl(std::shared_ptr<i3d>& sptr_i3d)
+void buildPcl(std::shared_ptr<I3d>& sptr_i3d)
 {
     sptr_i3d->buildPCloud(sptr_i3d);
 }
 
 void k4aCapture(
-    std::shared_ptr<Kinect>& sptr_kinect, std::shared_ptr<i3d>& sptr_i3d)
+    std::shared_ptr<Kinect>& sptr_kinect, std::shared_ptr<I3d>& sptr_i3d)
 {
     START
     sptr_kinect->capture();
@@ -86,7 +86,7 @@ int main(int argc, char* argv[])
     std::shared_ptr<Kinect> sptr_kinect(new Kinect);
 
     // initialize the 3dintact
-    std::shared_ptr<i3d> sptr_i3d(new i3d());
+    std::shared_ptr<I3d> sptr_i3d(new I3d());
     sptr_i3d->raiseRunFlag();
 
     // capture using k4a depth sensor
@@ -114,9 +114,9 @@ int main(int argc, char* argv[])
         auto indexClusters = clusters->second;
         std::vector<Point> points = clusters->first;
 
-        // define chromakey color for tabletop surface
-        uint8_t rgb[3] = { chromagreen[0], chromagreen[1], chromagreen[2] };
-        uint8_t bgra[4] = { chromagreen[2], chromagreen[1], chromagreen[0], 0 };
+        // define chromakey color for tabletop surface todo fixme
+        uint8_t rgb[3] = { 120, 198, 121 };
+        uint8_t bgra[4] = { 121, 198, 120, 0 };
 
         // cast 'index clusters' to 'point clusters'
         std::vector<std::vector<Point>> pointClusters;
@@ -135,8 +135,7 @@ int main(int argc, char* argv[])
         for (int i = 0; i < pointClusters.size(); i++) {
             zMeasures[i] = pointClusters[0][i].m_xyz[2];
         }
-        int16_t lowerLimit
-            = *std::min_element(zMeasures.begin(), zMeasures.end());
+
         int16_t upperLimit
             = *std::max_element(zMeasures.begin(), zMeasures.end());
 
