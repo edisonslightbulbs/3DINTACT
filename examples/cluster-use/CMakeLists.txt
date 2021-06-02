@@ -44,7 +44,7 @@ file(GLOB_RECURSE LIBS_SRC
     ${LIB_DIR}/*.cpp
     )
 
-option(BUILD_CLUSTER_USE_EXAMPLE "Build viewer example" OFF) # default OFF
+option(BUILD_CLUSTER_USE_EXAMPLE "Build viewer example" ON) # default OFF
 if(BUILD_CLUSTER_USE_EXAMPLE)
     #setup target
     add_executable(cluster-use
@@ -73,7 +73,7 @@ if(BUILD_CLUSTER_USE_EXAMPLE)
         )
 
     # execute target
-    option(EXECUTE_TARGET "Execute cluster example" OFF) # default OFF
+    option(EXECUTE_TARGET "Execute cluster example" ON) # default OFF
     if(EXECUTE_TARGET)
         add_custom_command(TARGET cluster-use
             POST_BUILD
