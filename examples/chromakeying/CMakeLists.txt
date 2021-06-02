@@ -1,4 +1,4 @@
-project(chroma)
+project(chromakeying)
 
 set(ROOT ${CMAKE_SOURCE_DIR})
 set(SRC_DIR ${ROOT}/src)
@@ -44,17 +44,17 @@ file(GLOB_RECURSE LIBS_SRC
     ${LIB_DIR}/*.cpp
     )
 
-option(BUILD_CHROMA_EXAMPLE "Build chroma example" OFF)            # default OFF
-if(BUILD_CHROMA_EXAMPLE)
+option(BUILD_CHROMAKEYING_EXAMPLE "Build chromakeying example" OFF) # default OFF
+if(BUILD_CHROMAKEYING_EXAMPLE)
     # setup target
-    add_executable(chroma
+    add_executable(chromakeying
         ${EXT_SRC}
         ${LIBS_SRC}
         main.cpp
         )
 
     # include directories
-    target_include_directories(chroma PRIVATE
+    target_include_directories(chromakeying PRIVATE
         ${K4A_VERSION}
         ${K4A_INCLUDE}
         ${INCLUDE_DIRS}
@@ -62,7 +62,7 @@ if(BUILD_CHROMA_EXAMPLE)
         )
 
     # link libraries
-    target_link_libraries(chroma
+    target_link_libraries(chromakeying
         glog
         gflags
         Eigen3::Eigen
@@ -73,11 +73,11 @@ if(BUILD_CHROMA_EXAMPLE)
         )
 
     # execute target
-    option(EXECUTE_TARGET "Execute chroma example" OFF)            # default OFF
-    if(EXECUTE_TARGET)
-        add_custom_command(TARGET chroma
+    option(EXECUTE_CHROMAKEYING_TARGET "Execute chromakeying example" OFF) # default OFF
+    if(EXECUTE_CHROMAKEYING_TARGET)
+        add_custom_command(TARGET chromakeying
             POST_BUILD
-            COMMAND ./scripts/run_chromaexample.sh
+            COMMAND ./scripts/run_chromakeying_example.sh
             WORKING_DIRECTORY ${ROOT})
     endif()
 endif()
