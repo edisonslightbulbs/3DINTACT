@@ -1,4 +1,4 @@
-project(cluster)
+project(cluster-use)
 
 set(ROOT ${CMAKE_SOURCE_DIR})
 set(SRC_DIR ${ROOT}/src)
@@ -44,17 +44,17 @@ file(GLOB_RECURSE LIBS_SRC
     ${LIB_DIR}/*.cpp
     )
 
-# option(BUILD_VIEWER_EXAMPLE "Build viewer example" ON)            # default OFF
-# if(BUILD_VIEWER_EXAMPLE)
+option(BUILD_CLUSTER_USE_EXAMPLE "Build viewer example" OFF) # default OFF
+if(BUILD_CLUSTER_USE_EXAMPLE)
     #setup target
-    add_executable(cluster
+    add_executable(cluster-use
         ${EXT_SRC}
         ${LIBS_SRC}
         main.cpp
         )
 
     # include directories
-    target_include_directories(cluster PRIVATE
+    target_include_directories(cluster-use PRIVATE
         ${K4A_VERSION}
         ${K4A_INCLUDE}
         ${INCLUDE_DIRS}
@@ -62,7 +62,7 @@ file(GLOB_RECURSE LIBS_SRC
         )
 
     # link libraries
-    target_link_libraries(cluster
+    target_link_libraries(cluster-use
         glog
         gflags
         Eigen3::Eigen
@@ -73,11 +73,11 @@ file(GLOB_RECURSE LIBS_SRC
         )
 
     # execute target
-    option(EXECUTE_TARGET "Execute cluster example" ON)            # default OFF
+    option(EXECUTE_TARGET "Execute cluster example" OFF) # default OFF
     if(EXECUTE_TARGET)
-        add_custom_command(TARGET cluster
+        add_custom_command(TARGET cluster-use
             POST_BUILD
-            COMMAND ./scripts/run_clusterexample.sh
+            COMMAND ./scripts/run_cluster_use_example.sh
             WORKING_DIRECTORY ${ROOT})
     endif()
-# endif()
+endif()
