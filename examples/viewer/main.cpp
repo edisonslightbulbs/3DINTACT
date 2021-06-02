@@ -2,12 +2,12 @@
 #include <string>
 #include <thread>
 
-#include "helpers.h"
-#include "viewer.h"
 #include "i3d.h"
 #include "io.h"
 #include "kinect.h"
 #include "macros.hpp"
+#include "utilities.h"
+#include "viewer.h"
 
 void clusterRegion(std::shared_ptr<I3d>& sptr_i3d)
 {
