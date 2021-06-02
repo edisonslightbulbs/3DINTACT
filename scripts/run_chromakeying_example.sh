@@ -13,6 +13,6 @@ PROJECT_DIR=$(dirname $(dirname $(readlink -f "$0")))
 cd "$PROJECT_DIR" || return
 
 mkdir -p ./output
-rm -rf ./output/chroma
-./build/bin/chroma --logtostderr=1
+rm -rf ./output/chromakeying
+./build/bin/chromakeying --logtostderr=1
 #cloudcompare.CloudCompare ./output/context.ply >/dev/null 2>&1 &
