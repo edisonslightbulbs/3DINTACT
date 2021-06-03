@@ -6,7 +6,7 @@ build/
 
 # miscellaneous
 *.csv
-*.png
+# *.png
 *.ply
 
 # CLion

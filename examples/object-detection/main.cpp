@@ -3,12 +3,12 @@
 #include <thread>
 #include <torch/script.h>
 
-#include "helpers.h"
 #include "i3d.h"
 #include "io.h"
 #include "kinect.h"
-#include "yolov5.h"
 #include "macros.hpp"
+#include "utilities.h"
+#include "yolov5.h"
 
 void clusterRegion(std::shared_ptr<I3d>& sptr_i3d)
 {
