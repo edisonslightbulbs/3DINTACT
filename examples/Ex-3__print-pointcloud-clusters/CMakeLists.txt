@@ -1,4 +1,4 @@
-project(viewer)
+project(print-pointcloud-clusters)
 
 set(ROOT ${CMAKE_SOURCE_DIR})
 set(SRC_DIR ${ROOT}/src)
@@ -7,7 +7,6 @@ set(BUILD_DIR ${ROOT}/build)
 set(EXT_DIR ${ROOT}/external)
 set(INCLUDE_DIR ${ROOT}/include)
 
-# find dependencies
 find_package(glog REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(gflags REQUIRED)
@@ -26,7 +25,6 @@ set(CMAKE_CXX_FLAGS
     )
 find_package(Torch REQUIRED)
 
-# find header files
 set (INCLUDE_DIRS "")
 file(GLOB_RECURSE HEADERS
     ${LIB_DIR}/*.h
@@ -39,30 +37,27 @@ foreach (HEADER ${HEADERS})
 endforeach()
 list(REMOVE_DUPLICATES INCLUDE_DIRS)
 
-# find source files
 file(GLOB_RECURSE LIBS_SRC
     ${LIB_DIR}/*.cpp
     )
 
-option(BUILD_VIEWER_EXAMPLE "Build viewer example" OFF) # default OFF
-if(BUILD_VIEWER_EXAMPLE)
-    #setup target
-    add_executable(viewer
+option(PRINT_POINTCLOUD_CLUSTERS_EXAMPLE "Build print-pointcloud-clusters example" ON) # default OFF
+if(PRINT_POINTCLOUD_CLUSTERS_EXAMPLE)
+
+    add_executable(print-pointcloud-clusters
         ${EXT_SRC}
         ${LIBS_SRC}
         main.cpp
         )
 
-    # include directories
-    target_include_directories(viewer PRIVATE
+    target_include_directories(print-pointcloud-clusters PRIVATE
         ${K4A_VERSION}
         ${K4A_INCLUDE}
         ${INCLUDE_DIRS}
         ${OpenCV_INCLUDE_DIRS}
         )
 
-    # link libraries
-    target_link_libraries(viewer
+    target_link_libraries(print-pointcloud-clusters
         glog
         gflags
         Eigen3::Eigen
@@ -72,12 +67,11 @@ if(BUILD_VIEWER_EXAMPLE)
         ${TORCH_LIBRARIES}
         )
 
-    # execute target
-    option(EXECUTE_TARGET "Execute viewer example" OFF) # default OFF
+    option(EXECUTE_TARGET "Execute print-pointcloud-clusters example" OFF) # default OFF
     if(EXECUTE_TARGET)
-        add_custom_command(TARGET viewer
+        add_custom_command(TARGET print-pointcloud-clusters
             POST_BUILD
-            COMMAND ./scripts/run_viewer_example.sh
+            COMMAND ./scripts/run_print_pointcloud_clusters_example.sh
             WORKING_DIRECTORY ${ROOT})
     endif()
 endif()

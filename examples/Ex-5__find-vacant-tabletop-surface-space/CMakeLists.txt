@@ -1,4 +1,4 @@
-project(object-detection)
+project(find-vacant-tabletop-surface-space)
 
 set(ROOT ${CMAKE_SOURCE_DIR})
 set(SRC_DIR ${ROOT}/src)
@@ -7,7 +7,6 @@ set(BUILD_DIR ${ROOT}/build)
 set(EXT_DIR ${ROOT}/external)
 set(INCLUDE_DIR ${ROOT}/include)
 
-# find dependencies
 find_package(glog REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(gflags REQUIRED)
@@ -26,7 +25,6 @@ set(CMAKE_CXX_FLAGS
     )
 find_package(Torch REQUIRED)
 
-# find header files
 set (INCLUDE_DIRS "")
 file(GLOB_RECURSE HEADERS
     ${LIB_DIR}/*.h
@@ -39,30 +37,27 @@ foreach (HEADER ${HEADERS})
 endforeach()
 list(REMOVE_DUPLICATES INCLUDE_DIRS)
 
-# find source files
 file(GLOB_RECURSE LIBS_SRC
     ${LIB_DIR}/*.cpp
     )
 
-option(BUILD_OBJECT_DETECTION_EXAMPLE "Build object detection example" OFF)            # default OFF
-if(BUILD_OBJECT_DETECTION_EXAMPLE)
-    #setup target
-    add_executable(object-detection
+option(FIND_VACANT_SURFACE_SPACE "Build find-vacant-tabletop-surface-space example" ON) # default OFF
+if(FIND_VACANT_SURFACE_SPACE)
+
+    add_executable(find-vacant-tabletop-surface-space
         ${EXT_SRC}
         ${LIBS_SRC}
         main.cpp
         )
 
-    # include directories
-    target_include_directories(object-detection PRIVATE
+    target_include_directories(find-vacant-tabletop-surface-space PRIVATE
         ${K4A_VERSION}
         ${K4A_INCLUDE}
         ${INCLUDE_DIRS}
         ${OpenCV_INCLUDE_DIRS}
         )
 
-    # link libraries
-    target_link_libraries(object-detection
+    target_link_libraries(find-vacant-tabletop-surface-space
         glog
         gflags
         Eigen3::Eigen
@@ -72,12 +67,11 @@ if(BUILD_OBJECT_DETECTION_EXAMPLE)
         ${TORCH_LIBRARIES}
         )
 
-    # execute target
-    option(EXECUTE_TARGET "Execute object detection example" OFF)            # default OFF
+    option(EXECUTE_TARGET "Execute find-vacant-tabletop-surface-space example" OFF) # default OFF
     if(EXECUTE_TARGET)
-        add_custom_command(TARGET object-detection
+        add_custom_command(TARGET find-vacant-tabletop-surface-space
             POST_BUILD
-            COMMAND ./scripts/run_object_detection_example.sh
+            COMMAND ./scripts/run_find_vacant_tabletop_surface_space_example.sh
             WORKING_DIRECTORY ${ROOT})
     endif()
 endif()

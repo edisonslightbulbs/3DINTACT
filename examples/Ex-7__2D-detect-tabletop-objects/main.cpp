@@ -1,20 +1,14 @@
-#include <Eigen/Dense>
 #include <chrono>
 #include <string>
 #include <thread>
+#include <torch/script.h>
 
 #include "i3d.h"
 #include "io.h"
 #include "kinect.h"
 #include "macros.hpp"
-#include "svd.h"
 #include "utilities.h"
-#include "viewer.h"
-
-void viewRegion(std::shared_ptr<I3d>& sptr_i3d)
-{
-    viewer::render(sptr_i3d); // CTRL + c to cycle different views
-}
+#include "yolov5.h"
 
 void clusterRegion(std::shared_ptr<I3d>& sptr_i3d)
 {
@@ -47,7 +41,7 @@ void k4aCapture(
     int w = k4a_image_get_width_pixels(sptr_kinect->m_depth);
     int h = k4a_image_get_height_pixels(sptr_kinect->m_depth);
 
-    while (RUN) {
+    while (sptr_i3d->isRun()) {
         START_TIMER
         sptr_kinect->capture();
         sptr_kinect->depthCapture();
@@ -67,7 +61,7 @@ void k4aCapture(
         // share k4a resources with intact
         sptr_i3d->setDepthWidth(w);
         sptr_i3d->setDepthHeight(h);
-        sptr_i3d->setSensorImgData(ptr_k4aImgData);
+        sptr_i3d->setSensorC2DImgData(ptr_k4aImgData);
         sptr_i3d->setSensorTableData(ptr_k4aTableData);
         sptr_i3d->setSensorDepthData(ptr_k4aDepthData);
         sptr_i3d->setSensorPCloudData(ptr_k4aPCloudData);
@@ -111,108 +105,73 @@ int main(int argc, char* argv[])
     // cluster segmented region
     std::thread clusterRegionWorker(clusterRegion, std::ref(sptr_i3d));
 
-#define DEV_ENV 0
     // ------> do stuff with tabletop environment <------
-    SLEEP_UNTIL_CLUSTERS_READY
-    std::thread viewRegionWorker(viewRegion, std::ref(sptr_i3d));
 
-#if DEV_ENV == 0
-    while (RUN) {
+    SLEEP_UNTIL_SENSOR_DATA_READY
+    std::vector<std::string> classnames;
+    torch::jit::script::Module module;
+    utils::configTorch(classnames, module);
 
-        // get clusters
-        auto clusters = sptr_i3d->getPCloudClusters();
-        auto points = clusters->first;
-        auto indexes = clusters->second;
-
-        // cast 'Index clusters' to 'Point clusters'
-        std::vector<std::vector<Point>> pointClusters;
-        for (const auto& cluster : indexes) {
-            std::vector<Point> heap;
-            for (const auto& index : cluster) {
-                heap.emplace_back(points[index]);
-            }
-            pointClusters.emplace_back(heap);
-        }
-
-        // config flags for svd computation
-        int flag = Eigen::ComputeThinU | Eigen::ComputeThinV;
-
-        // compute and heap the face normals of each cluster
-        std::vector<Eigen::Vector3d> normals;
-        for (const auto& cluster : pointClusters) {
-            SVD usv(cluster, flag);
-            normals.emplace_back(usv.getV3Normal());
-        }
-
-        // extract the vacant space and corresponding normal
-        std::vector<Point> vacantSpace = pointClusters[0];
-        Eigen::Vector3d n1 = normals[0];
-
-        pointClusters.erase(pointClusters.begin());
-        normals.erase(normals.begin());
-        const float ARGMIN = -0.00000008;
-
-        std::vector<std::vector<Point>> objectClusters;
-
-        // find coplanar clusters corresponding to the vacant surface space
-        int index = 0;
-        for (const auto& n2 : normals) {
-            double numerator = n1.dot(n2);
-            double denominator = n1.norm() * n2.norm();
-            double solution = std::acos(numerator / denominator);
-
-            if (!std::isnan(solution) && solution < ARGMIN
-                && solution > -ARGMIN) {
-                for (const auto& point : pointClusters[index]) {
-                    vacantSpace.emplace_back(point);
-                }
-            } else {
-                objectClusters.emplace_back(pointClusters[index]);
-            }
-            index++;
-        }
-
-        // max number of cluster regions
-        int max = 35;
-        index = 0;
-        std::vector<Point> pCloudSegment;
-        for (auto& object : objectClusters) {
-            if (index < max) {
-                for (auto& point : object) {
-                    pCloudSegment.emplace_back(point);
-                }
-                index++;
-            }
-        }
-
+    uint8_t* ptr_img;
+    while (sptr_i3d->isRun()) {
+        clock_t start = clock();
         int w = sptr_i3d->getDepthWidth();
         int h = sptr_i3d->getDepthHeight();
 
-        int16_t pCloud[w * h * 3];
-        uint8_t img_GL[w * h * 4];
-        uint8_t img_CV[w * h * 4];
+        ptr_img = *sptr_i3d->getSensorC2DImgData();
 
-        uint8_t rgba[4] = { 27, 120, 55, 1 };
+        // create image frame
+        cv::Mat img;
+        cv::Mat frame
+            = cv::Mat(h, w, CV_8UC4, (void*)ptr_img, cv::Mat::AUTO_STEP)
+                  .clone();
 
-        for (auto& point : vacantSpace) {
-            int id = point.m_id;
-            points[id].setPixel_GL(rgba);
+        // format frame for tensor input
+        cv::resize(frame, img, cv::Size(640, 384));
+        cv::cvtColor(img, img, cv::COLOR_BGR2RGB);
+        torch::Tensor imgTensor = torch::from_blob(
+            img.data, { img.rows, img.cols, 3 }, torch::kByte);
+        imgTensor = imgTensor.permute({ 2, 0, 1 });
+        imgTensor = imgTensor.toType(torch::kFloat);
+        imgTensor = imgTensor.div(255);
+        imgTensor = imgTensor.unsqueeze(0);
+
+        torch::Tensor preds // preds: [?, 15120, 9]
+            = module.forward({ imgTensor }).toTuple()->elements()[0].toTensor();
+        std::vector<torch::Tensor> dets
+            = yolo::non_max_suppression(preds, 0.4, 0.5);
+
+        // show objects
+        if (!dets.empty()) {
+            for (size_t i = 0; i < dets[0].sizes()[0]; ++i) {
+                float left
+                    = dets[0][i][0].item().toFloat() * (float)frame.cols / 640;
+                float top
+                    = dets[0][i][1].item().toFloat() * (float)frame.rows / 384;
+                float right
+                    = dets[0][i][2].item().toFloat() * (float)frame.cols / 640;
+                float bottom
+                    = dets[0][i][3].item().toFloat() * (float)frame.rows / 384;
+                float score = dets[0][i][4].item().toFloat();
+                int classID = dets[0][i][5].item().toInt();
+
+                cv::rectangle(frame,
+                    cv::Rect(left, top, (right - left), (bottom - top)),
+                    cv::Scalar(0, 255, 0), 2);
+                cv::putText(frame,
+                    classnames[classID] + ": " + cv::format("%.2f", score),
+                    cv::Point(left, top), cv::FONT_HERSHEY_SIMPLEX,
+                    (right - left) / 200, cv::Scalar(0, 255, 0), 2);
+            }
         }
-
-        for (int i = 0; i < points.size(); i++) {
-            utils::stitch(i, points[i], pCloud, img_GL, img_CV);
-        }
-
-        sptr_i3d->setColClusters({ pCloud, img_GL });
+        utils::cvDisplay(frame, sptr_i3d, start);
     }
     // ------> do stuff with tabletop environment <------
-#endif
 
     k4aCaptureWorker.join();
     buildPCloudWorker.join();
     proposeRegionWorker.join();
     segmentRegionWorker.join();
     clusterRegionWorker.join();
-    viewRegionWorker.join();
     return 0;
 }
