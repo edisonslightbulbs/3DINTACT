@@ -53,3 +53,6 @@
 [submodule "libs/or"]
 	path = libs/or
 	url = git@github.com:edisonslightbulbs/or.git
+[submodule "libs/searcher"]
+	path = libs/searcher
+	url = git@github.com:edisonslightbulbs/searcher.git
