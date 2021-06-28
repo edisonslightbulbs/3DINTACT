@@ -25,6 +25,10 @@ set(CMAKE_CXX_FLAGS
     )
 find_package(Torch REQUIRED)
 
+# link bluetooth dependencies
+set(EXTRA_LIBS ${YARP_LIBRARIES})
+list(APPEND EXTRA_LIBS "bluetooth")
+
 set (INCLUDE_DIRS "")
 file(GLOB_RECURSE HEADERS
     ${LIB_DIR}/*.h
@@ -60,6 +64,7 @@ if(BUILD_MDI_APP)
     target_link_libraries(mobile-device-interaction
         glog
         gflags
+        ${EXTRA_LIBS}
         Eigen3::Eigen
         ${OpenCV_LIBS}
         ${Pangolin_LIBRARIES}

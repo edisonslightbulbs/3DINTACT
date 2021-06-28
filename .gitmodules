@@ -56,3 +56,6 @@
 [submodule "libs/searcher"]
 	path = libs/searcher
 	url = git@github.com:edisonslightbulbs/searcher.git
+[submodule "libs/rfcomm-cpp"]
+	path = libs/rfcomm-cpp
+	url = git@github.com:edisonslightbulbs/rfcomm-cpp.git
