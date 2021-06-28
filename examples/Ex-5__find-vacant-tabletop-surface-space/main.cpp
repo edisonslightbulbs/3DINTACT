@@ -10,7 +10,7 @@
 void clusterRegion(std::shared_ptr<I3d>& sptr_i3d)
 {
     int minPoints = 4;
-    const float epsilon = 3.180;
+    const float epsilon = 3.170;
     sptr_i3d->clusterRegion(epsilon, minPoints, sptr_i3d);
 }
 
@@ -132,9 +132,9 @@ int main(int argc, char* argv[])
     // we assume that the vacant space corresponds to
     // the largest cluster
     std::vector<Point> vacant;
-        for(auto& index: indexClusters[0]){
-            points[index].setPixel_RGBA(rgba);
-            vacant.emplace_back(points[index]);
+    for (auto& index : indexClusters[0]) {
+        points[index].setPixel_RGBA(rgba);
+        vacant.emplace_back(points[index]);
     }
 
     // helper script uses cloud compare for viewing
