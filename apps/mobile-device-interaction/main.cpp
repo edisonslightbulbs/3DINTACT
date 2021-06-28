@@ -7,6 +7,12 @@
 #include "io.h"
 #include "kinect.h"
 #include "macros.hpp"
+#include "server.h"
+
+void setupServer(int channelID, int connectionCount)
+{
+    server::setup(channelID, connectionCount);
+}
 
 void clusterRegion(std::shared_ptr<I3d>& sptr_i3d)
 {
@@ -31,7 +37,7 @@ void buildPcl(std::shared_ptr<I3d>& sptr_i3d)
 }
 
 void k4aCapture(
-        std::shared_ptr<Kinect>& sptr_kinect, std::shared_ptr<I3d>& sptr_i3d)
+    std::shared_ptr<Kinect>& sptr_kinect, std::shared_ptr<I3d>& sptr_i3d)
 {
     START
     sptr_kinect->capture();
@@ -54,11 +60,11 @@ void k4aCapture(
         auto* ptr_k4aC2dData = k4a_image_get_buffer(sptr_kinect->m_c2d);
         auto* ptr_k4aImgData = k4a_image_get_buffer(sptr_kinect->m_img);
         auto* ptr_k4aPCloudData
-                = (int16_t*)(void*)k4a_image_get_buffer(sptr_kinect->m_pcl);
+            = (int16_t*)(void*)k4a_image_get_buffer(sptr_kinect->m_pcl);
         auto* ptr_k4aDepthData
-                = (uint16_t*)(void*)k4a_image_get_buffer(sptr_kinect->m_depth);
+            = (uint16_t*)(void*)k4a_image_get_buffer(sptr_kinect->m_depth);
         auto* ptr_k4aTableData
-                = (k4a_float2_t*)(void*)k4a_image_get_buffer(sptr_kinect->m_xyT);
+            = (k4a_float2_t*)(void*)k4a_image_get_buffer(sptr_kinect->m_xyT);
 
         // share k4a resources with intact
         sptr_i3d->setImgWidth(imgWidth);
@@ -96,7 +102,7 @@ int main(int argc, char* argv[])
 
     // capture using k4a depth sensor
     std::thread k4aCaptureWorker(
-            k4aCapture, std::ref(sptr_kinect), std::ref(sptr_i3d));
+        k4aCapture, std::ref(sptr_kinect), std::ref(sptr_i3d));
 
     // build point cloud
     std::thread buildPCloudWorker(buildPcl, std::ref(sptr_i3d));
@@ -110,12 +116,16 @@ int main(int argc, char* argv[])
     // cluster segmented region
     std::thread clusterRegionWorker(clusterRegion, std::ref(sptr_i3d));
 
-    // ------> do stuff with tabletop environment <------
-
     SLEEP_UNTIL_CLUSTERS_READY
 
+    // RFCOMM server config
+    const int CHANNEL_ID = 20;           // use channel 20 ...
+    const int NUMBER_OF_CONNECTIONS = 1; // ... for a single connection
+
+    std::thread serverWorker(setupServer, CHANNEL_ID, NUMBER_OF_CONNECTIONS);
+
     // use CTRL + c to cycle through different perspective views
-    viewer::render(sptr_i3d);
+    // viewer::render(sptr_i3d);
 
     // ------> do stuff with tabletop environment <------
 
@@ -124,5 +134,6 @@ int main(int argc, char* argv[])
     proposeRegionWorker.join();
     segmentRegionWorker.join();
     clusterRegionWorker.join();
+    serverWorker.join();
     return 0;
 }
