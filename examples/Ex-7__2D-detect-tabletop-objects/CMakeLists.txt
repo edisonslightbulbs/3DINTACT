@@ -67,7 +67,7 @@ if(BUILD_OBJECT_DETECTION_EXAMPLE)
         ${TORCH_LIBRARIES}
         )
 
-    option(EXECUTE_TARGET "Execute 2D-detect-tabletop-objects example" ON) # default OFF
+    option(EXECUTE_TARGET "Execute 2D-detect-tabletop-objects example" OFF) # default OFF
     if(EXECUTE_TARGET)
         add_custom_command(TARGET 2D-detect-tabletop-objects
             POST_BUILD
