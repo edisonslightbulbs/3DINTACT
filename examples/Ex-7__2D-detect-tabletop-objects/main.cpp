@@ -37,9 +37,12 @@ void k4aCapture(
 {
     START
     sptr_kinect->capture();
+    sptr_kinect->imgCapture();
     sptr_kinect->depthCapture();
-    int w = k4a_image_get_width_pixels(sptr_kinect->m_depth);
-    int h = k4a_image_get_height_pixels(sptr_kinect->m_depth);
+    int imgWidth = k4a_image_get_width_pixels(sptr_kinect->m_img);
+    int imgHeight = k4a_image_get_height_pixels(sptr_kinect->m_img);
+    int depthWidth = k4a_image_get_width_pixels(sptr_kinect->m_depth);
+    int depthHeight = k4a_image_get_height_pixels(sptr_kinect->m_depth);
 
     while (sptr_i3d->isRun()) {
         START_TIMER
@@ -50,7 +53,8 @@ void k4aCapture(
         sptr_kinect->c2dCapture();
         sptr_kinect->transform(RGB_TO_DEPTH);
 
-        auto* ptr_k4aImgData = k4a_image_get_buffer(sptr_kinect->m_c2d);
+        auto* ptr_k4aImgData = k4a_image_get_buffer(sptr_kinect->m_img);
+        auto* ptr_k4aC2DData = k4a_image_get_buffer(sptr_kinect->m_c2d);
         auto* ptr_k4aPCloudData
             = (int16_t*)(void*)k4a_image_get_buffer(sptr_kinect->m_pcl);
         auto* ptr_k4aDepthData
@@ -59,9 +63,12 @@ void k4aCapture(
             = (k4a_float2_t*)(void*)k4a_image_get_buffer(sptr_kinect->m_xyT);
 
         // share k4a resources with intact
-        sptr_i3d->setDepthWidth(w);
-        sptr_i3d->setDepthHeight(h);
-        sptr_i3d->setSensorC2DImgData(ptr_k4aImgData);
+        sptr_i3d->setImgWidth(imgWidth);
+        sptr_i3d->setImgHeight(imgHeight);
+        sptr_i3d->setDepthWidth(depthWidth);
+        sptr_i3d->setDepthHeight(depthHeight);
+        sptr_i3d->setSensorImgData(ptr_k4aImgData);
+        sptr_i3d->setSensorC2DImgData(ptr_k4aC2DData);
         sptr_i3d->setSensorTableData(ptr_k4aTableData);
         sptr_i3d->setSensorDepthData(ptr_k4aDepthData);
         sptr_i3d->setSensorPCloudData(ptr_k4aPCloudData);
@@ -115,10 +122,10 @@ int main(int argc, char* argv[])
     uint8_t* ptr_img;
     while (sptr_i3d->isRun()) {
         clock_t start = clock();
-        int w = sptr_i3d->getDepthWidth();
-        int h = sptr_i3d->getDepthHeight();
+        int w = sptr_i3d->getImgWidth();
+        int h = sptr_i3d->getImgHeight();
 
-        ptr_img = *sptr_i3d->getSensorC2DImgData();
+        ptr_img = *sptr_i3d->getSensorImgData();
 
         // create image frame
         cv::Mat img;
