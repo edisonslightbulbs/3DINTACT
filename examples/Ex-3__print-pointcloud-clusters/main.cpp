@@ -11,7 +11,7 @@
 void clusterRegion(std::shared_ptr<I3d>& sptr_i3d)
 {
     int minPoints = 4;
-    const float epsilon = 3.180;
+    const float epsilon = 3.170;
     sptr_i3d->clusterRegion(epsilon, minPoints, sptr_i3d);
 }
 
@@ -129,10 +129,12 @@ int main(int argc, char* argv[])
     std::vector<uint8_t*> colors;
     utils::add(colors);
 
+    ply::write1(points);
+
     // colorize clusters: visualize clusters
-    for (auto& indexCluster: indexClusters){
+    for (auto& indexCluster : indexClusters) {
         int colIndex = utils::randNum((int)colors.size());
-        for(auto& index: indexCluster){
+        for (auto& index : indexCluster) {
             points[index].setPixel_RGBA(colors[colIndex]);
         }
     }
@@ -150,9 +152,9 @@ int main(int argc, char* argv[])
     int h = sptr_i3d->getImgHeight();
     io::write(imgData, w, h);
     STOP
-    // ------> do stuff with tabletop environment <------
+        // ------> do stuff with tabletop environment <------
 
-    k4aCaptureWorker.join();
+        k4aCaptureWorker.join();
     buildPCloudWorker.join();
     proposeRegionWorker.join();
     segmentRegionWorker.join();
