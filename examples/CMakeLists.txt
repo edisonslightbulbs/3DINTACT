@@ -4,4 +4,5 @@
 # add_subdirectory(Ex-4__find-epsilon-helper)
 # add_subdirectory(Ex-5__find-vacant-tabletop-surface-space)
 # add_subdirectory(Ex-6__3D-render-tabletop-environment)
-add_subdirectory(Ex-7__2D-detect-tabletop-objects)
+# add_subdirectory(Ex-7__2D-detect-tabletop-objects)
+# add_subdirectory(Ex-8__chromakey-vacant-tabletop-surface-space)
