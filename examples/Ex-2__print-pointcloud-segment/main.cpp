@@ -22,7 +22,6 @@ void k4aCapture(
 {
     START
     sptr_kinect->capture();
-    sptr_kinect->imgCapture();
     sptr_kinect->depthCapture();
     int imgWidth = k4a_image_get_width_pixels(sptr_kinect->m_img);
     int imgHeight = k4a_image_get_height_pixels(sptr_kinect->m_img);
@@ -98,13 +97,6 @@ int main(int argc, char* argv[])
     SLEEP_UNTIL_PROPOSAL_READY
     std::vector<Point> pCloudSeg = *sptr_i3d->getPCloudSeg2x2Bin();
 
-    // helper script uses cloud compare for viewing
-    // output point clouds. To take advantage of the
-    // convenience script, install cloud compare.
-    // Alternatively use any other *.ply point cloud
-    // viewer. File written to: ./output/context.ply
-    ply::write(pCloud, pCloudSeg);
-
     // snapshot of tabletop environment
     // File written to: ./output/scene.png
     uint8_t* imgData = *sptr_i3d->getSensorImgData();
@@ -112,10 +104,9 @@ int main(int argc, char* argv[])
     int h = sptr_i3d->getImgHeight();
     io::write(imgData, w, h); //
     STOP
-    // ------> do stuff with tabletop environment <------
+        // ------> do stuff with tabletop environment <------
 
-    proposeRegionWorker.join();
-    k4aCaptureWorker.join();
+        k4aCaptureWorker.join();
     buildPCloudWorker.join();
     return 0;
 }
