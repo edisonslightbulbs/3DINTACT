@@ -18,3 +18,4 @@ rm -rf ./output/print-pointcloud-clusters
 ./build/bin/print-pointcloud-clusters --logtostderr=1
 
 cloudcompare.CloudCompare ./output/context.ply >/dev/null 2>&1 &
+cloudcompare.CloudCompare ./output/context1.ply >/dev/null 2>&1 &
