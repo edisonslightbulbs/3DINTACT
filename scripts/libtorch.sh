@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# get_libtorch.sh
+# libtorch.sh
 #   Iff no libtorch directory exists in external,
 #   downloads the most up-to-date version.
 #
