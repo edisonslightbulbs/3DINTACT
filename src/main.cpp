@@ -3,6 +3,7 @@
 #include "i3d.h"
 #include "kinect.h"
 #include "scene.h"
+#include "ply.h"
 #include "usage.h"
 
 int main(int argc, char* argv[])
