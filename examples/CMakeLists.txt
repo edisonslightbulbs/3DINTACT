@@ -1,5 +1,8 @@
 add_subdirectory(example-01-show-pointcloud)
 add_subdirectory(example-02-show-syncd-depth-image)
+add_subdirectory(example-03-segment-pcloud)
+# add_subdirectory(example-04-cluster-pcloud)
+# add_subdirectory(example-05-vacant-surface)
 
 # add_subdirectory(Ex-2__print-pointcloud-segment)
 # add_subdirectory(Ex-3__print-pointcloud-clusters)
