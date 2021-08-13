@@ -14,5 +14,5 @@ cd "$PROJECT_DIR" || return
 
 mkdir -p ./output
 rm -rf ./output/*.*
-./build/bin/3DINTACToolkit --logtostderr=1
+./build/bin/i3d --logtostderr=1
 #cloudcompare.CloudCompare ./output/context.ply >/dev/null 2>&1 &
