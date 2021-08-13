@@ -1,6 +1,6 @@
-# add_subdirectory(example-01-show-pointcloud)
+add_subdirectory(example-01-show-pointcloud)
+add_subdirectory(example-02-show-syncd-depth-image)
 
-# add_subdirectory(Ex-1__print-pointcloud)
 # add_subdirectory(Ex-2__print-pointcloud-segment)
 # add_subdirectory(Ex-3__print-pointcloud-clusters)
 # add_subdirectory(Ex-4__find-epsilon-helper)
