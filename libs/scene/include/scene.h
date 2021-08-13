@@ -18,30 +18,30 @@ static std::thread proposeRegionWorker; // propose thread
 static std::thread segmentRegionWorker; // segment thread
 static std::thread clusterRegionWorker; // cluster thread
 
-void clusterRegion(std::shared_ptr<I3d>& sptr_i3d)
+void clusterRegion(std::shared_ptr<i3d>& sptr_i3d)
 {
     int minPoints = 4;
     const float epsilon = 3.170;
     sptr_i3d->clusterRegion(epsilon, minPoints, sptr_i3d);
 }
 
-void segmentRegion(std::shared_ptr<I3d>& sptr_i3d)
+void segmentRegion(std::shared_ptr<i3d>& sptr_i3d)
 {
     sptr_i3d->segmentRegion(sptr_i3d);
 }
 
-void proposeRegion(std::shared_ptr<I3d>& sptr_i3d)
+void proposeRegion(std::shared_ptr<i3d>& sptr_i3d)
 {
     sptr_i3d->proposeRegion(sptr_i3d);
 }
 
-void buildPcl(std::shared_ptr<I3d>& sptr_i3d)
+void buildPcl(std::shared_ptr<i3d>& sptr_i3d)
 {
     sptr_i3d->buildPCloud(sptr_i3d);
 }
 
 void k4aCapture(
-    std::shared_ptr<Kinect>& sptr_kinect, std::shared_ptr<I3d>& sptr_i3d)
+    std::shared_ptr<kinect>& sptr_kinect, std::shared_ptr<i3d>& sptr_i3d)
 {
     START
     sptr_kinect->capture();
@@ -86,7 +86,7 @@ void k4aCapture(
 }
 
 void context(
-    std::shared_ptr<Kinect>& sptr_kinect, std::shared_ptr<I3d> sptr_i3d)
+    std::shared_ptr<kinect>& sptr_kinect, std::shared_ptr<i3d> sptr_i3d)
 {
     sptr_i3d->raiseRunFlag();
 
