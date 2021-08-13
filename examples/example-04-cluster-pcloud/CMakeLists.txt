@@ -1,4 +1,4 @@
-project(print-pointcloud-clusters)
+project(cluster)
 
 set(ROOT ${CMAKE_SOURCE_DIR})
 set(SRC_DIR ${ROOT}/src)
@@ -41,23 +41,23 @@ file(GLOB_RECURSE LIBS_SRC
     ${LIB_DIR}/*.cpp
     )
 
-option(PRINT_POINTCLOUD_CLUSTERS_EXAMPLE "Build print-pointcloud-clusters example" ON) # default OFF
-if(PRINT_POINTCLOUD_CLUSTERS_EXAMPLE)
+option(BUILD_EXAMPLE_4 "Build example 4" OFF) # default OFF
+if(BUILD_EXAMPLE_4)
 
-    add_executable(print-pointcloud-clusters
+    add_executable(cluster
         ${EXT_SRC}
         ${LIBS_SRC}
-        main.cpp
+        cluster.cpp
         )
 
-    target_include_directories(print-pointcloud-clusters PRIVATE
+    target_include_directories(cluster PRIVATE
         ${K4A_VERSION}
         ${K4A_INCLUDE}
         ${INCLUDE_DIRS}
         ${OpenCV_INCLUDE_DIRS}
         )
 
-    target_link_libraries(print-pointcloud-clusters
+    target_link_libraries(cluster
         glog
         gflags
         Eigen3::Eigen
@@ -67,11 +67,11 @@ if(PRINT_POINTCLOUD_CLUSTERS_EXAMPLE)
         ${TORCH_LIBRARIES}
         )
 
-    option(EXECUTE_TARGET "Execute print-pointcloud-clusters example" OFF) # default OFF
-    if(EXECUTE_TARGET)
-        add_custom_command(TARGET print-pointcloud-clusters
+    option(EXECUTE_EXAMPLE_4 "Execute example 4" OFF) # default OFF
+    if(EXECUTE_EXAMPLE_4)
+        add_custom_command(TARGET cluster
             POST_BUILD
-            COMMAND ./scripts/run_print_pointcloud_clusters_example.sh
+            COMMAND ./scripts/example_04.sh
             WORKING_DIRECTORY ${ROOT})
     endif()
 endif()

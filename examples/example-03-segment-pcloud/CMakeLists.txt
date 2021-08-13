@@ -1,4 +1,4 @@
-project(print-pointcloud-segment)
+project(segment-pcloud)
 
 set(ROOT ${CMAKE_SOURCE_DIR})
 set(SRC_DIR ${ROOT}/src)
@@ -41,23 +41,23 @@ file(GLOB_RECURSE LIBS_SRC
     ${LIB_DIR}/*.cpp
     )
 
-option(PRINT_POINTCLOUD_SEGMENT_EXAMPLE "Build print-pointcloud-segment example" ON) # default OFF
-if(PRINT_POINTCLOUD_SEGMENT_EXAMPLE)
+option(BUILD_EXAMPLE_3 "Build example 3" OFF) # default OFF
+if(BUILD_EXAMPLE_3)
 
-    add_executable(print-pointcloud-segment
+    add_executable(segment-pcloud
         ${EXT_SRC}
         ${LIBS_SRC}
-        main.cpp
+        segment.cpp
         )
 
-    target_include_directories(print-pointcloud-segment PRIVATE
+    target_include_directories(segment-pcloud PRIVATE
         ${K4A_VERSION}
         ${K4A_INCLUDE}
         ${INCLUDE_DIRS}
         ${OpenCV_INCLUDE_DIRS}
         )
 
-    target_link_libraries(print-pointcloud-segment
+    target_link_libraries(segment-pcloud
         glog
         gflags
         Eigen3::Eigen
@@ -67,11 +67,11 @@ if(PRINT_POINTCLOUD_SEGMENT_EXAMPLE)
         ${TORCH_LIBRARIES}
         )
 
-    option(EXECUTE_TARGET "Execute print-pointcloud-segment example" OFF) # default OFF
-    if(EXECUTE_TARGET)
-        add_custom_command(TARGET print-pointcloud-segment
+    option(EXECUTE_EXAMPLE_3 "Execute example 3" OFF) # default OFF
+    if(EXECUTE_EXAMPLE_3)
+        add_custom_command(TARGET segment-pcloud
             POST_BUILD
-            COMMAND ./scripts/run_print_pointcloud_segment_example.sh
+            COMMAND ./scripts/example_03.sh
             WORKING_DIRECTORY ${ROOT})
     endif()
 endif()
