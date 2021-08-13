@@ -10,8 +10,8 @@ int main(int argc, char* argv[])
     // init logger, kinect, and i3d
     logger(argc, argv);
     usage::prompt(ABOUT);
-    std::shared_ptr<Kinect> sptr_kinect(new Kinect);
-    std::shared_ptr<I3d> sptr_i3d(new I3d());
+    std::shared_ptr<kinect> sptr_kinect(new kinect);
+    std::shared_ptr<i3d> sptr_i3d(new i3d());
     std::thread work(scene::context, std::ref(sptr_kinect), std::ref(sptr_i3d));
 
     // write synchronized depth image
