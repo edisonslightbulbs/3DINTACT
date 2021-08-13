@@ -67,8 +67,8 @@ if(BUILD_EXAMPLE_1)
         ${TORCH_LIBRARIES}
         )
 
-    option(EXECUTE_TARGET "Execute example 1" ON) # default OFF
-    if(EXECUTE_TARGET)
+    option(EXECUTE_EXAMPLE_1 "Execute example 1" OFF) # default OFF
+    if(EXECUTE_EXAMPLE_1)
         add_custom_command(TARGET show-pointcloud
             POST_BUILD
             COMMAND ./scripts/example_01.sh
