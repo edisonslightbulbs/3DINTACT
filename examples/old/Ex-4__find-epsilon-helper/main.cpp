@@ -6,7 +6,7 @@
 #include "i3d.h"
 #include "io.h"
 #include "kinect.h"
-#include "macros.hpp"
+#include "i3dmacros.hpp"
 
 void proposeRegion(std::shared_ptr<I3d>& sptr_i3d)
 {

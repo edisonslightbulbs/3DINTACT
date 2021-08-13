@@ -1,24 +1,11 @@
 #include <chrono>
 #include <string>
 #include <thread>
-#include <utilities.h>
 
 #include "i3d.h"
 #include "io.h"
 #include "kinect.h"
-#include "macros.hpp"
-
-void clusterRegion(std::shared_ptr<I3d>& sptr_i3d)
-{
-    int minPoints = 4;
-    const float epsilon = 3.170;
-    sptr_i3d->clusterRegion(epsilon, minPoints, sptr_i3d);
-}
-
-void segmentRegion(std::shared_ptr<I3d>& sptr_i3d)
-{
-    sptr_i3d->segmentRegion(sptr_i3d);
-}
+#include "i3dmacros.hpp"
 
 void proposeRegion(std::shared_ptr<I3d>& sptr_i3d)
 {
@@ -35,7 +22,6 @@ void k4aCapture(
 {
     START
     sptr_kinect->capture();
-    sptr_kinect->imgCapture();
     sptr_kinect->depthCapture();
     int imgWidth = k4a_image_get_width_pixels(sptr_kinect->m_img);
     int imgHeight = k4a_image_get_height_pixels(sptr_kinect->m_img);
@@ -104,12 +90,6 @@ int main(int argc, char* argv[])
     // propose region
     std::thread proposeRegionWorker(proposeRegion, std::ref(sptr_i3d));
 
-    // segment region
-    std::thread segmentRegionWorker(segmentRegion, std::ref(sptr_i3d));
-
-    // cluster segmented region
-    std::thread clusterRegionWorker(clusterRegion, std::ref(sptr_i3d));
-
     // ------> do stuff with tabletop environment <------
     SLEEP_UNTIL_POINTCLOUD_READY
     std::vector<Point> pCloud = *sptr_i3d->getPCloud2x2Bin();
@@ -117,47 +97,16 @@ int main(int argc, char* argv[])
     SLEEP_UNTIL_PROPOSAL_READY
     std::vector<Point> pCloudSeg = *sptr_i3d->getPCloudSeg2x2Bin();
 
-    SLEEP_UNTIL_CLUSTERS_READY
-    auto clusters = sptr_i3d->getPCloudClusters();
-    auto points = clusters->first;
-    auto indexClusters = clusters->second;
-    // points represents our segmented point cloud
-    // indexes variable represents clustered indexes of the
-    // points
-
-    // initialize cluster colors
-    std::vector<uint8_t*> colors;
-    utils::add(colors);
-
-    ply::write1(points);
-
-    // colorize clusters: visualize clusters
-    for (auto& indexCluster : indexClusters) {
-        int colIndex = utils::randNum((int)colors.size());
-        for (auto& index : indexCluster) {
-            points[index].setPixel_RGBA(colors[colIndex]);
-        }
-    }
-    // helper script uses cloud compare for viewing
-    // output point clouds. To take advantage of the
-    // convenience script, install cloud compare.
-    // Alternatively use any other *.ply point cloud
-    // viewer. File written to: ./output/context.ply
-    ply::write(points);
-
     // snapshot of tabletop environment
     // File written to: ./output/scene.png
     uint8_t* imgData = *sptr_i3d->getSensorImgData();
     int w = sptr_i3d->getImgWidth();
     int h = sptr_i3d->getImgHeight();
-    io::write(imgData, w, h);
+    io::write(imgData, w, h); //
     STOP
         // ------> do stuff with tabletop environment <------
 
         k4aCaptureWorker.join();
     buildPCloudWorker.join();
-    proposeRegionWorker.join();
-    segmentRegionWorker.join();
-    clusterRegionWorker.join();
     return 0;
 }

@@ -6,8 +6,8 @@
 #include "i3d.h"
 #include "io.h"
 #include "kinect.h"
-#include "macros.hpp"
-#include "utilities.h"
+#include "i3dmacros.hpp"
+#include "i3dutils.h"
 #include "yolov5.h"
 
 void clusterRegion(std::shared_ptr<I3d>& sptr_i3d)

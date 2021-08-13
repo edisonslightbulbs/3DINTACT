@@ -1,11 +1,12 @@
 #include <chrono>
 #include <string>
 #include <thread>
+#include <i3dutils.h>
 
 #include "i3d.h"
 #include "io.h"
 #include "kinect.h"
-#include "macros.hpp"
+#include "i3dmacros.hpp"
 
 void clusterRegion(std::shared_ptr<I3d>& sptr_i3d)
 {
@@ -124,25 +125,25 @@ int main(int argc, char* argv[])
     // indexes variable represents clustered indexes of the
     // points
 
-    // initialize chromakey color
-    uint8_t rgba[4] = { 27, 120, 55, 1 };
+    // initialize cluster colors
+    std::vector<uint8_t*> colors;
+    utils::add(colors);
 
-    // clusters are sorted in descending order of size
-    // in this example to extract the tabletop surface
-    // we assume that the vacant space corresponds to
-    // the largest cluster
-    std::vector<Point> vacant;
-    for (auto& index : indexClusters[0]) {
-        points[index].setPixel_RGBA(rgba);
-        vacant.emplace_back(points[index]);
+    ply::write1(points);
+
+    // colorize clusters: visualize clusters
+    for (auto& indexCluster : indexClusters) {
+        int colIndex = utils::randNum((int)colors.size());
+        for (auto& index : indexCluster) {
+            points[index].setPixel_RGBA(colors[colIndex]);
+        }
     }
-
     // helper script uses cloud compare for viewing
     // output point clouds. To take advantage of the
     // convenience script, install cloud compare.
     // Alternatively use any other *.ply point cloud
     // viewer. File written to: ./output/context.ply
-    ply::write(vacant);
+    ply::write(points);
 
     // snapshot of tabletop environment
     // File written to: ./output/scene.png
@@ -151,9 +152,9 @@ int main(int argc, char* argv[])
     int h = sptr_i3d->getImgHeight();
     io::write(imgData, w, h);
     STOP
-    // ------> do stuff with tabletop environment <------
+        // ------> do stuff with tabletop environment <------
 
-    k4aCaptureWorker.join();
+        k4aCaptureWorker.join();
     buildPCloudWorker.join();
     proposeRegionWorker.join();
     segmentRegionWorker.join();
