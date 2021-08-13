@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
     i3dpcl::write(pCloud, "./output/gray.ply");
 
     // write color point cloud
-    WAIT_FOR_COLOR_POINTCLOUD
+    WAIT_FOR_C2D_POINTCLOUD
     int w = sptr_i3d->getDWidth();
     int h = sptr_i3d->getDHeight();
     int16_t* xyz = sptr_i3d->getXYZ()->data();
