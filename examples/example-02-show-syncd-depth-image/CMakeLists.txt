@@ -41,7 +41,7 @@ file(GLOB_RECURSE LIBS_SRC
     ${LIB_DIR}/*.cpp
     )
 
-option(BUILD_EXAMPLE_2 "Build example 1" ON) # default ON
+option(BUILD_EXAMPLE_2 "Build example 2" OFF) # default ON
 if(BUILD_EXAMPLE_2)
 
     add_executable(show-dimage
