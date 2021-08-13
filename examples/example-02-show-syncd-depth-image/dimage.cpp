@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
         i3dscene::context, std::ref(sptr_kinect), std::ref(sptr_i3d));
 
     // write synchronized depth image
-    WAIT_FOR_COLOR_POINTCLOUD
+    WAIT_FOR_C2D_TRANSFORMATION
     int w = sptr_i3d->getDWidth();
     int h = sptr_i3d->getDHeight();
     uint8_t* bgra = sptr_i3d->getBGRA()->data();
