@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.11)
-project(3DINTACToolkit)
+project(i3d)
 
 # optimization for dev environments
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -63,7 +63,7 @@ if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
     option(SETUP_K4A_SDK "Initialize the kinect SDK project" ON)  # default ON
     if(SETUP_K4A_SDK)
         execute_process(
-            COMMAND /bin/bash ./scripts/initialize_azure_kinect_sensor_sdk.sh -j 12
+            COMMAND /bin/bash ./scripts/init_k4a_sdk.sh -j 12
             WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
     endif()
 endif()
@@ -76,7 +76,7 @@ set(K4A_VERSION ${K4A_SDK}/build/src/sdk/include)
 option(SETUP_LIBTORCH "Setup libtorch" ON)
 if(SETUP_LIBTORCH)
     execute_process(
-        COMMAND /bin/bash ./scripts/get_libtorch.sh
+        COMMAND /bin/bash ./scripts/libtorch.sh
         WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
 endif()
 set(CMAKE_PREFIX_PATH ${EXT_DIR}/libtorch)
@@ -107,14 +107,14 @@ file(GLOB_RECURSE LIBS_SRC
 option(BUILD_3DINTACT "Build Project" OFF) # default OFF
 if(BUILD_3DINTACT)
     # setup target
-    add_executable(3DINTACToolkit
+    add_executable(i3d
         ${EXT_SRC}
         ${LIBS_SRC}
         ${SRC_DIR}/main.cpp
         )
 
     # include directories
-    target_include_directories(3DINTACToolkit PRIVATE
+    target_include_directories(i3d PRIVATE
         ${K4A_VERSION}
         ${K4A_INCLUDE}
         ${INCLUDE_DIRS}
@@ -122,7 +122,7 @@ if(BUILD_3DINTACT)
         )
 
     # link libraries
-    target_link_libraries(3DINTACToolkit
+    target_link_libraries(i3d
         glog
         gflags
         Eigen3::Eigen
@@ -135,9 +135,9 @@ if(BUILD_3DINTACT)
     # execute target
     option(EXECUTE_TARGET "Execute Project Target" OFF) # default OFF
     if(EXECUTE_TARGET)
-        add_custom_command(TARGET 3DINTACToolkit
+        add_custom_command(TARGET i3d
             POST_BUILD
-            COMMAND ./scripts/run_i3d.sh
+            COMMAND ./scripts/main.sh
             WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
     endif()
 endif()

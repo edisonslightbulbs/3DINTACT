@@ -8,21 +8,9 @@
     url = https://github.com/jlblancoc/nanoflann.git
     branch = master
     ignore = dirty
-[submodule "libs/kinect"]
-    path = libs/kinect
-    url = git@github.com:edisonslightbulbs/kinect.git
-    branch = main
 [submodule "libs/outliers"]
     path = libs/outliers
     url = git@github.com:edisonslightbulbs/outliers.git
-    branch = main
-[submodule "libs/svd"]
-    path = libs/svd
-    url = git@github.com:edisonslightbulbs/svd.git
-    branch = main
-[submodule "libs/point"]
-    path = libs/point
-    url = git@github.com:edisonslightbulbs/point.git
     branch = main
 [submodule "libs/viewer"]
     path = libs/viewer
@@ -32,27 +20,30 @@
     path = libs/edge
     url = git@github.com:edisonslightbulbs/edge.git
     branch = main
-[submodule "libs/knn"]
-    path = libs/knn
-    url = git@github.com:edisonslightbulbs/knn.git
-    branch = main
-[submodule "libs/dbscan"]
-    path = libs/dbscan
-    url = git@github.com:edisonslightbulbs/dbscan.git
-    branch = main
-[submodule "libs/calibration"]
-	path = libs/calibration
-	url = git@github.com:edisonslightbulbs/calibration.git
-    branch = main
 [submodule "libs/segment"]
 	path = libs/segment
 	url = git@github.com:edisonslightbulbs/segment.git
 [submodule "libs/i3d"]
 	path = libs/i3d
 	url = git@github.com:edisonslightbulbs/i3d.git
-[submodule "libs/or"]
-	path = libs/or
-	url = git@github.com:edisonslightbulbs/or.git
 [submodule "libs/searcher"]
 	path = libs/searcher
 	url = git@github.com:edisonslightbulbs/searcher.git
+[submodule "libs/K4a"]
+	path = libs/K4a
+	url = git@github.com:edisonslightbulbs/K4a.git
+[submodule "libs/Point"]
+	path = libs/Point
+	url = git@github.com:edisonslightbulbs/Point.git
+[submodule "libs/KNN"]
+	path = libs/KNN
+	url = git@github.com:edisonslightbulbs/KNN.git
+[submodule "libs/DBSCAN"]
+	path = libs/DBSCAN
+	url = git@github.com:edisonslightbulbs/DBSCAN.git
+[submodule "libs/SVD"]
+	path = libs/SVD
+	url = git@github.com:edisonslightbulbs/SVD.git
+[submodule "libs/YOLOv5-cpp"]
+	path = libs/YOLOv5-cpp
+	url = git@github.com:edisonslightbulbs/YOLOv5-cpp.git

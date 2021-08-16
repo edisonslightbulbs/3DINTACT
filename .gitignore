@@ -16,3 +16,6 @@ cmake-build-debug/
 # libtorch
 *.zip
 external/libtorch/
+output/
+external/deprecated/
+.cache/
