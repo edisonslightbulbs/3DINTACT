@@ -64,10 +64,10 @@ target_link_libraries(epsilon
     ${TORCH_LIBRARIES}
     )
 
-option(EXECUTE_EXAMPLE_5 "Execute example 5" OFF) # default OFF
-if(EXECUTE_EXAMPLE_5)
+option(EXECUTE_EXAMPLE_9 "Execute example 9" OFF) # default OFF
+if(EXECUTE_EXAMPLE_9)
     add_custom_command(TARGET epsilon
         POST_BUILD
-        COMMAND ./scripts/example_05.sh
+        COMMAND ./scripts/example_09.sh
         WORKING_DIRECTORY ${ROOT})
 endif()

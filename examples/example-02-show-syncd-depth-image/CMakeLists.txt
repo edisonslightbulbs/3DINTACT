@@ -64,7 +64,7 @@ target_link_libraries(show-dimage
     ${TORCH_LIBRARIES}
     )
 
-option(EXECUTE_EXAMPLE_2 "Execute example 1" OFF) # default OFF
+option(EXECUTE_EXAMPLE_2 "Execute example 2" OFF) # default OFF
 if(EXECUTE_EXAMPLE_2)
     add_custom_command(TARGET show-dimage
         POST_BUILD

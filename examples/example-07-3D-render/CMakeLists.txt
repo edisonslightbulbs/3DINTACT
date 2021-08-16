@@ -64,10 +64,10 @@ target_link_libraries(render
     ${TORCH_LIBRARIES}
     )
 
-option(EXECUTE_EXAMPLE_5 "Execute example 5" OFF) # default OFF
-if(EXECUTE_EXAMPLE_5)
+option(EXECUTE_EXAMPLE_7 "Execute example 7" OFF) # default OFF
+if(EXECUTE_EXAMPLE_7)
     add_custom_command(TARGET render
         POST_BUILD
-        COMMAND ./scripts/example_05.sh
+        COMMAND ./scripts/example_07.sh
         WORKING_DIRECTORY ${ROOT})
 endif()

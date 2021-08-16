@@ -7,4 +7,3 @@ add_subdirectory(example-06-chromakey)
 add_subdirectory(example-07-3D-render)
 add_subdirectory(example-08-detect-objects)
 add_subdirectory(example-09-find-epsilon)
-

@@ -104,7 +104,7 @@ file(GLOB_RECURSE LIBS_SRC
     ${LIB_DIR}/*.cpp
     )
 
-option(BUILD_3DINTACT "Build Project" ON) # default OFF
+option(BUILD_3DINTACT "Build Project" OFF) # default OFF
 if(BUILD_3DINTACT)
     # setup target
     add_executable(i3d
@@ -133,7 +133,7 @@ if(BUILD_3DINTACT)
         )
 
     # execute target
-    option(EXECUTE_TARGET "Execute Project Target" ON) # default OFF
+    option(EXECUTE_TARGET "Execute Project Target" OFF) # default OFF
     if(EXECUTE_TARGET)
         add_custom_command(TARGET i3d
             POST_BUILD
