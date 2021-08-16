@@ -41,37 +41,33 @@ file(GLOB_RECURSE LIBS_SRC
     ${LIB_DIR}/*.cpp
     )
 
-option(BUILD_EXAMPLE_2 "Build example 2" OFF) # default ON
-if(BUILD_EXAMPLE_2)
+add_executable(show-dimage
+    ${EXT_SRC}
+    ${LIBS_SRC}
+    dimage.cpp
+    )
 
-    add_executable(show-dimage
-        ${EXT_SRC}
-        ${LIBS_SRC}
-        dimage.cpp
-        )
+target_include_directories(show-dimage PRIVATE
+    ${K4A_VERSION}
+    ${K4A_INCLUDE}
+    ${INCLUDE_DIRS}
+    ${OpenCV_INCLUDE_DIRS}
+    )
 
-    target_include_directories(show-dimage PRIVATE
-        ${K4A_VERSION}
-        ${K4A_INCLUDE}
-        ${INCLUDE_DIRS}
-        ${OpenCV_INCLUDE_DIRS}
-        )
+target_link_libraries(show-dimage
+    glog
+    gflags
+    Eigen3::Eigen
+    ${OpenCV_LIBS}
+    ${Pangolin_LIBRARIES}
+    ${K4A_LIBRARY}/bin/libk4a.so
+    ${TORCH_LIBRARIES}
+    )
 
-    target_link_libraries(show-dimage
-        glog
-        gflags
-        Eigen3::Eigen
-        ${OpenCV_LIBS}
-        ${Pangolin_LIBRARIES}
-        ${K4A_LIBRARY}/bin/libk4a.so
-        ${TORCH_LIBRARIES}
-        )
-
-    option(EXECUTE_EXAMPLE_2 "Execute example 1" OFF) # default OFF
-    if(EXECUTE_EXAMPLE_2)
-        add_custom_command(TARGET show-dimage
-            POST_BUILD
-            COMMAND ./scripts/example_02.sh
-            WORKING_DIRECTORY ${ROOT})
-    endif()
+option(EXECUTE_EXAMPLE_2 "Execute example 1" OFF) # default OFF
+if(EXECUTE_EXAMPLE_2)
+    add_custom_command(TARGET show-dimage
+        POST_BUILD
+        COMMAND ./scripts/example_02.sh
+        WORKING_DIRECTORY ${ROOT})
 endif()

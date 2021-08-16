@@ -41,37 +41,33 @@ file(GLOB_RECURSE LIBS_SRC
     ${LIB_DIR}/*.cpp
     )
 
-option(BUILD_EXAMPLE_3 "Build example 3" OFF) # default OFF
-if(BUILD_EXAMPLE_3)
+add_executable(segment-pcloud
+    ${EXT_SRC}
+    ${LIBS_SRC}
+    segment.cpp
+    )
 
-    add_executable(segment-pcloud
-        ${EXT_SRC}
-        ${LIBS_SRC}
-        segment.cpp
-        )
+target_include_directories(segment-pcloud PRIVATE
+    ${K4A_VERSION}
+    ${K4A_INCLUDE}
+    ${INCLUDE_DIRS}
+    ${OpenCV_INCLUDE_DIRS}
+    )
 
-    target_include_directories(segment-pcloud PRIVATE
-        ${K4A_VERSION}
-        ${K4A_INCLUDE}
-        ${INCLUDE_DIRS}
-        ${OpenCV_INCLUDE_DIRS}
-        )
+target_link_libraries(segment-pcloud
+    glog
+    gflags
+    Eigen3::Eigen
+    ${OpenCV_LIBS}
+    ${Pangolin_LIBRARIES}
+    ${K4A_LIBRARY}/bin/libk4a.so
+    ${TORCH_LIBRARIES}
+    )
 
-    target_link_libraries(segment-pcloud
-        glog
-        gflags
-        Eigen3::Eigen
-        ${OpenCV_LIBS}
-        ${Pangolin_LIBRARIES}
-        ${K4A_LIBRARY}/bin/libk4a.so
-        ${TORCH_LIBRARIES}
-        )
-
-    option(EXECUTE_EXAMPLE_3 "Execute example 3" OFF) # default OFF
-    if(EXECUTE_EXAMPLE_3)
-        add_custom_command(TARGET segment-pcloud
-            POST_BUILD
-            COMMAND ./scripts/example_03.sh
-            WORKING_DIRECTORY ${ROOT})
-    endif()
+option(EXECUTE_EXAMPLE_3 "Execute example 3" OFF) # default OFF
+if(EXECUTE_EXAMPLE_3)
+    add_custom_command(TARGET segment-pcloud
+        POST_BUILD
+        COMMAND ./scripts/example_03.sh
+        WORKING_DIRECTORY ${ROOT})
 endif()

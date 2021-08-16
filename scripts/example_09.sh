@@ -11,7 +11,4 @@ cd "$PROJECT_DIR" || return
 
 mkdir -p ./output
 rm -rf ./output/*.*
-./build/bin/show-pointcloud --logtostderr=1
-
-# cloudcompare.CloudCompare ./output/color.ply >/dev/null 2>&1 &
-# cloudcompare.CloudCompare ./output/gray.ply >/dev/null 2>&1 &
+./build/bin/epsilon --logtostderr=1

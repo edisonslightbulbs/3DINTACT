@@ -63,7 +63,7 @@ if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
     option(SETUP_K4A_SDK "Initialize the kinect SDK project" ON)  # default ON
     if(SETUP_K4A_SDK)
         execute_process(
-            COMMAND /bin/bash ./scripts/initialize_azure_kinect_sensor_sdk.sh -j 12
+            COMMAND /bin/bash ./scripts/init_k4a_sdk.sh -j 12
             WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
     endif()
 endif()

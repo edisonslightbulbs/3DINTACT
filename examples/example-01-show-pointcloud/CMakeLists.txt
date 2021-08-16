@@ -41,37 +41,33 @@ file(GLOB_RECURSE LIBS_SRC
     ${LIB_DIR}/*.cpp
     )
 
-option(BUILD_EXAMPLE_1 "Build example 1" OFF) # default ON
-if(BUILD_EXAMPLE_1)
+add_executable(show-pointcloud
+    ${EXT_SRC}
+    ${LIBS_SRC}
+    pcloud.cpp
+    )
 
-    add_executable(show-pointcloud
-        ${EXT_SRC}
-        ${LIBS_SRC}
-        pcloud.cpp
-        )
+target_include_directories(show-pointcloud PRIVATE
+    ${K4A_VERSION}
+    ${K4A_INCLUDE}
+    ${INCLUDE_DIRS}
+    ${OpenCV_INCLUDE_DIRS}
+    )
 
-    target_include_directories(show-pointcloud PRIVATE
-        ${K4A_VERSION}
-        ${K4A_INCLUDE}
-        ${INCLUDE_DIRS}
-        ${OpenCV_INCLUDE_DIRS}
-        )
+target_link_libraries(show-pointcloud
+    glog
+    gflags
+    Eigen3::Eigen
+    ${OpenCV_LIBS}
+    ${Pangolin_LIBRARIES}
+    ${K4A_LIBRARY}/bin/libk4a.so
+    ${TORCH_LIBRARIES}
+    )
 
-    target_link_libraries(show-pointcloud
-        glog
-        gflags
-        Eigen3::Eigen
-        ${OpenCV_LIBS}
-        ${Pangolin_LIBRARIES}
-        ${K4A_LIBRARY}/bin/libk4a.so
-        ${TORCH_LIBRARIES}
-        )
-
-    option(EXECUTE_EXAMPLE_1 "Execute example 1" OFF) # default OFF
-    if(EXECUTE_EXAMPLE_1)
-        add_custom_command(TARGET show-pointcloud
-            POST_BUILD
-            COMMAND ./scripts/example_01.sh
-            WORKING_DIRECTORY ${ROOT})
-    endif()
+option(EXECUTE_EXAMPLE_1 "Execute example 1" OFF) # default OFF
+if(EXECUTE_EXAMPLE_1)
+    add_custom_command(TARGET show-pointcloud
+        POST_BUILD
+        COMMAND ./scripts/example_01.sh
+        WORKING_DIRECTORY ${ROOT})
 endif()

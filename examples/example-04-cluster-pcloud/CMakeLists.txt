@@ -41,37 +41,33 @@ file(GLOB_RECURSE LIBS_SRC
     ${LIB_DIR}/*.cpp
     )
 
-option(BUILD_EXAMPLE_4 "Build example 4" OFF) # default OFF
-if(BUILD_EXAMPLE_4)
+add_executable(cluster
+    ${EXT_SRC}
+    ${LIBS_SRC}
+    cluster.cpp
+    )
 
-    add_executable(cluster
-        ${EXT_SRC}
-        ${LIBS_SRC}
-        cluster.cpp
-        )
+target_include_directories(cluster PRIVATE
+    ${K4A_VERSION}
+    ${K4A_INCLUDE}
+    ${INCLUDE_DIRS}
+    ${OpenCV_INCLUDE_DIRS}
+    )
 
-    target_include_directories(cluster PRIVATE
-        ${K4A_VERSION}
-        ${K4A_INCLUDE}
-        ${INCLUDE_DIRS}
-        ${OpenCV_INCLUDE_DIRS}
-        )
+target_link_libraries(cluster
+    glog
+    gflags
+    Eigen3::Eigen
+    ${OpenCV_LIBS}
+    ${Pangolin_LIBRARIES}
+    ${K4A_LIBRARY}/bin/libk4a.so
+    ${TORCH_LIBRARIES}
+    )
 
-    target_link_libraries(cluster
-        glog
-        gflags
-        Eigen3::Eigen
-        ${OpenCV_LIBS}
-        ${Pangolin_LIBRARIES}
-        ${K4A_LIBRARY}/bin/libk4a.so
-        ${TORCH_LIBRARIES}
-        )
-
-    option(EXECUTE_EXAMPLE_4 "Execute example 4" OFF) # default OFF
-    if(EXECUTE_EXAMPLE_4)
-        add_custom_command(TARGET cluster
-            POST_BUILD
-            COMMAND ./scripts/example_04.sh
-            WORKING_DIRECTORY ${ROOT})
-    endif()
+option(EXECUTE_EXAMPLE_4 "Execute example 4" OFF) # default OFF
+if(EXECUTE_EXAMPLE_4)
+    add_custom_command(TARGET cluster
+        POST_BUILD
+        COMMAND ./scripts/example_04.sh
+        WORKING_DIRECTORY ${ROOT})
 endif()
