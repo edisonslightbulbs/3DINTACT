@@ -1,4 +1,4 @@
-project(find-vacant-tabletop-surface-space)
+project(vacant)
 
 set(ROOT ${CMAKE_SOURCE_DIR})
 set(SRC_DIR ${ROOT}/src)
@@ -41,23 +41,23 @@ file(GLOB_RECURSE LIBS_SRC
     ${LIB_DIR}/*.cpp
     )
 
-option(FIND_VACANT_SURFACE_SPACE "Build find-vacant-tabletop-surface-space example" ON) # default OFF
-if(FIND_VACANT_SURFACE_SPACE)
+option(BUILD_EXAMPLE_5 "Build example 5" ON) # default OFF
+if(BUILD_EXAMPLE_5)
 
-    add_executable(find-vacant-tabletop-surface-space
+    add_executable(vacant
         ${EXT_SRC}
         ${LIBS_SRC}
-        main.cpp
+        vacant.cpp
         )
 
-    target_include_directories(find-vacant-tabletop-surface-space PRIVATE
+    target_include_directories(vacant PRIVATE
         ${K4A_VERSION}
         ${K4A_INCLUDE}
         ${INCLUDE_DIRS}
         ${OpenCV_INCLUDE_DIRS}
         )
 
-    target_link_libraries(find-vacant-tabletop-surface-space
+    target_link_libraries(vacant
         glog
         gflags
         Eigen3::Eigen
@@ -67,11 +67,11 @@ if(FIND_VACANT_SURFACE_SPACE)
         ${TORCH_LIBRARIES}
         )
 
-    option(EXECUTE_TARGET "Execute find-vacant-tabletop-surface-space example" OFF) # default OFF
-    if(EXECUTE_TARGET)
-        add_custom_command(TARGET find-vacant-tabletop-surface-space
+    option(EXECUTE_EXAMPLE_5 "Execute example 5" OFF) # default OFF
+    if(EXECUTE_EXAMPLE_5)
+        add_custom_command(TARGET vacant
             POST_BUILD
-            COMMAND ./scripts/run_find_vacant_tabletop_surface_space_example.sh
+            COMMAND ./scripts/example_05.sh
             WORKING_DIRECTORY ${ROOT})
     endif()
 endif()
