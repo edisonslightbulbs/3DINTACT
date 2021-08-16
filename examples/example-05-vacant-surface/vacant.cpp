@@ -14,15 +14,15 @@ int main(int argc, char* argv[])
     std::shared_ptr<kinect> sptr_kinect(new kinect);
     std::shared_ptr<i3d> sptr_i3d(new i3d());
     std::thread work(
-            i3dscene::context, std::ref(sptr_kinect), std::ref(sptr_i3d));
+        i3dscene::context, std::ref(sptr_kinect), std::ref(sptr_i3d));
 
     WAIT_FOR_CLUSTERS
     auto clusters = sptr_i3d->getPCloudClusters();
     auto clusteredPoints = clusters->first;
     auto clusteredPointIndexes = clusters->second;
 
-    // initialize chromakey
-    uint8_t rgba[4] = { 69,117,180, 1 };
+    // initialize random color
+    uint8_t rgba[4] = { 69, 117, 180, 1 };
 
     // clusters are sorted in descending order of size
     // in this example, to extract the tabletop surface
