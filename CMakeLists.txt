@@ -56,7 +56,7 @@ find_package(gflags REQUIRED)
 find_package(Pangolin REQUIRED)
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 
-add_subdirectory(examples)
+#add_subdirectory(examples)
 
 # setup Azure-Kinect-Sensor-SDK
 if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
@@ -104,7 +104,7 @@ file(GLOB_RECURSE LIBS_SRC
     ${LIB_DIR}/*.cpp
     )
 
-option(BUILD_3DINTACT "Build Project" OFF) # default OFF
+option(BUILD_3DINTACT "Build Project" ON) # default OFF
 if(BUILD_3DINTACT)
     # setup target
     add_executable(i3d
@@ -133,7 +133,7 @@ if(BUILD_3DINTACT)
         )
 
     # execute target
-    option(EXECUTE_TARGET "Execute Project Target" OFF) # default OFF
+    option(EXECUTE_TARGET "Execute Project Target" ON) # default OFF
     if(EXECUTE_TARGET)
         add_custom_command(TARGET i3d
             POST_BUILD
