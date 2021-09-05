@@ -5,9 +5,10 @@
 #include "i3d.h"
 #include "i3dscene.h"
 #include "i3dutils.h"
+#include "io.h"
 #include "kinect.h"
+#include "od.h"
 #include "usage.h"
-#include "yolov5.h"
 
 int main(int argc, char* argv[])
 {
@@ -19,15 +20,17 @@ int main(int argc, char* argv[])
     std::thread work(
         i3dscene::context, std::ref(sptr_kinect), std::ref(sptr_i3d));
 
-    // object detection using torch and yolov5/yolov5-trained model
-    std::vector<std::string> classnames;
+    // initialize object detection resources
     torch::jit::script::Module module;
-    od::setup(classnames, module);
+    std::vector<std::string> classnames;
+    std::string torchscript = io::pwd() + "/resources/best.pt";
+    std::string classes = io::pwd() + "/resources/class.names";
+    od::setup(classnames, module, torchscript, classes);
 
-    // cluster interaction regions
+    // segment and cluster interaction regions in fish tank
     WAIT_FOR_CLUSTERS
 
-    // main driver that with synchronized point cloud and images
+    // process synchronized point cloud and images
     while (RUN) {
         int w = sptr_i3d->getDWidth();
         int h = sptr_i3d->getDHeight();
@@ -41,7 +44,7 @@ int main(int argc, char* argv[])
             // ++
             i3dutils::stitch(i, pCloud[i], processedImage);
         }
-        od::detectObjects(h, w, pCloudSynchImage, classnames, module, sptr_i3d);
+        od::detect(h, w, pCloudSynchImage, classnames, module, sptr_i3d);
     }
     work.join();
     return 0;
