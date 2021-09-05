@@ -9,6 +9,28 @@
 #include "kinect.h"
 #include "od.h"
 #include "usage.h"
+#include "object.h"
+
+void show(std::shared_ptr<i3d>& sptr_i3d, const std::vector<object_t>& objects){
+    cv::Mat img;
+
+    for(auto& object: objects){
+        // image reference
+        img = object.m_image;
+
+        // set bounding regions to show
+        cv::rectangle(img, object.m_boundingBox, cv::Scalar(0, 255, 0), 1);
+
+        // set detected object class name and confidence to show
+        cv::putText(img, object.m_label, object.m_boundingBoxOrigin, cv::FONT_HERSHEY_SIMPLEX, (double)(object.m_imageWidth) / 200, cv::Scalar(0, 255, 0), 1);
+    }
+
+    // show image frame with bounding region, class name, confidence and FPS
+    cv::imshow("i3d", img);
+    if (cv::waitKey(1) == 27) {
+        sptr_i3d->stop();
+    }
+}
 
 int main(int argc, char* argv[])
 {
@@ -44,7 +66,8 @@ int main(int argc, char* argv[])
             // ++
             i3dutils::stitch(i, pCloud[i], processedImage);
         }
-        od::detect(h, w, pCloudSynchImage, classnames, module, sptr_i3d);
+        std::vector<object_t> objects = od::detect(h, w, pCloudSynchImage, classnames, module, sptr_i3d);
+        show(sptr_i3d, objects);
     }
     work.join();
     return 0;
