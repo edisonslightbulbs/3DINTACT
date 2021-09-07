@@ -1,5 +1,5 @@
-#include "file.h"
 #include "surface.h"
+#include "file.h"
 #include "i3d.h"
 
 cv::Mat surface::getSurfaceCapture(std::shared_ptr<i3d>& sptr_i3d)
@@ -13,7 +13,7 @@ cv::Mat surface::getSurfaceCapture(std::shared_ptr<i3d>& sptr_i3d)
 }
 
 void surface::project(const std::string& window, const int& w, const int& h,
-                      cv::Mat& img, const cv::Mat& R, const cv::Mat& t)
+    cv::Mat& img, const cv::Mat& R, const cv::Mat& t)
 {
     cv::rotate(img, img, cv::ROTATE_90_CLOCKWISE);
 
@@ -26,7 +26,6 @@ void surface::project(const std::string& window, const int& w, const int& h,
         window, cv::WND_PROP_FULLSCREEN, cv::WINDOW_FULLSCREEN);
     cv::imshow(window, img);
     cv::moveWindow(window, 3000, 0);
-    cv::waitKey();
 }
 
 cv::Mat surface::color(const bool& contrast, const int& w, const int& h)
@@ -42,8 +41,8 @@ cv::Mat surface::color(const bool& contrast, const int& w, const int& h)
 }
 
 void surface::contrast(std::shared_ptr<i3d>& sptr_i3d,
-                       const std::string& window, const int& w, const int& h,
-                       std::vector<cv::Mat>& scene)
+    const std::string& window, const int& w, const int& h,
+    std::vector<cv::Mat>& scene)
 {
     bool contrast = false;
     cv::namedWindow(window, cv::WINDOW_NORMAL);
