@@ -47,3 +47,6 @@
 [submodule "libs/YOLOv5-cpp"]
 	path = libs/YOLOv5-cpp
 	url = git@github.com:edisonslightbulbs/YOLOv5-cpp.git
+[submodule "libs/procam-calibration"]
+	path = libs/procam-calibration
+	url = git@github.com:edisonslightbulbs/procam-calibration.git
