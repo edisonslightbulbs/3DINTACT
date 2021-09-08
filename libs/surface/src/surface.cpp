@@ -15,15 +15,21 @@ cv::Mat surface::getSurfaceCapture(std::shared_ptr<i3d>& sptr_i3d)
 void surface::project(const std::string& window, const int& w, const int& h,
     cv::Mat& img, const cv::Mat& R, const cv::Mat& t)
 {
+    // rotate image
     cv::rotate(img, img, cv::ROTATE_90_CLOCKWISE);
 
     // scale
     cv::Size dSize = cv::Size(w, h);
     cv::resize(img, img, dSize, 0, 0, cv::INTER_AREA);
 
+    // create named window
     cv::namedWindow(window, cv::WINDOW_NORMAL);
+
+    // remove window's title bar
     cv::setWindowProperty(
         window, cv::WND_PROP_FULLSCREEN, cv::WINDOW_FULLSCREEN);
+
+    // show window @ position x=3000, y=0
     cv::imshow(window, img);
     cv::moveWindow(window, 3000, 0);
 }
