@@ -79,7 +79,7 @@ The project documentation is underway. In the meantime, we offer support and wel
 }
 ```
 
-*   You can take a closer look at the implementation of the pipeline here
+*   You can take a closer look at each of the implemented pipeline modules here
 
 ```tex
 @inproceedings{3dintact-manuscript-2021,
