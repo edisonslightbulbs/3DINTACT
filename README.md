@@ -71,7 +71,7 @@ The project documentation is underway. In the meantime, we offer support and wel
 *   if the project is helpful with your work (or any part of it),  citing is one way of letting us know we are doing something right.
 
 ```tex
-@misc{3dintact-github-2021_,
+@misc{3dintact-github-2021,
     author = {Mthunzi, Everett M.},
     title = {3DINTACT: an open-source CXX{\_}11 project for segmenting interaction regions on tabletop surfaces near real-time},
     url = {https://github.com/edisonslightbulbs/3DINTACToolkit},
