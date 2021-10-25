@@ -56,7 +56,7 @@ find_package(gflags REQUIRED)
 find_package(Pangolin REQUIRED)
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 
-#add_subdirectory(examples)
+add_subdirectory(examples)
 
 # setup Azure-Kinect-Sensor-SDK
 if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
