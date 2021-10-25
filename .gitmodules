@@ -10,43 +10,43 @@
     ignore = dirty
 [submodule "libs/outliers"]
     path = libs/outliers
-    url = git@github.com:edisonslightbulbs/outliers.git
+    url = https://github.com:edisonslightbulbs/outliers.git
     branch = main
 [submodule "libs/viewer"]
     path = libs/viewer
-    url = git@github.com:edisonslightbulbs/viewer.git
+    url = https://github.com:edisonslightbulbs/viewer.git
     branch = main
 [submodule "libs/edge"]
     path = libs/edge
-    url = git@github.com:edisonslightbulbs/edge.git
+    url = https://github.com:edisonslightbulbs/edge.git
     branch = main
 [submodule "libs/segment"]
-	path = libs/segment
-	url = git@github.com:edisonslightbulbs/segment.git
+    path = libs/segment
+    url = https://github.com:edisonslightbulbs/segment.git
 [submodule "libs/i3d"]
-	path = libs/i3d
-	url = git@github.com:edisonslightbulbs/i3d.git
+    path = libs/i3d
+    url = https://github.com:edisonslightbulbs/i3d.git
 [submodule "libs/searcher"]
-	path = libs/searcher
-	url = git@github.com:edisonslightbulbs/searcher.git
+    path = libs/searcher
+    url = https://github.com:edisonslightbulbs/searcher.git
 [submodule "libs/K4a"]
-	path = libs/K4a
-	url = git@github.com:edisonslightbulbs/K4a.git
+    path = libs/K4a
+    url = https://github.com:edisonslightbulbs/K4a.git
 [submodule "libs/Point"]
-	path = libs/Point
-	url = git@github.com:edisonslightbulbs/Point.git
+    path = libs/Point
+    url = https://github.com:edisonslightbulbs/Point.git
 [submodule "libs/KNN"]
-	path = libs/KNN
-	url = git@github.com:edisonslightbulbs/KNN.git
+    path = libs/KNN
+    url = https://github.com:edisonslightbulbs/KNN.git
 [submodule "libs/DBSCAN"]
-	path = libs/DBSCAN
-	url = git@github.com:edisonslightbulbs/DBSCAN.git
+    path = libs/DBSCAN
+    url = https://github.com:edisonslightbulbs/DBSCAN.git
 [submodule "libs/SVD"]
-	path = libs/SVD
-	url = git@github.com:edisonslightbulbs/SVD.git
+    path = libs/SVD
+    url = https://github.com:edisonslightbulbs/SVD.git
 [submodule "libs/YOLOv5-cpp"]
-	path = libs/YOLOv5-cpp
-	url = git@github.com:edisonslightbulbs/YOLOv5-cpp.git
+    path = libs/YOLOv5-cpp
+    url = https://github.com:edisonslightbulbs/YOLOv5-cpp.git
 [submodule "libs/procam-calibration"]
-	path = libs/procam-calibration
-	url = git@github.com:edisonslightbulbs/procam-calibration.git
+    path = libs/procam-calibration
+    url = https://github.com:edisonslightbulbs/procam-calibration.git
